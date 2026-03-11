@@ -254,6 +254,16 @@ All tests passed locally
 
 ---
 
+## Code Review Requirements
+- Every PR requires at least two reviewers.
+- New features must include test cases.
+- Breaking changes require documentation updates.
+
+## Commit Conventions
+- Use the Conventional Commits format.
+- Commit messages must include the issue number.
+- Each commit should contain only one logical change.
+
 # Git Best Practices
 
 - Pull latest changes before starting work
