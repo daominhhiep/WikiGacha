@@ -54,7 +54,7 @@
 - [x] T014 [P] [US1] Component test for Gacha reveal animation in `frontend/src/features/gacha/GachaReveal.test.tsx`
 
 ### Implementation for User Story 1
-- [ ] T015 [P] [US1] Implement Wikipedia API Client (Random/Summary) in `backend/src/modules/card/wiki.service.ts`
+- [x] T015 [P] [US1] Implement Wikipedia API Client (Random/Summary) in `backend/src/modules/card/wiki.service.ts`
 - [ ] T016 [US1] Implement Card Generation Logic (Stats/Rarity derivation) in `backend/src/modules/card/card.service.ts`
 - [ ] T017 [US1] Implement Gacha Controller and `POST /gacha/open` in `backend/src/modules/card/card.controller.ts`
 - [ ] T018 [P] [US1] Create Gacha Store/Hook for state management in `frontend/src/features/gacha/useGacha.ts`
