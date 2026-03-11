@@ -1,0 +1,48 @@
+services:
+  db:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_DATABASE: wikigacha
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_USER: wikiuser
+      MYSQL_PASSWORD: wikipass
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  redis:
+    image: redis:alpine
+    restart: always
+    ports:
+      - "6379:6379"
+
+  backend:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+      target: backend
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: mysql://wikiuser:wikipass@db:3306/wikigacha
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      JWT_SECRET: supersecret
+    depends_on:
+      - db
+      - redis
+
+  frontend:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+      target: frontend
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+
+volumes:
+  mysql_data:

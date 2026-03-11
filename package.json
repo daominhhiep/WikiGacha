@@ -1,0 +1,12 @@
+{
+  "name": "wikigacha",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "format": "concurrently \"npm run format --prefix backend\" \"npm run format --prefix frontend\"",
+    "lint": "concurrently \"npm run lint --prefix backend\" \"npm run lint --prefix frontend\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}
