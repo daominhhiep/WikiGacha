@@ -36,7 +36,7 @@
 - [x] T008 [P] Setup Redis client for caching in backend/src/common/redis.service.ts
 - [x] T009 [P] Create API response wrappers and global error filter in `backend/src/common/`
 - [x] T010 Setup Frontend API client (Axios/Fetch) with Interceptors in `frontend/src/services/api.ts`
-- [ ] T011 [P] Implement Basic Layout and Navigation in `frontend/src/components/layout/`
+- [x] T011 [P] Implement Basic Layout and Navigation in `frontend/src/components/layout/`
 
 **Checkpoint**: Foundation ready - user story implementation can now begin.
 
