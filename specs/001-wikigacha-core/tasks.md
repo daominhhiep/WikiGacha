@@ -51,7 +51,7 @@
 ### Tests for User Story 1
 - [x] T012 [P] [US1] Unit test for Wikipedia API Client in `backend/src/modules/card/wiki.service.spec.ts`
 - [x] T013 [US1] Integration test for Pack Opening flow in `backend/test/gacha.e2e-spec.ts`
-- [ ] T014 [P] [US1] Component test for Gacha reveal animation in `frontend/src/features/gacha/GachaReveal.test.tsx`
+- [x] T014 [P] [US1] Component test for Gacha reveal animation in `frontend/src/features/gacha/GachaReveal.test.tsx`
 
 ### Implementation for User Story 1
 - [ ] T015 [P] [US1] Implement Wikipedia API Client (Random/Summary) in `backend/src/modules/card/wiki.service.ts`
