@@ -58,7 +58,7 @@
 - [x] T016 [US1] Implement Card Generation Logic (Stats/Rarity derivation) in `backend/src/modules/card/card.service.ts`
 - [x] T017 [US1] Implement Gacha Controller and `POST /gacha/open` in `backend/src/modules/card/card.controller.ts`
 - [x] T018 [P] [US1] Create Gacha Store/Hook for state management in `frontend/src/features/gacha/useGacha.ts`
-- [ ] T019 [US1] Implement Pack Opening UI with Shadcn components in `frontend/src/features/gacha/GachaPage.tsx`
+- [x] T019 [US1] Implement Pack Opening UI with Shadcn components in `frontend/src/features/gacha/GachaPage.tsx`
 - [ ] T020 [US1] Add Wikipedia attribution and links to Card components in `frontend/src/components/Card.tsx`
 
 **Checkpoint**: User Story 1 is functional. Packs can be opened and cards saved.
