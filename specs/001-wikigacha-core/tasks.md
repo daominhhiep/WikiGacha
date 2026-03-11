@@ -49,7 +49,7 @@
 **Independent Test**: Trigger "Open Pack" via UI or API, verify 5 cards are added to DB and displayed with Wikipedia content.
 
 ### Tests for User Story 1
-- [ ] T012 [P] [US1] Unit test for Wikipedia API Client in `backend/src/modules/card/wiki.service.spec.ts`
+- [x] T012 [P] [US1] Unit test for Wikipedia API Client in `backend/src/modules/card/wiki.service.spec.ts`
 - [ ] T013 [US1] Integration test for Pack Opening flow in `backend/test/gacha.e2e-spec.ts`
 - [ ] T014 [P] [US1] Component test for Gacha reveal animation in `frontend/src/features/gacha/GachaReveal.test.tsx`
 
