@@ -33,7 +33,7 @@
 
 - [x] T006 Initialize Prisma schema and connection to MySQL in `backend/prisma/schema.prisma`
 - [x] T007 Implement Base Player Entity and Auth Service (Guest Auth) in `backend/src/modules/auth/`
-- [ ] T008 [P] Setup Redis client for caching in `backend/src/common/redis.service.ts`
+- [x] T008 [P] Setup Redis client for caching in backend/src/common/redis.service.ts
 - [ ] T009 [P] Create API response wrappers and global error filter in `backend/src/common/`
 - [ ] T010 Setup Frontend API client (Axios/Fetch) with Interceptors in `frontend/src/services/api.ts`
 - [ ] T011 [P] Implement Basic Layout and Navigation in `frontend/src/components/layout/`
