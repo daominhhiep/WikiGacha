@@ -305,3 +305,4 @@ During code review ensure:
 - Proper error handling exists
 - Tests are included
 - Documentation is updated
+- Dont use any 'type'
