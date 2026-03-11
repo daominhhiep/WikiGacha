@@ -32,7 +32,7 @@
 **Purpose**: Core infrastructure that MUST be complete before ANY user story can be implemented
 
 - [x] T006 Initialize Prisma schema and connection to MySQL in `backend/prisma/schema.prisma`
-- [ ] T007 Implement Base Player Entity and Auth Service (Guest Auth) in `backend/src/modules/auth/`
+- [x] T007 Implement Base Player Entity and Auth Service (Guest Auth) in `backend/src/modules/auth/`
 - [ ] T008 [P] Setup Redis client for caching in `backend/src/common/redis.service.ts`
 - [ ] T009 [P] Create API response wrappers and global error filter in `backend/src/common/`
 - [ ] T010 Setup Frontend API client (Axios/Fetch) with Interceptors in `frontend/src/services/api.ts`
