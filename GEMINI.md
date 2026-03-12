@@ -8,6 +8,7 @@ Auto-generated from all feature plans. Last updated: 2026-03-11
 - NestJS + Prisma (Backend), Wikipedia API (001-wikigacha-core)
 - Database: MySql
 - Deployment: Docker
+- Search: elasticsearch
 
 ## Project Structure
 

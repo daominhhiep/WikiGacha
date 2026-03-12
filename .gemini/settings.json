@@ -4,6 +4,11 @@
       "command": "npx",
       "args": ["@upstash/context7-mcp"]
     },
+    "chrome-mcp-server": {
+      "type": "streamableHttp",
+      "url": "http://127.0.0.1:12306/mcp"
+    }
+    },
     "mysql": {
       "command": "npx",
       "args": ["mysql-mcp-server"],
