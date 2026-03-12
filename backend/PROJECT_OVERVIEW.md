@@ -1,0 +1,37 @@
+# Project Overview: Wikigacha
+
+## 🚀 Concept
+Wikigacha is a multiverse-themed gacha game where every Wikipedia article is a collectible card. Players extract data from the "Wikipedia Core" to generate unique combat assets with stats derived from real-world metadata.
+
+## 🛠 Tech Stack
+- **Frontend:** React 19, Vite, Tailwind CSS (v4), Shadcn UI, TanStack Query, Zustand.
+- **Backend:** NestJS, Prisma 7, MySQL, Redis, Wikipedia MediaWiki API.
+- **Vibe:** Cyberpunk, Sci-Fi, Data-Terminal.
+
+## 🎯 Core Features
+- **Data Breach (Gacha):** Extract articles from Wikipedia to generate cards.
+- **Article Summaries:** Every card links back to its source article.
+- **Derived Stats:** Rarity, HP, ATK, and DEF are calculated based on article popularity and depth.
+- **Inventory Management:** Store and browse collected data units.
+- **Combat Simulation:** (Planned) Battle cards based on their attributes.
+
+## 🧬 Design System (Cyberpunk)
+- **Anti-Softness Rule:** No rounded corners (`rounded-none`).
+- **HUD Elements:** Decorative scanning lines and HUD corners.
+- **Color Palette:** Neon Cyan (R), Purple (SR), and Gold (SSR) accents on a deep space background.
+- **Monospace Typography:** All numeric data and IDs use `JetBrains Mono` or `Fira Code`.
+
+## 📦 Implemented Stories
+### US1: Open Card Packs (MVP)
+- **Backend:** Wikipedia client with random article retrieval and summary fetching.
+- **Guest Auth:** Automatic session creation for new users with `POST /auth/guest`.
+- **Gacha Engine:** Credit-based pack opening with rarity derivation logic.
+- **Frontend:** Data-terminal style gacha page with breach animation.
+- **Card UI:** Cyberpunk-themed cards with full Wikipedia attribution and links.
+
+## 📝 API Documentation
+- **Swagger UI:** Accessible at `/docs` when the server is running.
+- **Auth Endpoints:**
+  - `POST /api/v1/auth/guest` - Create a guest player session.
+  - `GET /api/v1/auth/me` - Fetch the current player's profile (requires JWT).
+- **Gacha Endpoint:** `POST /api/v1/gacha/open` - Initiates a data breach to acquire 5 new cards.

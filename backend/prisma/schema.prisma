@@ -1,0 +1,86 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+model Player {
+  id          String      @id @default(uuid())
+  username    String      @unique
+  email       String?
+  googleId    String?     @unique
+  avatarUrl   String?     @db.Text
+  credits     Int         @default(100)
+  level       Int         @default(1)
+  xp          Int         @default(0)
+  pityCounter Int         @default(0)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  battles1    Battle[]    @relation("Player1Battles")
+  battles2    Battle[]    @relation("Player2Battles")
+  wonBattles  Battle[]    @relation("WonBattles")
+  inventory   Inventory[]
+}
+
+model Card {
+  id            String      @id
+  title         String
+  summary       String      @db.Text
+  imageUrl      String?     @db.Text
+  wikiUrl       String      @db.Text
+  rarity        Rarity
+  hp            Int
+  atk           Int
+  def           Int
+  pageViews     Int
+  languageCount Int
+  createdAt     DateTime    @default(now())
+  inventory     Inventory[]
+}
+
+model Inventory {
+  id         String   @id @default(uuid())
+  playerId   String
+  cardId     String
+  acquiredAt DateTime @default(now())
+  isFavorite Boolean  @default(false)
+  card       Card     @relation(fields: [cardId], references: [id])
+  player     Player   @relation(fields: [playerId], references: [id])
+
+  @@index([playerId])
+  @@index([cardId])
+}
+
+model Battle {
+  id        String       @id @default(uuid())
+  player1Id String
+  player2Id String?
+  winnerId  String?
+  log       Json
+  status    BattleStatus @default(PENDING)
+  createdAt DateTime     @default(now())
+  player1   Player       @relation("Player1Battles", fields: [player1Id], references: [id])
+  player2   Player?      @relation("Player2Battles", fields: [player2Id], references: [id])
+  winner    Player?      @relation("WonBattles", fields: [winnerId], references: [id])
+
+  @@index([player1Id])
+  @@index([player2Id])
+  @@index([winnerId])
+}
+
+enum Rarity {
+  N
+  R
+  S
+  SR
+  SSR
+}
+
+enum BattleStatus {
+  PENDING
+  COMPLETED
+  CANCELLED
+}
