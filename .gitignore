@@ -4,3 +4,4 @@ package-lock.json
 # Prisma generated files
 backend/src/generated/prisma/
 .gemini/settings.json
+review.txt
