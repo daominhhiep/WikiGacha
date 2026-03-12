@@ -3,8 +3,9 @@ import React, { useState } from 'react';
 import { useOpenPack, useGachaStore } from './use-gacha';
 import GachaReveal from './gacha-reveal';
 import { Button } from '@/components/ui/button';
-import { Terminal, ShieldAlert, Cpu, Database, Network } from 'lucide-react';
+import { Terminal, ShieldAlert, Cpu, Database, Network, Lock } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useAuthStore } from '../auth/auth-store';
 
 /**
  * GachaPage component providing the Cyberpunk "Data Breach" gacha interface.
@@ -15,21 +16,20 @@ import { cn } from '@/lib/utils';
 const GachaPage: React.FC = () => {
   const { mutate: openPack, isPending: isOpening, error: apiError } = useOpenPack();
   const { lastOpenedCards, reset } = useGachaStore();
+  const { accessToken } = useAuthStore();
   const [showReveal, setShowReveal] = useState(false);
 
   const getErrorMessage = (error: Error | null) => {
     if (!error) return null;
     if (axios.isAxiosError(error)) {
-      return (
-        (error.response?.data as any)?.error?.message ||
-        error.message ||
-        'DATA_BREACH_FAILED'
-      );
+      return (error.response?.data as any)?.error?.message || error.message || 'DATA_BREACH_FAILED';
     }
     return error.message;
   };
 
   const handleOpenPack = () => {
+    if (!accessToken) return;
+
     openPack('BASIC', {
       onSuccess: (data) => {
         if (data.newCards && data.newCards.length > 0) {
@@ -143,24 +143,42 @@ const GachaPage: React.FC = () => {
         <Button
           size="lg"
           onClick={handleOpenPack}
-          disabled={isOpening}
-          className="h-16 px-12 text-xl font-black rounded-none border-2 border-primary bg-primary text-black hover:bg-black hover:text-primary transition-all duration-300 shadow-[0_0_20px_rgba(0,240,255,0.2)] flex items-center gap-3 uppercase italic"
+          disabled={isOpening || !accessToken}
+          className={cn(
+            'h-16 px-12 text-xl font-black rounded-none border-2 transition-all duration-300 flex items-center gap-3 uppercase italic',
+            !accessToken
+              ? 'border-muted-foreground/40 bg-muted/10 text-muted-foreground cursor-not-allowed opacity-50'
+              : 'border-primary bg-primary text-black hover:bg-black hover:text-primary shadow-[0_0_20px_rgba(0,240,255,0.2)]',
+          )}
         >
           {isOpening ? (
             <>
               <Terminal className="size-6 animate-pulse" />
               BREACHING_FIREWALL...
             </>
+          ) : !accessToken ? (
+            <>
+              <Lock className="size-6" />
+              LOGIN_REQUIRED
+            </>
           ) : (
             <>INITIATE_BREACH</>
           )}
         </Button>
         <div className="flex items-center gap-2 font-mono text-[10px] opacity-60">
-          <span className="text-primary font-bold">COST:</span>
-          <span>10_CREDITS</span>
-          <span className="mx-2 text-border-grid">|</span>
-          <span className="text-primary font-bold">RETURN:</span>
-          <span>5_DATA_UNITS</span>
+          {!accessToken ? (
+            <span className="text-red-500/80 font-bold uppercase animate-pulse">
+              [ IDENTITY_VERIFICATION_REQUIRED_FOR_DATA_EXTRACTION ]
+            </span>
+          ) : (
+            <>
+              <span className="text-primary font-bold">COST:</span>
+              <span>10_CREDITS</span>
+              <span className="mx-2 text-border-grid">|</span>
+              <span className="text-primary font-bold">RETURN:</span>
+              <span>5_DATA_UNITS</span>
+            </>
+          )}
         </div>
       </div>
     </div>

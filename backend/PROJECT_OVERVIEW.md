@@ -24,10 +24,14 @@ Wikigacha is a multiverse-themed gacha game where every Wikipedia article is a c
 ## 📦 Implemented Stories
 ### US1: Open Card Packs (MVP)
 - **Backend:** Wikipedia client with random article retrieval and summary fetching.
+- **Guest Auth:** Automatic session creation for new users with `POST /auth/guest`.
 - **Gacha Engine:** Credit-based pack opening with rarity derivation logic.
 - **Frontend:** Data-terminal style gacha page with breach animation.
 - **Card UI:** Cyberpunk-themed cards with full Wikipedia attribution and links.
 
 ## 📝 API Documentation
 - **Swagger UI:** Accessible at `/docs` when the server is running.
-- **Key Endpoint:** `POST /api/v1/gacha/open` - Initiates a data breach to acquire 5 new cards.
+- **Auth Endpoints:**
+  - `POST /api/v1/auth/guest` - Create a guest player session.
+  - `GET /api/v1/auth/me` - Fetch the current player's profile (requires JWT).
+- **Gacha Endpoint:** `POST /api/v1/gacha/open` - Initiates a data breach to acquire 5 new cards.

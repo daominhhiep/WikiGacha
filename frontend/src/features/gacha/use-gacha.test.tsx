@@ -13,6 +13,14 @@ vi.mock('@/services/api', () => ({
   },
 }));
 
+// Mock useAuthStore
+vi.mock('../auth/auth-store', () => ({
+  useAuthStore: vi.fn(() => ({
+    accessToken: 'fake-token',
+    deductCredits: vi.fn(),
+  })),
+}));
+
 const createWrapper = () => {
   const queryClient = new QueryClient({
     defaultOptions: {

@@ -11,6 +11,8 @@ model Player {
   id         String      @id @default(uuid())
   username   String      @unique
   email      String?
+  googleId   String?     @unique
+  avatarUrl  String?     @db.Text
   credits    Int         @default(100)
   level      Int         @default(1)
   xp         Int         @default(0)
@@ -26,8 +28,8 @@ model Card {
   id            String      @id
   title         String
   summary       String      @db.Text
-  imageUrl      String?
-  wikiUrl       String
+  imageUrl      String?     @db.Text
+  wikiUrl       String      @db.Text
   rarity        Rarity
   hp            Int
   atk           Int

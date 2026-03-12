@@ -1,8 +1,7 @@
 import { Injectable, Logger, BadRequestException } from '@nestjs/common';
 import { PrismaService } from './../../common/prisma/prisma.service';
 import { WikiService, ArticleSummary } from './wiki.service';
-import { Rarity } from '../../generated/prisma/enums';
-import { Card } from '../../generated/prisma/client';
+import { Rarity, Card } from '../../generated/prisma/client';
 
 /**
  * Service for managing game cards and gacha mechanics.

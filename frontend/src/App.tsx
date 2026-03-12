@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { MainLayout } from './components/layout/MainLayout';
 import { Button } from '@/components/ui/button';
 import GachaPage from '@/features/gacha/gacha-page';
+import { AuthCallback } from './features/auth/auth-callback';
 
 const HomePage = () => (
   <div className="flex flex-col items-center justify-center space-y-8 text-center py-12">
@@ -69,6 +70,7 @@ function App() {
           <Route path="gacha" element={<GachaPage />} />
           <Route path="collection" element={<CollectionPage />} />
           <Route path="battle" element={<BattlePage />} />
+          <Route path="auth-callback" element={<AuthCallback />} />
         </Route>
       </Routes>
     </Router>

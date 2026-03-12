@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '@/services/api';
 import type { CardData } from '@/components/card';
+import { useAuthStore } from '../auth/auth-store';
 
 /**
  * Interface for the gacha pack opening response.
@@ -9,8 +10,10 @@ import type { CardData } from '@/components/card';
 export interface OpenPackResponse {
   /** The list of cards generated from the pack. */
   newCards: CardData[];
-  /** The remaining credits for the player. */
-  remainingCredits: number;
+  /** The remaining credits for the player (if logged in). */
+  remainingCredits?: number;
+  /** The cost of the pack (if anonymous). */
+  cost?: number;
 }
 
 /**
@@ -36,22 +39,28 @@ export const useGachaStore = create<GachaStore>((set) => ({
 
 /**
  * Custom hook for opening a gacha pack using TanStack Query.
- * Adheres to the project convention of using React Query for async data.
+ * Supports both authenticated (DB) and anonymous (Local) modes.
  *
  * @returns Mutation object for the gacha pack opening process.
  */
 export const useOpenPack = () => {
   const queryClient = useQueryClient();
   const setLastOpenedCards = useGachaStore((state) => state.setLastOpenedCards);
+  const { accessToken } = useAuthStore();
 
   return useMutation({
     mutationFn: async (packType: 'BASIC' | 'THEMED' = 'BASIC') => {
-      // The api client is configured to return response.data.data directly
+      if (!accessToken) {
+        throw new Error('AUTHENTICATION_REQUIRED: Please login to open packs.');
+      }
+
+      // If logged in, use the standard endpoint
       const response = await api.post<OpenPackResponse>('/gacha/open', { packType });
       return response as unknown as OpenPackResponse;
     },
     onSuccess: (data) => {
       setLastOpenedCards(data.newCards);
+
       // Invalidate queries that might depend on player credits or inventory
       queryClient.invalidateQueries({ queryKey: ['player'] });
       queryClient.invalidateQueries({ queryKey: ['inventory'] });

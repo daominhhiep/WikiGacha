@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { WikiService } from './wiki.service';
-import { Rarity } from '../../generated/prisma/enums';
+import { Rarity } from '../../generated/prisma/client';
 
 // Mock PrismaService BEFORE it is imported by CardService
 jest.mock('../../common/prisma/prisma.service', () => ({
