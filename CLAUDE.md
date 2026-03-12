@@ -22,10 +22,13 @@ Wikigacha is a Wikipedia-based gacha game. Each Wikipedia article is a collectib
 - `cd backend && npm run build`
 - `cd backend && npm run start:dev`
 - `cd backend && npx prisma generate`
+- `cd backend && npm test`
+- `cd backend && npm run test:e2e`
 
 ### Frontend
 - `cd frontend && npm run dev`
 - `cd frontend && npm run build`
+- `cd frontend && npm test`
 
 ## Pull Request Review Guidelines
 - Verify security best practices (e.g., no secrets in code).
