@@ -1,8 +1,8 @@
 import axios from 'axios';
 import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useOpenPack, useGachaStore } from './use-gacha';
 import GachaReveal from './gacha-reveal';
-import { Button } from '@/components/ui/button';
 import { Terminal, ShieldAlert, Cpu, Database, Network, Lock } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuthStore } from '../auth/auth-store';
@@ -33,7 +33,10 @@ const GachaPage: React.FC = () => {
     openPack('BASIC', {
       onSuccess: (data) => {
         if (data.newCards && data.newCards.length > 0) {
-          setShowReveal(true);
+          // Delay reveal slightly for effect
+          setTimeout(() => {
+            setShowReveal(true);
+          }, 800);
         }
       },
     });
@@ -47,7 +50,12 @@ const GachaPage: React.FC = () => {
   // If we are showing the reveal animation, render the GachaReveal component
   if (showReveal && lastOpenedCards) {
     return (
-      <div className="flex min-h-[70vh] flex-col items-center justify-center p-4">
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="flex min-h-[70vh] flex-col items-center justify-center p-4"
+      >
         <div className="mb-12 text-center space-y-2">
           <div className="flex items-center justify-center gap-4 text-primary animate-pulse">
             <Cpu className="size-8" />
@@ -62,7 +70,7 @@ const GachaPage: React.FC = () => {
           </p>
         </div>
         <GachaReveal cards={lastOpenedCards} onComplete={handleRevealComplete} />
-      </div>
+      </motion.div>
     );
   }
 
@@ -77,7 +85,7 @@ const GachaPage: React.FC = () => {
           <Network className="text-primary size-10" />
           Wikipedia Pack
         </h1>
-        <p className="text-sm font-mono text-muted-foreground max-w-lg mx-auto opacity-80 uppercase leading-relaxed">
+        <p className="text-sm font-mono text-muted-foreground max-lg mx-auto opacity-80 uppercase leading-relaxed">
           Accessing the infinite multiverse library. Extract article data and convert to
           combat-ready assets.
         </p>
@@ -95,7 +103,30 @@ const GachaPage: React.FC = () => {
       )}
 
       {/* Main Gacha Interaction (Data Core) */}
-      <div className="relative group perspective-1000 p-8 border border-border-grid bg-bg-surface/30 backdrop-blur-sm">
+      <motion.div
+        className="relative group perspective-1000 p-8 border border-border-grid bg-bg-surface/30 backdrop-blur-sm"
+        animate={
+          isOpening
+            ? {
+                x: [0, -2, 2, -2, 2, 0],
+                y: [0, 1, -1, 1, -1, 0],
+                transition: { repeat: Infinity, duration: 0.1 },
+              }
+            : {}
+        }
+      >
+        {/* Flash Effect on opening */}
+        <AnimatePresence>
+          {isOpening && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: [0, 0.4, 0] }}
+              transition={{ repeat: Infinity, duration: 0.5 }}
+              className="absolute inset-0 bg-primary z-20 pointer-events-none"
+            />
+          )}
+        </AnimatePresence>
+
         {/* HUD Corners */}
         <div className="absolute top-0 left-0 size-8 border-t-2 border-l-2 border-primary/40" />
         <div className="absolute top-0 right-0 size-8 border-t-2 border-r-2 border-primary/40" />
@@ -106,7 +137,7 @@ const GachaPage: React.FC = () => {
           className={cn(
             'w-64 h-80 bg-black/80 border-2 border-border-grid flex items-center justify-center overflow-hidden transition-all duration-500 relative',
             isOpening
-              ? 'animate-pulse scale-105 border-primary shadow-[0_0_30px_rgba(0,240,255,0.3)]'
+              ? 'border-primary shadow-[0_0_30px_rgba(0,240,255,0.3)] scale-105'
               : 'group-hover:border-primary group-hover:bg-primary/5',
           )}
         >
@@ -137,11 +168,12 @@ const GachaPage: React.FC = () => {
             </div>
           </div>
         </div>
-      </div>
+      </motion.div>
 
       <div className="flex flex-col items-center gap-6">
-        <Button
-          size="lg"
+        <motion.button
+          whileHover={accessToken ? { scale: 1.05 } : {}}
+          whileTap={accessToken ? { scale: 0.95 } : {}}
           onClick={handleOpenPack}
           disabled={isOpening || !accessToken}
           className={cn(
@@ -164,7 +196,7 @@ const GachaPage: React.FC = () => {
           ) : (
             <>INITIATE_BREACH</>
           )}
-        </Button>
+        </motion.button>
         <div className="flex items-center gap-2 font-mono text-[10px] opacity-60">
           {!accessToken ? (
             <span className="text-red-500/80 font-bold uppercase animate-pulse">

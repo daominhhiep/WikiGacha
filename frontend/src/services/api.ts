@@ -29,7 +29,19 @@ const api = axios.create({
 // Request interceptor for adding auth token etc.
 api.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    const token = localStorage.getItem('accessToken');
+    // Retrieve token from Zustand's persisted storage
+    const storageStr = localStorage.getItem('wikigacha-auth-storage');
+    let token = null;
+
+    if (storageStr) {
+      try {
+        const storage = JSON.parse(storageStr);
+        token = storage.state?.accessToken;
+      } catch (e) {
+        console.error('Failed to parse auth storage', e);
+      }
+    }
+
     if (token && config.headers) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -51,13 +63,15 @@ api.interceptors.response.use(
     const apiError = error.response?.data;
     const message = apiError?.error?.message || error.message || 'An unexpected error occurred';
 
-    // You could add a notification/toast system call here
     console.error(`[API Error] ${message}`, apiError);
 
-    // If it's a 401 Unauthorized, we might want to logout the user
+    // If it's a 401 Unauthorized, we might want to clear the storage
     if (error.response?.status === 401) {
-      localStorage.removeItem('accessToken');
-      // window.location.href = '/login'; // Or use a router to redirect
+      localStorage.removeItem('wikigacha-auth-storage');
+      // Redirect to home or reload to clear state
+      if (typeof window !== 'undefined') {
+        window.location.href = '/';
+      }
     }
 
     return Promise.reject(error);
