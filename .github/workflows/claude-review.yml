@@ -3,51 +3,37 @@ on:
   pull_request:
     branches: [main]
     types: [opened, synchronize]
+  issue_comment:
+    types: [created]
 
 permissions:
-  contents: read
+  contents: write
   pull-requests: write
+  issues: write
 
 jobs:
   review:
+    # Trigger on PR events OR if someone mentions @claude in a PR comment
+    if: |
+      github.event_name == 'pull_request' ||
+      (github.event_name == 'issue_comment' && github.event.issue.pull_request && contains(github.event.comment.body, '@claude'))
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Run Claude Code
+        uses: anthropics/claude-code-action@v1
         with:
-          node-version: '20'
-          cache: 'npm'
-
-      - name: Check API key
-        run: |
-          if [ -z "${{ secrets.ANTHROPIC_API_KEY }}" ]; then
-            echo "ANTHROPIC_API_KEY is not set. Skipping review."
-            exit 0
-          fi
-
-      - name: Install Claude Code
-        run: npm install -g @anthropic-ai/claude-code@latest
-
-      - name: Run Claude Review
-        id: claude
-        run: |
-          # Increased max-turns to 15 for larger PRs
-          # Use a more specific prompt to get a summary
-          claude --max-turns 15 "Review the changes in this pull request and provide a concise summary of findings. Focus only on critical bugs, security risks, and architectural concerns. Output your review in Markdown format." > review.txt
-        env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-
-      - name: Post Comment
-        run: |
-          if [ -s review.txt ]; then
-            gh pr comment ${{ github.event.pull_request.number }} --body-file review.txt
-          else
-            echo "No review content generated or Claude failed."
-          fi
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          # The prompt handles both automated review and interactive replies
+          prompt: |
+            If this is a new Pull Request or an update:
+              Review the changes and provide feedback as inline suggested edits where possible.
+              Focus on code quality, security, and architectural consistency.
+            If this is a reply to a comment mentioning @claude:
+              Answer the user's question or implement the requested changes directly in the PR.
+          claude_args: "--max-turns 20"
