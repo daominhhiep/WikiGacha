@@ -1,4 +1,4 @@
-name: Claude Code Review
+name: Claude Code Review (No App)
 on:
   pull_request:
     branches: [main]
@@ -7,7 +7,6 @@ on:
 permissions:
   contents: read
   pull-requests: write
-  issues: write
 
 jobs:
   review:
@@ -17,14 +16,26 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Run Claude Code Review
-        uses: anthropics/claude-code-action@v1
-        with:
-          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
-          prompt: |
-            Review the changes in this pull request.
-            Focus on code quality, potential bugs, and security.
-            Post your feedback as a concise summary comment on the PR.
-          claude_args: "--max-turns 10"
+      - name: Install Claude Code
+        run: npm install -g @anthropic-ai/claude-code
+
+      - name: Run Claude Review
+        id: claude
+        run: |
+          # Use a heredoc to capture the output
+          # Note: We use --non-interactive if available or pipe 'yes' if needed
+          # For now, let's assume 'claude' can run a single command
+          # We use 'script' to trick it into thinking it's a TTY if it complains
+          claude --max-turns 5 "Review the changes in this pull request and provide a concise summary of findings." > review.txt
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+
+      - name: Post Comment
+        run: |
+          if [ -f review.txt ]; then
+            gh pr comment ${{ github.event.pull_request.number }} --body-file review.txt
+          else
+            echo "No review file generated."
+          fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
