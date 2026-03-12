@@ -1,3 +1,6 @@
 .idea
 node_modules
-package-lock.json\n# Prisma generated files\nbackend/src/generated/prisma/
+package-lock.json
+# Prisma generated files
+backend/src/generated/prisma/
+.gemini/settings.json
