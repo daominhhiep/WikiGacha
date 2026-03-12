@@ -22,20 +22,21 @@ jobs:
       - name: Run Claude Review
         id: claude
         run: |
-          # Use a heredoc to capture the output
-          # Note: We use --non-interactive if available or pipe 'yes' if needed
-          # For now, let's assume 'claude' can run a single command
-          # We use 'script' to trick it into thinking it's a TTY if it complains
-          claude --max-turns 5 "Review the changes in this pull request and provide a concise summary of findings." > review.txt
+          # Increased max-turns to 15 for larger PRs
+          # Use 'review' command if it exists, otherwise just a prompt
+          # We use a more specific prompt to get a summary
+          claude --max-turns 15 "Review the changes in this pull request and provide a concise summary of findings. Focus only on critical bugs, security risks, and architectural concerns. Output your review in Markdown format." > review.txt
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
 
       - name: Post Comment
         run: |
-          if [ -f review.txt ]; then
+          if [ -s review.txt ]; then
             gh pr comment ${{ github.event.pull_request.number }} --body-file review.txt
           else
-            echo "No review file generated."
+            echo "No review content generated."
+            echo "Claude reached a limit or failed to output." > error.txt
+            gh pr comment ${{ github.event.pull_request.number }} --body-file error.txt
           fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
