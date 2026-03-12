@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
-import { motion, AnimatePresence, Variants, Variant } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+import type { Variants, Variant } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import Card, { Rarity } from '@/components/card';
 import type { CardData } from '@/components/card';
