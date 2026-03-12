@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, Variants, Variant } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import Card, { Rarity } from '@/components/card';
 import type { CardData } from '@/components/card';
@@ -53,18 +53,18 @@ interface BurstData {
   particles: { angle: number; distance: number }[];
 }
 
-const containerVariants = {
-  hidden: { opacity: 0 },
+const containerVariants: Variants = {
+  hidden: { opacity: 0 } as Variant,
   visible: {
     opacity: 1,
     transition: {
       staggerChildren: 0.2,
     },
-  },
+  } as Variant,
 };
 
-const itemVariants = {
-  hidden: { opacity: 0, scale: 0.8, rotateY: 90 },
+const itemVariants: Variants = {
+  hidden: { opacity: 0, scale: 0.8, rotateY: 90 } as Variant,
   visible: {
     opacity: 1,
     scale: 1,
@@ -74,7 +74,7 @@ const itemVariants = {
       damping: 15,
       stiffness: 120,
     },
-  },
+  } as Variant,
 };
 
 /**
