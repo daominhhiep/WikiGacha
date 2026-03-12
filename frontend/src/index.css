@@ -32,6 +32,7 @@
   --border-grid: #4a4e69;
   --rarity-n: #cccccc;
   --rarity-r: #00f0ff;
+  --rarity-s: #39ff14;
   --rarity-sr: #b026ff;
   --rarity-ssr: #ffd700;
 }
@@ -65,6 +66,7 @@
   --color-border-grid: var(--border-grid);
   --color-rarity-n: var(--rarity-n);
   --color-rarity-r: var(--rarity-r);
+  --color-rarity-s: var(--rarity-s);
   --color-rarity-sr: var(--rarity-sr);
   --color-rarity-ssr: var(--rarity-ssr);
 

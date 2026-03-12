@@ -6,11 +6,12 @@ import Card, { Rarity } from '@/components/card';
 import type { CardData } from '@/components/card';
 import { Button } from '@/components/ui/button';
 
-// External counter for unique IDs to satisfy strict purity rules
+// External counter for unique IDs to satisfy strict purity rules (Math.random/Date.now in render)
 let particleBurstIdCounter = 0;
 
 /**
  * Lightweight particle component for reveal effects.
+ * Receives pre-calculated coordinates to remain "pure" during render.
  */
 const Particle = ({
   color,
@@ -79,8 +80,8 @@ const itemVariants: Variants = {
 };
 
 /**
- * GachaReveal displays a Cyberpunk-themed auto-reveal interface.
- * SR and SSR cards require manual action to reveal.
+ * GachaReveal displays a Cyberpunk-themed manual reveal interface for newly opened cards.
+ * Users must click individual cards to "decrypt" them.
  */
 const GachaReveal: React.FC<GachaRevealProps> = ({ cards: initialCards, onComplete }) => {
   const [revealedIds, setRevealedIds] = useState<Set<string>>(new Set());
@@ -92,7 +93,13 @@ const GachaReveal: React.FC<GachaRevealProps> = ({ cards: initialCards, onComple
   const cards = useMemo(() => {
     const sorted = [...initialCards];
     let bestIndex = 0;
-    const rarityPower = { [Rarity.N]: 0, [Rarity.R]: 1, [Rarity.SR]: 2, [Rarity.SSR]: 3 };
+    const rarityPower = {
+      [Rarity.N]: 0,
+      [Rarity.R]: 1,
+      [Rarity.S]: 2,
+      [Rarity.SR]: 3,
+      [Rarity.SSR]: 4,
+    };
 
     for (let i = 1; i < sorted.length; i++) {
       if (rarityPower[sorted[i].rarity] > rarityPower[sorted[bestIndex].rarity]) {
@@ -133,16 +140,25 @@ const GachaReveal: React.FC<GachaRevealProps> = ({ cards: initialCards, onComple
         }
       }
 
-      if (card.rarity === Rarity.SSR || card.rarity === Rarity.SR || card.rarity === Rarity.R) {
+      // Add particle burst for rare cards (R, S, SR, SSR)
+      if (
+        card.rarity === Rarity.SSR ||
+        card.rarity === Rarity.SR ||
+        card.rarity === Rarity.S ||
+        card.rarity === Rarity.R
+      ) {
         const color =
           card.rarity === Rarity.SSR
             ? '#FFD700'
             : card.rarity === Rarity.SR
               ? '#B026FF'
-              : '#00F0FF';
+              : card.rarity === Rarity.S
+                ? '#39FF14'
+                : '#00F0FF';
 
         const burstId = `burst-${particleBurstIdCounter++}`;
 
+        // Pre-calculate random values in the event handler (safe from purity rules)
         const newBurst: BurstData = {
           id: burstId,
           cardId: card.id,
@@ -155,6 +171,7 @@ const GachaReveal: React.FC<GachaRevealProps> = ({ cards: initialCards, onComple
 
         setActiveBursts((prev) => [...prev, newBurst]);
 
+        // Cleanup particles after animation
         setTimeout(() => {
           setActiveBursts((prev) => prev.filter((p) => p.id !== burstId));
         }, 1000);
@@ -168,15 +185,16 @@ const GachaReveal: React.FC<GachaRevealProps> = ({ cards: initialCards, onComple
     const timeoutIds: ReturnType<typeof setTimeout>[] = [];
 
     cards.forEach((card, index) => {
-      // ONLY auto-reveal N and R cards. SR and SSR require manual click.
-      const isManualRarity = card.rarity === Rarity.SR || card.rarity === Rarity.SSR;
+      // ONLY auto-reveal N and R cards. S, SR and SSR require manual click.
+      const isManualRarity =
+        card.rarity === Rarity.S || card.rarity === Rarity.SR || card.rarity === Rarity.SSR;
       if (isManualRarity) return;
 
       const tid = setTimeout(
         () => {
           handleReveal(card, index);
         },
-        (index + 1) * 150,
+        (index + 1) * 400,
       );
       timeoutIds.push(tid);
     });
@@ -191,9 +209,10 @@ const GachaReveal: React.FC<GachaRevealProps> = ({ cards: initialCards, onComple
       animate="visible"
       className="flex flex-col items-center bg-black/60 p-8 backdrop-blur-xl border border-border-grid w-full min-h-[60vh] relative"
     >
+      {/* Background Ambience */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--color-primary)_0%,_transparent_100%)] opacity-5 pointer-events-none" />
 
-      {/* Outer scroll container */}
+      {/* 5 Cards in 1 Line Roll Container */}
       <div ref={scrollRef} className="w-full overflow-x-auto no-scrollbar py-20 z-10 scroll-smooth">
         <div
           className="flex flex-nowrap justify-start lg:justify-center gap-12 px-[25vw] min-w-max"
@@ -202,7 +221,8 @@ const GachaReveal: React.FC<GachaRevealProps> = ({ cards: initialCards, onComple
           {cards.map((card, index) => {
             const cardBurst = activeBursts.find((b) => b.cardId === card.id);
             const isRevealed = revealedIds.has(card.id);
-            const isManualRarity = card.rarity === Rarity.SR || card.rarity === Rarity.SSR;
+            const isManualRarity =
+              card.rarity === Rarity.S || card.rarity === Rarity.SR || card.rarity === Rarity.SSR;
 
             return (
               <motion.div
@@ -214,6 +234,7 @@ const GachaReveal: React.FC<GachaRevealProps> = ({ cards: initialCards, onComple
                 className="relative flex-shrink-0 cursor-pointer"
                 onClick={() => handleReveal(card, index)}
               >
+                {/* Particle Burst Anchor */}
                 <AnimatePresence>
                   {cardBurst && (
                     <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
@@ -268,6 +289,7 @@ const GachaReveal: React.FC<GachaRevealProps> = ({ cards: initialCards, onComple
         </AnimatePresence>
       </div>
 
+      {/* Progress HUD */}
       <div className="mt-4 font-mono text-[10px] text-muted-foreground/60 uppercase tracking-widest">
         [ {revealedIds.size} / {cards.length} DATA_UNITS_DECRYPTED ]
       </div>

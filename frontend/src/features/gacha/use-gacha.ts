@@ -12,6 +12,8 @@ export interface OpenPackResponse {
   newCards: CardData[];
   /** The remaining credits for the player (if logged in). */
   remainingCredits?: number;
+  /** The current pity counter for the player. */
+  pityCounter?: number;
   /** The cost of the pack (if anonymous). */
   cost?: number;
 }
@@ -46,7 +48,7 @@ export const useGachaStore = create<GachaStore>((set) => ({
 export const useOpenPack = () => {
   const queryClient = useQueryClient();
   const setLastOpenedCards = useGachaStore((state) => state.setLastOpenedCards);
-  const { accessToken } = useAuthStore();
+  const { accessToken, updatePlayerStats } = useAuthStore();
 
   return useMutation({
     mutationFn: async (packType: 'BASIC' | 'THEMED' = 'BASIC') => {
@@ -60,6 +62,14 @@ export const useOpenPack = () => {
     },
     onSuccess: (data) => {
       setLastOpenedCards(data.newCards);
+
+      // Synchronize player stats (credits, pity)
+      if (data.remainingCredits !== undefined || data.pityCounter !== undefined) {
+        updatePlayerStats({
+          credits: data.remainingCredits,
+          pityCounter: data.pityCounter,
+        });
+      }
 
       // Invalidate queries that might depend on player credits or inventory
       queryClient.invalidateQueries({ queryKey: ['player'] });

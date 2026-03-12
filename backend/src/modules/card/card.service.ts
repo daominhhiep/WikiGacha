@@ -12,6 +12,7 @@ export class CardService {
   private readonly logger = new Logger(CardService.name);
   private readonly PACK_COST = 10;
   private readonly CARDS_PER_PACK = 5;
+  private readonly PITY_THRESHOLD = 10;
 
   constructor(
     private readonly prisma: PrismaService,
@@ -21,13 +22,14 @@ export class CardService {
   /**
    * Opens a card pack for a player.
    * Deducts credits, fetches articles, generates cards, and adds to inventory.
+   * Includes a pity system: Guaranteed S or higher every 10 packs.
    *
    * @param playerId The unique identifier of the player opening the pack.
    * @throws BadRequestException if the player is not found or has insufficient credits.
    * @returns An object containing the generated cards and the player's remaining credits.
    */
   async openPack(playerId: string) {
-    // 1. Check player credits
+    // 1. Check player state
     const player = await this.prisma.player.findUnique({
       where: { id: playerId },
     });
@@ -45,16 +47,34 @@ export class CardService {
 
     // 3. Fetch summaries and generate cards
     const newCards: Card[] = [];
-    for (const title of titles) {
+    let highRarityPulled = false;
+    const currentPity = player.pityCounter + 1;
+    const isPityTriggered = currentPity >= this.PITY_THRESHOLD;
+
+    for (let i = 0; i < titles.length; i++) {
+      const title = titles[i];
       const wikiData = await this.wikiService.getArticleSummary(title);
+
       if (wikiData) {
-        // For now, we'll randomize or use mock values for pageViews and languageCount
-        // In a production app, we would fetch these from more Wikipedia API endpoints
-        const mockPageViews = Math.floor(Math.random() * 100000);
+        // Natural range increased to allow S and SR naturally (up to 500,000)
+        let mockPageViews = Math.floor(Math.random() * 500000);
         const mockLangCount = Math.floor(Math.random() * 50);
+
+        // Pity Logic: If this is the last card and no S+ pulled yet, force high rarity
+        const isLastCard = i === titles.length - 1;
+        if (isLastCard && isPityTriggered && !highRarityPulled) {
+          this.logger.log(`[Pity Triggered] Forcing S+ for player ${playerId}`);
+          // Force page views to S threshold (> 50,000)
+          mockPageViews = 50001 + Math.floor(Math.random() * 950000);
+        }
 
         const card = await this.generateCardFromWiki(wikiData, mockPageViews, mockLangCount);
         newCards.push(card);
+
+        // Track if we pulled an S or higher (S, SR, or SSR)
+        if (card.rarity === Rarity.S || card.rarity === Rarity.SR || card.rarity === Rarity.SSR) {
+          highRarityPulled = true;
+        }
 
         // Add to player inventory
         await this.prisma.inventory.create({
@@ -66,19 +86,27 @@ export class CardService {
       }
     }
 
-    // 4. Deduct credits
+    this.logger.log(`[Pity Debug] Player ${playerId} before update: credits=${player.credits}, pityCounter=${player.pityCounter}`);
+    this.logger.log(`[Pity Debug] Result of pull: highRarityPulled=${highRarityPulled}, newPity=${highRarityPulled ? 0 : currentPity}`);
+
+    // 4. Update player state: Deduct credits and update pity counter
     const updatedPlayer = await this.prisma.player.update({
       where: { id: playerId },
       data: {
         credits: {
           decrement: this.PACK_COST,
         },
+        // Reset pity if S or higher was pulled, otherwise increment
+        pityCounter: highRarityPulled ? 0 : currentPity,
       },
     });
+
+    this.logger.log(`[Pity Debug] Player ${playerId} after update: credits=${updatedPlayer.credits}, pityCounter=${updatedPlayer.pityCounter}`);
 
     return {
       newCards,
       remainingCredits: updatedPlayer.credits,
+      pityCounter: updatedPlayer.pityCounter,
     };
   }
 
@@ -126,12 +154,13 @@ export class CardService {
    * Page views act as a proxy for article popularity/importance.
    *
    * @param pageViews The number of views for the Wikipedia article.
-   * @returns The derived Rarity level (N, R, SR, SSR).
+   * @returns The derived Rarity level (N, R, S, SR, SSR).
    */
   private deriveRarity(pageViews: number): Rarity {
     if (pageViews > 500000) return Rarity.SSR;
-    if (pageViews > 100000) return Rarity.SR;
-    if (pageViews > 20000) return Rarity.R;
+    if (pageViews > 150000) return Rarity.SR;
+    if (pageViews > 50000) return Rarity.S;
+    if (pageViews > 15000) return Rarity.R;
     return Rarity.N;
   }
 
@@ -154,7 +183,6 @@ export class CardService {
     const baseDef = 10;
 
     // HP scales with language count (logarithmic to prevent outliers)
-    // Average article has ~5-10 languages, major ones have 100+.
     const hpBonus = Math.floor(Math.log2(Math.max(1, languageCount)) * 15);
 
     // ATK scales with popularity (logarithmic)

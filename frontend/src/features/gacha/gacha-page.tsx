@@ -16,7 +16,7 @@ import { useAuthStore } from '../auth/auth-store';
 const GachaPage: React.FC = () => {
   const { mutate: openPack, isPending: isOpening, error: apiError } = useOpenPack();
   const { lastOpenedCards, reset } = useGachaStore();
-  const { accessToken } = useAuthStore();
+  const { accessToken, player } = useAuthStore();
   const [showReveal, setShowReveal] = useState(false);
 
   const getErrorMessage = (error: Error | null) => {
@@ -197,18 +197,31 @@ const GachaPage: React.FC = () => {
             <>INITIATE_BREACH</>
           )}
         </motion.button>
-        <div className="flex items-center gap-2 font-mono text-[10px] opacity-60">
+        <div className="flex flex-col items-center gap-2 font-mono text-[10px] opacity-60 text-center">
           {!accessToken ? (
             <span className="text-red-500/80 font-bold uppercase animate-pulse">
               [ IDENTITY_VERIFICATION_REQUIRED_FOR_DATA_EXTRACTION ]
             </span>
           ) : (
             <>
-              <span className="text-primary font-bold">COST:</span>
-              <span>10_CREDITS</span>
-              <span className="mx-2 text-border-grid">|</span>
-              <span className="text-primary font-bold">RETURN:</span>
-              <span>5_DATA_UNITS</span>
+              <div className="flex items-center gap-2">
+                <span className="text-primary font-bold">COST:</span>
+                <span>10_CREDITS</span>
+                <span className="mx-2 text-border-grid">|</span>
+                <span className="text-primary font-bold">RETURN:</span>
+                <span>5_DATA_UNITS</span>
+              </div>
+              {player && (
+                <div
+                  className={cn(
+                    'mt-2 font-bold transition-colors',
+                    player.pityCounter >= 9 ? 'text-rarity-ssr animate-pulse' : 'text-primary/40',
+                  )}
+                >
+                  [ PITY_TIMER: {player.pityCounter}/10 ]
+                  {player.pityCounter >= 9 && ' - HIGH_VALUE_SIGNAL_DETECTED'}
+                </div>
+              )}
             </>
           )}
         </div>

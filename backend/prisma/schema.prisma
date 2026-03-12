@@ -8,20 +8,21 @@ datasource db {
 }
 
 model Player {
-  id         String      @id @default(uuid())
-  username   String      @unique
-  email      String?
-  googleId   String?     @unique
-  avatarUrl  String?     @db.Text
-  credits    Int         @default(100)
-  level      Int         @default(1)
-  xp         Int         @default(0)
-  createdAt  DateTime    @default(now())
-  updatedAt  DateTime    @updatedAt
-  battles1   Battle[]    @relation("Player1Battles")
-  battles2   Battle[]    @relation("Player2Battles")
-  wonBattles Battle[]    @relation("WonBattles")
-  inventory  Inventory[]
+  id          String      @id @default(uuid())
+  username    String      @unique
+  email       String?
+  googleId    String?     @unique
+  avatarUrl   String?     @db.Text
+  credits     Int         @default(100)
+  level       Int         @default(1)
+  xp          Int         @default(0)
+  pityCounter Int         @default(0)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  battles1    Battle[]    @relation("Player1Battles")
+  battles2    Battle[]    @relation("Player2Battles")
+  wonBattles  Battle[]    @relation("WonBattles")
+  inventory   Inventory[]
 }
 
 model Card {
@@ -73,6 +74,7 @@ model Battle {
 enum Rarity {
   N
   R
+  S
   SR
   SSR
 }

@@ -52,36 +52,34 @@ To enable up-to-date documentation retrieval:
 }
 ```
 
-#### Example Configuration (`mysql`):
-To enable direct database access for the AI agent (using `benborla/mcp-server-mysql`):
+#### Example Configuration (`github`):
+To enable repository management, issue tracking, and PR automation:
 ```json
 {
   "mcpServers": {
-    "mysql": {
-      "command": "npx",
-      "args": ["-y", "@benborla29/mcp-server-mysql"],
-      "env": {
-        "MYSQL_HOST": "127.0.0.1",
-        "MYSQL_PORT": "3306",
-        "MYSQL_USER": "root",
-        "MYSQL_PASS": "your_password",
-        "MYSQL_DB": "wikigacha",
-        "ALLOW_INSERT_OPERATION": "true",
-        "ALLOW_UPDATE_OPERATION": "true"
-      }
+    "github": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "-e",
+        "GITHUB_PERSONAL_ACCESS_TOKEN=your_token_here",
+        "ghcr.io/github/github-mcp-server"
+      ]
     }
   }
 }
 ```
 
 ### 3. Setup & Installation
-Most MCP servers can be installed via `npm` or run via `npx`.
+Most MCP servers can be installed via `npm` or run via `npx` or `docker`.
 
 **Step 1: Identify the Server**
-Find the MCP server you need (e.g., `context7` for docs, `@benborla29/mcp-server-mysql` for MySQL).
+Find the MCP server you need (e.g., `context7` for docs, `@benborla29/mcp-server-mysql` for MySQL, or `ghcr.io/github/github-mcp-server` for GitHub).
 
 **Step 2: Install/Configure**
-Add the server to your agent's configuration. Ensure all necessary environment variables are set. For the MySQL server, you can explicitly enable write operations using security flags like `ALLOW_INSERT_OPERATION`, `ALLOW_UPDATE_OPERATION`, `ALLOW_DELETE_OPERATION`, and `ALLOW_DDL_OPERATION`.
+Add the server to your agent's configuration. Ensure all necessary environment variables are set. For the MySQL server, you can explicitly enable write operations using security flags like `ALLOW_INSERT_OPERATION`, `ALLOW_UPDATE_OPERATION`, `ALLOW_DELETE_OPERATION`, and `ALLOW_DDL_OPERATION`. For GitHub, ensure your PAT has `repo` and `read:org` scopes.
 
 **Step 3: Verification**
 Ask the agent to list its available tools:

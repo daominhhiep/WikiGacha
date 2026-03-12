@@ -12,6 +12,7 @@ export interface Player {
   credits: number;
   level: number;
   xp: number;
+  pityCounter: number;
   avatarUrl?: string;
 }
 
@@ -28,6 +29,8 @@ interface AuthStore {
 
   /** Sets the auth session data. */
   setAuth: (player: Player, accessToken: string) => void;
+  /** Updates specific player stats (credits, pity, etc.) */
+  updatePlayerStats: (stats: Partial<Player>) => void;
   /** Deducts credits from remote account. */
   deductCredits: (amount: number) => void;
   /** Clears the auth session (logout). */
@@ -50,6 +53,17 @@ export const useAuthStore = create<AuthStore>()(
         if (!player.googleId) {
           set({ persistedGuestUsername: player.username });
         }
+      },
+
+      updatePlayerStats: (stats) => {
+        set((state) => {
+          if (state.player) {
+            return {
+              player: { ...state.player, ...stats },
+            };
+          }
+          return {};
+        });
       },
 
       deductCredits: (amount) => {

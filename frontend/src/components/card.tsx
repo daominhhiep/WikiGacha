@@ -10,6 +10,7 @@ import { ExternalLink, Heart, Sword, Shield, Sparkles } from 'lucide-react';
 export const Rarity = {
   N: 'N',
   R: 'R',
+  S: 'S',
   SR: 'SR',
   SSR: 'SSR',
 } as const;
@@ -47,17 +48,16 @@ interface CardProps {
   isRevealed?: boolean;
 }
 
-/**
- * Returns the border color class based on card rarity.
- */
 const getRarityBorder = (rarity: Rarity) => {
   switch (rarity) {
     case Rarity.SSR:
-      return 'border-rarity-ssr shadow-[0_0_15px_rgba(255,215,0,0.4)]';
+      return 'border-rarity-ssr shadow-[0_0_20px_rgba(255,215,0,0.5)]';
     case Rarity.SR:
-      return 'border-rarity-sr shadow-[0_0_15px_rgba(176,38,255,0.4)]';
+      return 'border-rarity-sr shadow-[0_0_20px_rgba(176,38,255,0.5)]';
+    case Rarity.S:
+      return 'border-rarity-s shadow-[0_0_20px_rgba(57,255,20,0.5)]';
     case Rarity.R:
-      return 'border-rarity-r shadow-[0_0_15px_rgba(0,240,255,0.4)]';
+      return 'border-rarity-r shadow-[0_0_20px_rgba(0,240,255,0.5)]';
     default:
       return 'border-rarity-n';
   }
@@ -72,6 +72,8 @@ const getRarityTextColor = (rarity: Rarity) => {
       return 'text-rarity-ssr';
     case Rarity.SR:
       return 'text-rarity-sr';
+    case Rarity.S:
+      return 'text-rarity-s';
     case Rarity.R:
       return 'text-rarity-r';
     default:
