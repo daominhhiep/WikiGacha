@@ -32,3 +32,4 @@ Wikigacha is a Wikipedia-based gacha game. Each Wikipedia article is a collectib
 - Ensure new features have corresponding tests.
 - Check for architectural consistency with existing modules.
 - Maintain responsive and user-friendly UI.
+
