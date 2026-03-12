@@ -20,7 +20,11 @@ jobs:
       - name: Run Claude Code Review
         uses: anthropics/claude-code-action@v1
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
-          prompt: "Review this pull request for code quality, security, and architectural consistency. Focus on the changes in this PR and provide actionable feedback as comments on the PR."
+          prompt: |
+            Review the changes in this pull request.
+            Focus on code quality, potential bugs, and security.
+            Post your feedback as a concise summary comment on the PR.
           claude_args: "--max-turns 10"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
