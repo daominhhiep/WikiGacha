@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
-import { ExternalLink, Heart, Sword, Shield, Sparkles } from 'lucide-react';
+import { Heart, Sword, Shield, Sparkles } from 'lucide-react';
 
 /**
  * Rarity levels based on the project design system.
@@ -77,6 +77,8 @@ interface CardProps {
   isRevealed?: boolean;
   /** The visual size of the card. */
   size?: 'sm' | 'md' | 'lg';
+  /** Optional acquired date (ISO string) to show in the card footer. */
+  acquiredAt?: string;
 }
 
 const getRarityBorder = (rarity: Rarity) => {
@@ -170,6 +172,7 @@ const Card: React.FC<CardProps> = ({
   showSummary = false,
   isRevealed = true,
   size = 'md',
+  acquiredAt,
 }) => {
   const sizeClasses = {
     sm: 'h-[22rem] w-56 p-3',
@@ -304,11 +307,11 @@ const Card: React.FC<CardProps> = ({
                 </div>
               )}
 
-              {/* Tier Label (HUD Style) */}
+              {/* Tier Label — bottom-left of image */}
               {card.tier && (
                 <div
                   className={cn(
-                    'absolute top-0 left-0 px-2 py-0.5 text-[8px] font-black font-mono bg-black/80 border-r border-b border-border-grid uppercase tracking-tighter z-10',
+                    'absolute bottom-0 left-0 px-2 py-0.5 text-[8px] font-black font-mono bg-black/80 border-r border-t border-border-grid uppercase tracking-tighter z-10',
                     getTierColor(card.tier),
                   )}
                 >
@@ -377,18 +380,14 @@ const Card: React.FC<CardProps> = ({
               </div>
             </div>
 
-            {/* Footer (Wikipedia Link) */}
+            {/* Footer: ACQUIRED date or SOURCE label */}
             <div className="mt-4 pt-2 border-t border-border-grid flex items-center justify-between">
               <span className="text-[8px] font-mono opacity-50">SOURCE: WIKIPEDIA_API_v1</span>
-              <a
-                href={card.wikiUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-1 text-[10px] font-bold text-primary hover:text-white transition-colors uppercase tracking-tighter"
-                onClick={(e) => e.stopPropagation()}
-              >
-                ACCESS_DATA <ExternalLink className="size-2.5" />
-              </a>
+              {acquiredAt ? (
+                <span className="text-[9px] font-mono text-primary/60 uppercase tracking-tighter">
+                  ACQUIRED: {new Date(acquiredAt).toLocaleDateString(undefined, { year: '2-digit', month: 'short', day: 'numeric' })}
+                </span>
+              ) : null}
             </div>
           </motion.div>
         )}

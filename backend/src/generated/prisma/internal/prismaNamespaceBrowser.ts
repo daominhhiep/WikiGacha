@@ -53,7 +53,12 @@ export const ModelName = {
   Player: 'Player',
   Card: 'Card',
   Inventory: 'Inventory',
-  Battle: 'Battle'
+  Battle: 'Battle',
+  Mission: 'Mission',
+  UserMission: 'UserMission',
+  Trophy: 'Trophy',
+  ChatMessage: 'ChatMessage',
+  PvPMatch: 'PvPMatch'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -82,6 +87,9 @@ export const PlayerScalarFieldEnum = {
   level: 'level',
   xp: 'xp',
   pityCounter: 'pityCounter',
+  eloRating: 'eloRating',
+  matchesPlayed: 'matchesPlayed',
+  lastLogin: 'lastLogin',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -96,6 +104,8 @@ export const CardScalarFieldEnum = {
   imageUrl: 'imageUrl',
   wikiUrl: 'wikiUrl',
   rarity: 'rarity',
+  tier: 'tier',
+  category: 'category',
   hp: 'hp',
   atk: 'atk',
   def: 'def',
@@ -131,6 +141,66 @@ export const BattleScalarFieldEnum = {
 } as const
 
 export type BattleScalarFieldEnum = (typeof BattleScalarFieldEnum)[keyof typeof BattleScalarFieldEnum]
+
+
+export const MissionScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  description: 'description',
+  rewardCredits: 'rewardCredits',
+  type: 'type',
+  criteria: 'criteria'
+} as const
+
+export type MissionScalarFieldEnum = (typeof MissionScalarFieldEnum)[keyof typeof MissionScalarFieldEnum]
+
+
+export const UserMissionScalarFieldEnum = {
+  id: 'id',
+  playerId: 'playerId',
+  missionId: 'missionId',
+  progress: 'progress',
+  isCompleted: 'isCompleted',
+  isClaimed: 'isClaimed'
+} as const
+
+export type UserMissionScalarFieldEnum = (typeof UserMissionScalarFieldEnum)[keyof typeof UserMissionScalarFieldEnum]
+
+
+export const TrophyScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  description: 'description',
+  icon: 'icon',
+  playerId: 'playerId',
+  unlockedAt: 'unlockedAt'
+} as const
+
+export type TrophyScalarFieldEnum = (typeof TrophyScalarFieldEnum)[keyof typeof TrophyScalarFieldEnum]
+
+
+export const ChatMessageScalarFieldEnum = {
+  id: 'id',
+  senderId: 'senderId',
+  content: 'content',
+  timestamp: 'timestamp',
+  channel: 'channel'
+} as const
+
+export type ChatMessageScalarFieldEnum = (typeof ChatMessageScalarFieldEnum)[keyof typeof ChatMessageScalarFieldEnum]
+
+
+export const PvPMatchScalarFieldEnum = {
+  id: 'id',
+  player1Id: 'player1Id',
+  player2Id: 'player2Id',
+  status: 'status',
+  winnerId: 'winnerId',
+  logs: 'logs',
+  createdAt: 'createdAt'
+} as const
+
+export type PvPMatchScalarFieldEnum = (typeof PvPMatchScalarFieldEnum)[keyof typeof PvPMatchScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -212,4 +282,48 @@ export const BattleOrderByRelevanceFieldEnum = {
 } as const
 
 export type BattleOrderByRelevanceFieldEnum = (typeof BattleOrderByRelevanceFieldEnum)[keyof typeof BattleOrderByRelevanceFieldEnum]
+
+
+export const MissionOrderByRelevanceFieldEnum = {
+  title: 'title',
+  description: 'description'
+} as const
+
+export type MissionOrderByRelevanceFieldEnum = (typeof MissionOrderByRelevanceFieldEnum)[keyof typeof MissionOrderByRelevanceFieldEnum]
+
+
+export const UserMissionOrderByRelevanceFieldEnum = {
+  playerId: 'playerId'
+} as const
+
+export type UserMissionOrderByRelevanceFieldEnum = (typeof UserMissionOrderByRelevanceFieldEnum)[keyof typeof UserMissionOrderByRelevanceFieldEnum]
+
+
+export const TrophyOrderByRelevanceFieldEnum = {
+  name: 'name',
+  description: 'description',
+  icon: 'icon',
+  playerId: 'playerId'
+} as const
+
+export type TrophyOrderByRelevanceFieldEnum = (typeof TrophyOrderByRelevanceFieldEnum)[keyof typeof TrophyOrderByRelevanceFieldEnum]
+
+
+export const ChatMessageOrderByRelevanceFieldEnum = {
+  senderId: 'senderId',
+  content: 'content',
+  channel: 'channel'
+} as const
+
+export type ChatMessageOrderByRelevanceFieldEnum = (typeof ChatMessageOrderByRelevanceFieldEnum)[keyof typeof ChatMessageOrderByRelevanceFieldEnum]
+
+
+export const PvPMatchOrderByRelevanceFieldEnum = {
+  id: 'id',
+  player1Id: 'player1Id',
+  player2Id: 'player2Id',
+  winnerId: 'winnerId'
+} as const
+
+export type PvPMatchOrderByRelevanceFieldEnum = (typeof PvPMatchOrderByRelevanceFieldEnum)[keyof typeof PvPMatchOrderByRelevanceFieldEnum]
 

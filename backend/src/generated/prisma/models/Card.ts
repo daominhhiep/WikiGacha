@@ -52,6 +52,8 @@ export type CardMinAggregateOutputType = {
   imageUrl: string | null
   wikiUrl: string | null
   rarity: $Enums.Rarity | null
+  tier: $Enums.Tier | null
+  category: $Enums.Category | null
   hp: number | null
   atk: number | null
   def: number | null
@@ -69,6 +71,8 @@ export type CardMaxAggregateOutputType = {
   imageUrl: string | null
   wikiUrl: string | null
   rarity: $Enums.Rarity | null
+  tier: $Enums.Tier | null
+  category: $Enums.Category | null
   hp: number | null
   atk: number | null
   def: number | null
@@ -86,6 +90,8 @@ export type CardCountAggregateOutputType = {
   imageUrl: number
   wikiUrl: number
   rarity: number
+  tier: number
+  category: number
   hp: number
   atk: number
   def: number
@@ -125,6 +131,8 @@ export type CardMinAggregateInputType = {
   imageUrl?: true
   wikiUrl?: true
   rarity?: true
+  tier?: true
+  category?: true
   hp?: true
   atk?: true
   def?: true
@@ -142,6 +150,8 @@ export type CardMaxAggregateInputType = {
   imageUrl?: true
   wikiUrl?: true
   rarity?: true
+  tier?: true
+  category?: true
   hp?: true
   atk?: true
   def?: true
@@ -159,6 +169,8 @@ export type CardCountAggregateInputType = {
   imageUrl?: true
   wikiUrl?: true
   rarity?: true
+  tier?: true
+  category?: true
   hp?: true
   atk?: true
   def?: true
@@ -263,6 +275,8 @@ export type CardGroupByOutputType = {
   imageUrl: string | null
   wikiUrl: string
   rarity: $Enums.Rarity
+  tier: $Enums.Tier | null
+  category: $Enums.Category | null
   hp: number
   atk: number
   def: number
@@ -303,6 +317,8 @@ export type CardWhereInput = {
   imageUrl?: Prisma.StringNullableFilter<"Card"> | string | null
   wikiUrl?: Prisma.StringFilter<"Card"> | string
   rarity?: Prisma.EnumRarityFilter<"Card"> | $Enums.Rarity
+  tier?: Prisma.EnumTierNullableFilter<"Card"> | $Enums.Tier | null
+  category?: Prisma.EnumCategoryNullableFilter<"Card"> | $Enums.Category | null
   hp?: Prisma.IntFilter<"Card"> | number
   atk?: Prisma.IntFilter<"Card"> | number
   def?: Prisma.IntFilter<"Card"> | number
@@ -321,6 +337,8 @@ export type CardOrderByWithRelationInput = {
   imageUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   wikiUrl?: Prisma.SortOrder
   rarity?: Prisma.SortOrder
+  tier?: Prisma.SortOrderInput | Prisma.SortOrder
+  category?: Prisma.SortOrderInput | Prisma.SortOrder
   hp?: Prisma.SortOrder
   atk?: Prisma.SortOrder
   def?: Prisma.SortOrder
@@ -343,6 +361,8 @@ export type CardWhereUniqueInput = Prisma.AtLeast<{
   imageUrl?: Prisma.StringNullableFilter<"Card"> | string | null
   wikiUrl?: Prisma.StringFilter<"Card"> | string
   rarity?: Prisma.EnumRarityFilter<"Card"> | $Enums.Rarity
+  tier?: Prisma.EnumTierNullableFilter<"Card"> | $Enums.Tier | null
+  category?: Prisma.EnumCategoryNullableFilter<"Card"> | $Enums.Category | null
   hp?: Prisma.IntFilter<"Card"> | number
   atk?: Prisma.IntFilter<"Card"> | number
   def?: Prisma.IntFilter<"Card"> | number
@@ -361,6 +381,8 @@ export type CardOrderByWithAggregationInput = {
   imageUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   wikiUrl?: Prisma.SortOrder
   rarity?: Prisma.SortOrder
+  tier?: Prisma.SortOrderInput | Prisma.SortOrder
+  category?: Prisma.SortOrderInput | Prisma.SortOrder
   hp?: Prisma.SortOrder
   atk?: Prisma.SortOrder
   def?: Prisma.SortOrder
@@ -386,6 +408,8 @@ export type CardScalarWhereWithAggregatesInput = {
   imageUrl?: Prisma.StringNullableWithAggregatesFilter<"Card"> | string | null
   wikiUrl?: Prisma.StringWithAggregatesFilter<"Card"> | string
   rarity?: Prisma.EnumRarityWithAggregatesFilter<"Card"> | $Enums.Rarity
+  tier?: Prisma.EnumTierNullableWithAggregatesFilter<"Card"> | $Enums.Tier | null
+  category?: Prisma.EnumCategoryNullableWithAggregatesFilter<"Card"> | $Enums.Category | null
   hp?: Prisma.IntWithAggregatesFilter<"Card"> | number
   atk?: Prisma.IntWithAggregatesFilter<"Card"> | number
   def?: Prisma.IntWithAggregatesFilter<"Card"> | number
@@ -403,6 +427,8 @@ export type CardCreateInput = {
   imageUrl?: string | null
   wikiUrl: string
   rarity: $Enums.Rarity
+  tier?: $Enums.Tier | null
+  category?: $Enums.Category | null
   hp: number
   atk: number
   def: number
@@ -421,6 +447,8 @@ export type CardUncheckedCreateInput = {
   imageUrl?: string | null
   wikiUrl: string
   rarity: $Enums.Rarity
+  tier?: $Enums.Tier | null
+  category?: $Enums.Category | null
   hp: number
   atk: number
   def: number
@@ -439,6 +467,8 @@ export type CardUpdateInput = {
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   wikiUrl?: Prisma.StringFieldUpdateOperationsInput | string
   rarity?: Prisma.EnumRarityFieldUpdateOperationsInput | $Enums.Rarity
+  tier?: Prisma.NullableEnumTierFieldUpdateOperationsInput | $Enums.Tier | null
+  category?: Prisma.NullableEnumCategoryFieldUpdateOperationsInput | $Enums.Category | null
   hp?: Prisma.IntFieldUpdateOperationsInput | number
   atk?: Prisma.IntFieldUpdateOperationsInput | number
   def?: Prisma.IntFieldUpdateOperationsInput | number
@@ -457,6 +487,8 @@ export type CardUncheckedUpdateInput = {
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   wikiUrl?: Prisma.StringFieldUpdateOperationsInput | string
   rarity?: Prisma.EnumRarityFieldUpdateOperationsInput | $Enums.Rarity
+  tier?: Prisma.NullableEnumTierFieldUpdateOperationsInput | $Enums.Tier | null
+  category?: Prisma.NullableEnumCategoryFieldUpdateOperationsInput | $Enums.Category | null
   hp?: Prisma.IntFieldUpdateOperationsInput | number
   atk?: Prisma.IntFieldUpdateOperationsInput | number
   def?: Prisma.IntFieldUpdateOperationsInput | number
@@ -475,6 +507,8 @@ export type CardCreateManyInput = {
   imageUrl?: string | null
   wikiUrl: string
   rarity: $Enums.Rarity
+  tier?: $Enums.Tier | null
+  category?: $Enums.Category | null
   hp: number
   atk: number
   def: number
@@ -492,6 +526,8 @@ export type CardUpdateManyMutationInput = {
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   wikiUrl?: Prisma.StringFieldUpdateOperationsInput | string
   rarity?: Prisma.EnumRarityFieldUpdateOperationsInput | $Enums.Rarity
+  tier?: Prisma.NullableEnumTierFieldUpdateOperationsInput | $Enums.Tier | null
+  category?: Prisma.NullableEnumCategoryFieldUpdateOperationsInput | $Enums.Category | null
   hp?: Prisma.IntFieldUpdateOperationsInput | number
   atk?: Prisma.IntFieldUpdateOperationsInput | number
   def?: Prisma.IntFieldUpdateOperationsInput | number
@@ -509,6 +545,8 @@ export type CardUncheckedUpdateManyInput = {
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   wikiUrl?: Prisma.StringFieldUpdateOperationsInput | string
   rarity?: Prisma.EnumRarityFieldUpdateOperationsInput | $Enums.Rarity
+  tier?: Prisma.NullableEnumTierFieldUpdateOperationsInput | $Enums.Tier | null
+  category?: Prisma.NullableEnumCategoryFieldUpdateOperationsInput | $Enums.Category | null
   hp?: Prisma.IntFieldUpdateOperationsInput | number
   atk?: Prisma.IntFieldUpdateOperationsInput | number
   def?: Prisma.IntFieldUpdateOperationsInput | number
@@ -532,6 +570,8 @@ export type CardCountOrderByAggregateInput = {
   imageUrl?: Prisma.SortOrder
   wikiUrl?: Prisma.SortOrder
   rarity?: Prisma.SortOrder
+  tier?: Prisma.SortOrder
+  category?: Prisma.SortOrder
   hp?: Prisma.SortOrder
   atk?: Prisma.SortOrder
   def?: Prisma.SortOrder
@@ -559,6 +599,8 @@ export type CardMaxOrderByAggregateInput = {
   imageUrl?: Prisma.SortOrder
   wikiUrl?: Prisma.SortOrder
   rarity?: Prisma.SortOrder
+  tier?: Prisma.SortOrder
+  category?: Prisma.SortOrder
   hp?: Prisma.SortOrder
   atk?: Prisma.SortOrder
   def?: Prisma.SortOrder
@@ -576,6 +618,8 @@ export type CardMinOrderByAggregateInput = {
   imageUrl?: Prisma.SortOrder
   wikiUrl?: Prisma.SortOrder
   rarity?: Prisma.SortOrder
+  tier?: Prisma.SortOrder
+  category?: Prisma.SortOrder
   hp?: Prisma.SortOrder
   atk?: Prisma.SortOrder
   def?: Prisma.SortOrder
@@ -603,6 +647,14 @@ export type CardScalarRelationFilter = {
 
 export type EnumRarityFieldUpdateOperationsInput = {
   set?: $Enums.Rarity
+}
+
+export type NullableEnumTierFieldUpdateOperationsInput = {
+  set?: $Enums.Tier | null
+}
+
+export type NullableEnumCategoryFieldUpdateOperationsInput = {
+  set?: $Enums.Category | null
 }
 
 export type FloatFieldUpdateOperationsInput = {
@@ -634,6 +686,8 @@ export type CardCreateWithoutInventoryInput = {
   imageUrl?: string | null
   wikiUrl: string
   rarity: $Enums.Rarity
+  tier?: $Enums.Tier | null
+  category?: $Enums.Category | null
   hp: number
   atk: number
   def: number
@@ -651,6 +705,8 @@ export type CardUncheckedCreateWithoutInventoryInput = {
   imageUrl?: string | null
   wikiUrl: string
   rarity: $Enums.Rarity
+  tier?: $Enums.Tier | null
+  category?: $Enums.Category | null
   hp: number
   atk: number
   def: number
@@ -684,6 +740,8 @@ export type CardUpdateWithoutInventoryInput = {
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   wikiUrl?: Prisma.StringFieldUpdateOperationsInput | string
   rarity?: Prisma.EnumRarityFieldUpdateOperationsInput | $Enums.Rarity
+  tier?: Prisma.NullableEnumTierFieldUpdateOperationsInput | $Enums.Tier | null
+  category?: Prisma.NullableEnumCategoryFieldUpdateOperationsInput | $Enums.Category | null
   hp?: Prisma.IntFieldUpdateOperationsInput | number
   atk?: Prisma.IntFieldUpdateOperationsInput | number
   def?: Prisma.IntFieldUpdateOperationsInput | number
@@ -701,6 +759,8 @@ export type CardUncheckedUpdateWithoutInventoryInput = {
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   wikiUrl?: Prisma.StringFieldUpdateOperationsInput | string
   rarity?: Prisma.EnumRarityFieldUpdateOperationsInput | $Enums.Rarity
+  tier?: Prisma.NullableEnumTierFieldUpdateOperationsInput | $Enums.Tier | null
+  category?: Prisma.NullableEnumCategoryFieldUpdateOperationsInput | $Enums.Category | null
   hp?: Prisma.IntFieldUpdateOperationsInput | number
   atk?: Prisma.IntFieldUpdateOperationsInput | number
   def?: Prisma.IntFieldUpdateOperationsInput | number
@@ -749,6 +809,8 @@ export type CardSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   imageUrl?: boolean
   wikiUrl?: boolean
   rarity?: boolean
+  tier?: boolean
+  category?: boolean
   hp?: boolean
   atk?: boolean
   def?: boolean
@@ -770,6 +832,8 @@ export type CardSelectScalar = {
   imageUrl?: boolean
   wikiUrl?: boolean
   rarity?: boolean
+  tier?: boolean
+  category?: boolean
   hp?: boolean
   atk?: boolean
   def?: boolean
@@ -780,7 +844,7 @@ export type CardSelectScalar = {
   createdAt?: boolean
 }
 
-export type CardOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "summary" | "imageUrl" | "wikiUrl" | "rarity" | "hp" | "atk" | "def" | "pageViews" | "languageCount" | "quality" | "popularity" | "createdAt", ExtArgs["result"]["card"]>
+export type CardOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "summary" | "imageUrl" | "wikiUrl" | "rarity" | "tier" | "category" | "hp" | "atk" | "def" | "pageViews" | "languageCount" | "quality" | "popularity" | "createdAt", ExtArgs["result"]["card"]>
 export type CardInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   inventory?: boolean | Prisma.Card$inventoryArgs<ExtArgs>
   _count?: boolean | Prisma.CardCountOutputTypeDefaultArgs<ExtArgs>
@@ -798,6 +862,8 @@ export type $CardPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     imageUrl: string | null
     wikiUrl: string
     rarity: $Enums.Rarity
+    tier: $Enums.Tier | null
+    category: $Enums.Category | null
     hp: number
     atk: number
     def: number
@@ -1182,6 +1248,8 @@ export interface CardFieldRefs {
   readonly imageUrl: Prisma.FieldRef<"Card", 'String'>
   readonly wikiUrl: Prisma.FieldRef<"Card", 'String'>
   readonly rarity: Prisma.FieldRef<"Card", 'Rarity'>
+  readonly tier: Prisma.FieldRef<"Card", 'Tier'>
+  readonly category: Prisma.FieldRef<"Card", 'Category'>
   readonly hp: Prisma.FieldRef<"Card", 'Int'>
   readonly atk: Prisma.FieldRef<"Card", 'Int'>
   readonly def: Prisma.FieldRef<"Card", 'Int'>

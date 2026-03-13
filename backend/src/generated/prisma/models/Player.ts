@@ -30,6 +30,8 @@ export type PlayerAvgAggregateOutputType = {
   level: number | null
   xp: number | null
   pityCounter: number | null
+  eloRating: number | null
+  matchesPlayed: number | null
 }
 
 export type PlayerSumAggregateOutputType = {
@@ -37,6 +39,8 @@ export type PlayerSumAggregateOutputType = {
   level: number | null
   xp: number | null
   pityCounter: number | null
+  eloRating: number | null
+  matchesPlayed: number | null
 }
 
 export type PlayerMinAggregateOutputType = {
@@ -49,6 +53,9 @@ export type PlayerMinAggregateOutputType = {
   level: number | null
   xp: number | null
   pityCounter: number | null
+  eloRating: number | null
+  matchesPlayed: number | null
+  lastLogin: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -63,6 +70,9 @@ export type PlayerMaxAggregateOutputType = {
   level: number | null
   xp: number | null
   pityCounter: number | null
+  eloRating: number | null
+  matchesPlayed: number | null
+  lastLogin: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -77,6 +87,9 @@ export type PlayerCountAggregateOutputType = {
   level: number
   xp: number
   pityCounter: number
+  eloRating: number
+  matchesPlayed: number
+  lastLogin: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -88,6 +101,8 @@ export type PlayerAvgAggregateInputType = {
   level?: true
   xp?: true
   pityCounter?: true
+  eloRating?: true
+  matchesPlayed?: true
 }
 
 export type PlayerSumAggregateInputType = {
@@ -95,6 +110,8 @@ export type PlayerSumAggregateInputType = {
   level?: true
   xp?: true
   pityCounter?: true
+  eloRating?: true
+  matchesPlayed?: true
 }
 
 export type PlayerMinAggregateInputType = {
@@ -107,6 +124,9 @@ export type PlayerMinAggregateInputType = {
   level?: true
   xp?: true
   pityCounter?: true
+  eloRating?: true
+  matchesPlayed?: true
+  lastLogin?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -121,6 +141,9 @@ export type PlayerMaxAggregateInputType = {
   level?: true
   xp?: true
   pityCounter?: true
+  eloRating?: true
+  matchesPlayed?: true
+  lastLogin?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -135,6 +158,9 @@ export type PlayerCountAggregateInputType = {
   level?: true
   xp?: true
   pityCounter?: true
+  eloRating?: true
+  matchesPlayed?: true
+  lastLogin?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -236,6 +262,9 @@ export type PlayerGroupByOutputType = {
   level: number
   xp: number
   pityCounter: number
+  eloRating: number
+  matchesPlayed: number
+  lastLogin: Date
   createdAt: Date
   updatedAt: Date
   _count: PlayerCountAggregateOutputType | null
@@ -273,12 +302,21 @@ export type PlayerWhereInput = {
   level?: Prisma.IntFilter<"Player"> | number
   xp?: Prisma.IntFilter<"Player"> | number
   pityCounter?: Prisma.IntFilter<"Player"> | number
+  eloRating?: Prisma.IntFilter<"Player"> | number
+  matchesPlayed?: Prisma.IntFilter<"Player"> | number
+  lastLogin?: Prisma.DateTimeFilter<"Player"> | Date | string
   createdAt?: Prisma.DateTimeFilter<"Player"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Player"> | Date | string
   battles1?: Prisma.BattleListRelationFilter
   battles2?: Prisma.BattleListRelationFilter
   wonBattles?: Prisma.BattleListRelationFilter
   inventory?: Prisma.InventoryListRelationFilter
+  missions?: Prisma.UserMissionListRelationFilter
+  trophies?: Prisma.TrophyListRelationFilter
+  chatMessages?: Prisma.ChatMessageListRelationFilter
+  pvpMatches1?: Prisma.PvPMatchListRelationFilter
+  pvpMatches2?: Prisma.PvPMatchListRelationFilter
+  wonPvPMatches?: Prisma.PvPMatchListRelationFilter
 }
 
 export type PlayerOrderByWithRelationInput = {
@@ -291,12 +329,21 @@ export type PlayerOrderByWithRelationInput = {
   level?: Prisma.SortOrder
   xp?: Prisma.SortOrder
   pityCounter?: Prisma.SortOrder
+  eloRating?: Prisma.SortOrder
+  matchesPlayed?: Prisma.SortOrder
+  lastLogin?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   battles1?: Prisma.BattleOrderByRelationAggregateInput
   battles2?: Prisma.BattleOrderByRelationAggregateInput
   wonBattles?: Prisma.BattleOrderByRelationAggregateInput
   inventory?: Prisma.InventoryOrderByRelationAggregateInput
+  missions?: Prisma.UserMissionOrderByRelationAggregateInput
+  trophies?: Prisma.TrophyOrderByRelationAggregateInput
+  chatMessages?: Prisma.ChatMessageOrderByRelationAggregateInput
+  pvpMatches1?: Prisma.PvPMatchOrderByRelationAggregateInput
+  pvpMatches2?: Prisma.PvPMatchOrderByRelationAggregateInput
+  wonPvPMatches?: Prisma.PvPMatchOrderByRelationAggregateInput
   _relevance?: Prisma.PlayerOrderByRelevanceInput
 }
 
@@ -313,12 +360,21 @@ export type PlayerWhereUniqueInput = Prisma.AtLeast<{
   level?: Prisma.IntFilter<"Player"> | number
   xp?: Prisma.IntFilter<"Player"> | number
   pityCounter?: Prisma.IntFilter<"Player"> | number
+  eloRating?: Prisma.IntFilter<"Player"> | number
+  matchesPlayed?: Prisma.IntFilter<"Player"> | number
+  lastLogin?: Prisma.DateTimeFilter<"Player"> | Date | string
   createdAt?: Prisma.DateTimeFilter<"Player"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Player"> | Date | string
   battles1?: Prisma.BattleListRelationFilter
   battles2?: Prisma.BattleListRelationFilter
   wonBattles?: Prisma.BattleListRelationFilter
   inventory?: Prisma.InventoryListRelationFilter
+  missions?: Prisma.UserMissionListRelationFilter
+  trophies?: Prisma.TrophyListRelationFilter
+  chatMessages?: Prisma.ChatMessageListRelationFilter
+  pvpMatches1?: Prisma.PvPMatchListRelationFilter
+  pvpMatches2?: Prisma.PvPMatchListRelationFilter
+  wonPvPMatches?: Prisma.PvPMatchListRelationFilter
 }, "id" | "username" | "googleId">
 
 export type PlayerOrderByWithAggregationInput = {
@@ -331,6 +387,9 @@ export type PlayerOrderByWithAggregationInput = {
   level?: Prisma.SortOrder
   xp?: Prisma.SortOrder
   pityCounter?: Prisma.SortOrder
+  eloRating?: Prisma.SortOrder
+  matchesPlayed?: Prisma.SortOrder
+  lastLogin?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.PlayerCountOrderByAggregateInput
@@ -353,6 +412,9 @@ export type PlayerScalarWhereWithAggregatesInput = {
   level?: Prisma.IntWithAggregatesFilter<"Player"> | number
   xp?: Prisma.IntWithAggregatesFilter<"Player"> | number
   pityCounter?: Prisma.IntWithAggregatesFilter<"Player"> | number
+  eloRating?: Prisma.IntWithAggregatesFilter<"Player"> | number
+  matchesPlayed?: Prisma.IntWithAggregatesFilter<"Player"> | number
+  lastLogin?: Prisma.DateTimeWithAggregatesFilter<"Player"> | Date | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Player"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Player"> | Date | string
 }
@@ -367,12 +429,21 @@ export type PlayerCreateInput = {
   level?: number
   xp?: number
   pityCounter?: number
+  eloRating?: number
+  matchesPlayed?: number
+  lastLogin?: Date | string
   createdAt?: Date | string
   updatedAt?: Date | string
   battles1?: Prisma.BattleCreateNestedManyWithoutPlayer1Input
   battles2?: Prisma.BattleCreateNestedManyWithoutPlayer2Input
   wonBattles?: Prisma.BattleCreateNestedManyWithoutWinnerInput
   inventory?: Prisma.InventoryCreateNestedManyWithoutPlayerInput
+  missions?: Prisma.UserMissionCreateNestedManyWithoutPlayerInput
+  trophies?: Prisma.TrophyCreateNestedManyWithoutPlayerInput
+  chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutSenderInput
+  pvpMatches1?: Prisma.PvPMatchCreateNestedManyWithoutPlayer1Input
+  pvpMatches2?: Prisma.PvPMatchCreateNestedManyWithoutPlayer2Input
+  wonPvPMatches?: Prisma.PvPMatchCreateNestedManyWithoutWinnerInput
 }
 
 export type PlayerUncheckedCreateInput = {
@@ -385,12 +456,21 @@ export type PlayerUncheckedCreateInput = {
   level?: number
   xp?: number
   pityCounter?: number
+  eloRating?: number
+  matchesPlayed?: number
+  lastLogin?: Date | string
   createdAt?: Date | string
   updatedAt?: Date | string
   battles1?: Prisma.BattleUncheckedCreateNestedManyWithoutPlayer1Input
   battles2?: Prisma.BattleUncheckedCreateNestedManyWithoutPlayer2Input
   wonBattles?: Prisma.BattleUncheckedCreateNestedManyWithoutWinnerInput
   inventory?: Prisma.InventoryUncheckedCreateNestedManyWithoutPlayerInput
+  missions?: Prisma.UserMissionUncheckedCreateNestedManyWithoutPlayerInput
+  trophies?: Prisma.TrophyUncheckedCreateNestedManyWithoutPlayerInput
+  chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutSenderInput
+  pvpMatches1?: Prisma.PvPMatchUncheckedCreateNestedManyWithoutPlayer1Input
+  pvpMatches2?: Prisma.PvPMatchUncheckedCreateNestedManyWithoutPlayer2Input
+  wonPvPMatches?: Prisma.PvPMatchUncheckedCreateNestedManyWithoutWinnerInput
 }
 
 export type PlayerUpdateInput = {
@@ -403,12 +483,21 @@ export type PlayerUpdateInput = {
   level?: Prisma.IntFieldUpdateOperationsInput | number
   xp?: Prisma.IntFieldUpdateOperationsInput | number
   pityCounter?: Prisma.IntFieldUpdateOperationsInput | number
+  eloRating?: Prisma.IntFieldUpdateOperationsInput | number
+  matchesPlayed?: Prisma.IntFieldUpdateOperationsInput | number
+  lastLogin?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   battles1?: Prisma.BattleUpdateManyWithoutPlayer1NestedInput
   battles2?: Prisma.BattleUpdateManyWithoutPlayer2NestedInput
   wonBattles?: Prisma.BattleUpdateManyWithoutWinnerNestedInput
   inventory?: Prisma.InventoryUpdateManyWithoutPlayerNestedInput
+  missions?: Prisma.UserMissionUpdateManyWithoutPlayerNestedInput
+  trophies?: Prisma.TrophyUpdateManyWithoutPlayerNestedInput
+  chatMessages?: Prisma.ChatMessageUpdateManyWithoutSenderNestedInput
+  pvpMatches1?: Prisma.PvPMatchUpdateManyWithoutPlayer1NestedInput
+  pvpMatches2?: Prisma.PvPMatchUpdateManyWithoutPlayer2NestedInput
+  wonPvPMatches?: Prisma.PvPMatchUpdateManyWithoutWinnerNestedInput
 }
 
 export type PlayerUncheckedUpdateInput = {
@@ -421,12 +510,21 @@ export type PlayerUncheckedUpdateInput = {
   level?: Prisma.IntFieldUpdateOperationsInput | number
   xp?: Prisma.IntFieldUpdateOperationsInput | number
   pityCounter?: Prisma.IntFieldUpdateOperationsInput | number
+  eloRating?: Prisma.IntFieldUpdateOperationsInput | number
+  matchesPlayed?: Prisma.IntFieldUpdateOperationsInput | number
+  lastLogin?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   battles1?: Prisma.BattleUncheckedUpdateManyWithoutPlayer1NestedInput
   battles2?: Prisma.BattleUncheckedUpdateManyWithoutPlayer2NestedInput
   wonBattles?: Prisma.BattleUncheckedUpdateManyWithoutWinnerNestedInput
   inventory?: Prisma.InventoryUncheckedUpdateManyWithoutPlayerNestedInput
+  missions?: Prisma.UserMissionUncheckedUpdateManyWithoutPlayerNestedInput
+  trophies?: Prisma.TrophyUncheckedUpdateManyWithoutPlayerNestedInput
+  chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutSenderNestedInput
+  pvpMatches1?: Prisma.PvPMatchUncheckedUpdateManyWithoutPlayer1NestedInput
+  pvpMatches2?: Prisma.PvPMatchUncheckedUpdateManyWithoutPlayer2NestedInput
+  wonPvPMatches?: Prisma.PvPMatchUncheckedUpdateManyWithoutWinnerNestedInput
 }
 
 export type PlayerCreateManyInput = {
@@ -439,6 +537,9 @@ export type PlayerCreateManyInput = {
   level?: number
   xp?: number
   pityCounter?: number
+  eloRating?: number
+  matchesPlayed?: number
+  lastLogin?: Date | string
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -453,6 +554,9 @@ export type PlayerUpdateManyMutationInput = {
   level?: Prisma.IntFieldUpdateOperationsInput | number
   xp?: Prisma.IntFieldUpdateOperationsInput | number
   pityCounter?: Prisma.IntFieldUpdateOperationsInput | number
+  eloRating?: Prisma.IntFieldUpdateOperationsInput | number
+  matchesPlayed?: Prisma.IntFieldUpdateOperationsInput | number
+  lastLogin?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -467,6 +571,9 @@ export type PlayerUncheckedUpdateManyInput = {
   level?: Prisma.IntFieldUpdateOperationsInput | number
   xp?: Prisma.IntFieldUpdateOperationsInput | number
   pityCounter?: Prisma.IntFieldUpdateOperationsInput | number
+  eloRating?: Prisma.IntFieldUpdateOperationsInput | number
+  matchesPlayed?: Prisma.IntFieldUpdateOperationsInput | number
+  lastLogin?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -487,6 +594,9 @@ export type PlayerCountOrderByAggregateInput = {
   level?: Prisma.SortOrder
   xp?: Prisma.SortOrder
   pityCounter?: Prisma.SortOrder
+  eloRating?: Prisma.SortOrder
+  matchesPlayed?: Prisma.SortOrder
+  lastLogin?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -496,6 +606,8 @@ export type PlayerAvgOrderByAggregateInput = {
   level?: Prisma.SortOrder
   xp?: Prisma.SortOrder
   pityCounter?: Prisma.SortOrder
+  eloRating?: Prisma.SortOrder
+  matchesPlayed?: Prisma.SortOrder
 }
 
 export type PlayerMaxOrderByAggregateInput = {
@@ -508,6 +620,9 @@ export type PlayerMaxOrderByAggregateInput = {
   level?: Prisma.SortOrder
   xp?: Prisma.SortOrder
   pityCounter?: Prisma.SortOrder
+  eloRating?: Prisma.SortOrder
+  matchesPlayed?: Prisma.SortOrder
+  lastLogin?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -522,6 +637,9 @@ export type PlayerMinOrderByAggregateInput = {
   level?: Prisma.SortOrder
   xp?: Prisma.SortOrder
   pityCounter?: Prisma.SortOrder
+  eloRating?: Prisma.SortOrder
+  matchesPlayed?: Prisma.SortOrder
+  lastLogin?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -531,6 +649,8 @@ export type PlayerSumOrderByAggregateInput = {
   level?: Prisma.SortOrder
   xp?: Prisma.SortOrder
   pityCounter?: Prisma.SortOrder
+  eloRating?: Prisma.SortOrder
+  matchesPlayed?: Prisma.SortOrder
 }
 
 export type PlayerScalarRelationFilter = {
@@ -623,6 +743,92 @@ export type PlayerUpdateOneWithoutWonBattlesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.PlayerUpdateToOneWithWhereWithoutWonBattlesInput, Prisma.PlayerUpdateWithoutWonBattlesInput>, Prisma.PlayerUncheckedUpdateWithoutWonBattlesInput>
 }
 
+export type PlayerCreateNestedOneWithoutMissionsInput = {
+  create?: Prisma.XOR<Prisma.PlayerCreateWithoutMissionsInput, Prisma.PlayerUncheckedCreateWithoutMissionsInput>
+  connectOrCreate?: Prisma.PlayerCreateOrConnectWithoutMissionsInput
+  connect?: Prisma.PlayerWhereUniqueInput
+}
+
+export type PlayerUpdateOneRequiredWithoutMissionsNestedInput = {
+  create?: Prisma.XOR<Prisma.PlayerCreateWithoutMissionsInput, Prisma.PlayerUncheckedCreateWithoutMissionsInput>
+  connectOrCreate?: Prisma.PlayerCreateOrConnectWithoutMissionsInput
+  upsert?: Prisma.PlayerUpsertWithoutMissionsInput
+  connect?: Prisma.PlayerWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.PlayerUpdateToOneWithWhereWithoutMissionsInput, Prisma.PlayerUpdateWithoutMissionsInput>, Prisma.PlayerUncheckedUpdateWithoutMissionsInput>
+}
+
+export type PlayerCreateNestedOneWithoutTrophiesInput = {
+  create?: Prisma.XOR<Prisma.PlayerCreateWithoutTrophiesInput, Prisma.PlayerUncheckedCreateWithoutTrophiesInput>
+  connectOrCreate?: Prisma.PlayerCreateOrConnectWithoutTrophiesInput
+  connect?: Prisma.PlayerWhereUniqueInput
+}
+
+export type PlayerUpdateOneRequiredWithoutTrophiesNestedInput = {
+  create?: Prisma.XOR<Prisma.PlayerCreateWithoutTrophiesInput, Prisma.PlayerUncheckedCreateWithoutTrophiesInput>
+  connectOrCreate?: Prisma.PlayerCreateOrConnectWithoutTrophiesInput
+  upsert?: Prisma.PlayerUpsertWithoutTrophiesInput
+  connect?: Prisma.PlayerWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.PlayerUpdateToOneWithWhereWithoutTrophiesInput, Prisma.PlayerUpdateWithoutTrophiesInput>, Prisma.PlayerUncheckedUpdateWithoutTrophiesInput>
+}
+
+export type PlayerCreateNestedOneWithoutChatMessagesInput = {
+  create?: Prisma.XOR<Prisma.PlayerCreateWithoutChatMessagesInput, Prisma.PlayerUncheckedCreateWithoutChatMessagesInput>
+  connectOrCreate?: Prisma.PlayerCreateOrConnectWithoutChatMessagesInput
+  connect?: Prisma.PlayerWhereUniqueInput
+}
+
+export type PlayerUpdateOneRequiredWithoutChatMessagesNestedInput = {
+  create?: Prisma.XOR<Prisma.PlayerCreateWithoutChatMessagesInput, Prisma.PlayerUncheckedCreateWithoutChatMessagesInput>
+  connectOrCreate?: Prisma.PlayerCreateOrConnectWithoutChatMessagesInput
+  upsert?: Prisma.PlayerUpsertWithoutChatMessagesInput
+  connect?: Prisma.PlayerWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.PlayerUpdateToOneWithWhereWithoutChatMessagesInput, Prisma.PlayerUpdateWithoutChatMessagesInput>, Prisma.PlayerUncheckedUpdateWithoutChatMessagesInput>
+}
+
+export type PlayerCreateNestedOneWithoutPvpMatches1Input = {
+  create?: Prisma.XOR<Prisma.PlayerCreateWithoutPvpMatches1Input, Prisma.PlayerUncheckedCreateWithoutPvpMatches1Input>
+  connectOrCreate?: Prisma.PlayerCreateOrConnectWithoutPvpMatches1Input
+  connect?: Prisma.PlayerWhereUniqueInput
+}
+
+export type PlayerCreateNestedOneWithoutPvpMatches2Input = {
+  create?: Prisma.XOR<Prisma.PlayerCreateWithoutPvpMatches2Input, Prisma.PlayerUncheckedCreateWithoutPvpMatches2Input>
+  connectOrCreate?: Prisma.PlayerCreateOrConnectWithoutPvpMatches2Input
+  connect?: Prisma.PlayerWhereUniqueInput
+}
+
+export type PlayerCreateNestedOneWithoutWonPvPMatchesInput = {
+  create?: Prisma.XOR<Prisma.PlayerCreateWithoutWonPvPMatchesInput, Prisma.PlayerUncheckedCreateWithoutWonPvPMatchesInput>
+  connectOrCreate?: Prisma.PlayerCreateOrConnectWithoutWonPvPMatchesInput
+  connect?: Prisma.PlayerWhereUniqueInput
+}
+
+export type PlayerUpdateOneRequiredWithoutPvpMatches1NestedInput = {
+  create?: Prisma.XOR<Prisma.PlayerCreateWithoutPvpMatches1Input, Prisma.PlayerUncheckedCreateWithoutPvpMatches1Input>
+  connectOrCreate?: Prisma.PlayerCreateOrConnectWithoutPvpMatches1Input
+  upsert?: Prisma.PlayerUpsertWithoutPvpMatches1Input
+  connect?: Prisma.PlayerWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.PlayerUpdateToOneWithWhereWithoutPvpMatches1Input, Prisma.PlayerUpdateWithoutPvpMatches1Input>, Prisma.PlayerUncheckedUpdateWithoutPvpMatches1Input>
+}
+
+export type PlayerUpdateOneRequiredWithoutPvpMatches2NestedInput = {
+  create?: Prisma.XOR<Prisma.PlayerCreateWithoutPvpMatches2Input, Prisma.PlayerUncheckedCreateWithoutPvpMatches2Input>
+  connectOrCreate?: Prisma.PlayerCreateOrConnectWithoutPvpMatches2Input
+  upsert?: Prisma.PlayerUpsertWithoutPvpMatches2Input
+  connect?: Prisma.PlayerWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.PlayerUpdateToOneWithWhereWithoutPvpMatches2Input, Prisma.PlayerUpdateWithoutPvpMatches2Input>, Prisma.PlayerUncheckedUpdateWithoutPvpMatches2Input>
+}
+
+export type PlayerUpdateOneWithoutWonPvPMatchesNestedInput = {
+  create?: Prisma.XOR<Prisma.PlayerCreateWithoutWonPvPMatchesInput, Prisma.PlayerUncheckedCreateWithoutWonPvPMatchesInput>
+  connectOrCreate?: Prisma.PlayerCreateOrConnectWithoutWonPvPMatchesInput
+  upsert?: Prisma.PlayerUpsertWithoutWonPvPMatchesInput
+  disconnect?: Prisma.PlayerWhereInput | boolean
+  delete?: Prisma.PlayerWhereInput | boolean
+  connect?: Prisma.PlayerWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.PlayerUpdateToOneWithWhereWithoutWonPvPMatchesInput, Prisma.PlayerUpdateWithoutWonPvPMatchesInput>, Prisma.PlayerUncheckedUpdateWithoutWonPvPMatchesInput>
+}
+
 export type PlayerCreateWithoutInventoryInput = {
   id?: string
   username: string
@@ -633,11 +839,20 @@ export type PlayerCreateWithoutInventoryInput = {
   level?: number
   xp?: number
   pityCounter?: number
+  eloRating?: number
+  matchesPlayed?: number
+  lastLogin?: Date | string
   createdAt?: Date | string
   updatedAt?: Date | string
   battles1?: Prisma.BattleCreateNestedManyWithoutPlayer1Input
   battles2?: Prisma.BattleCreateNestedManyWithoutPlayer2Input
   wonBattles?: Prisma.BattleCreateNestedManyWithoutWinnerInput
+  missions?: Prisma.UserMissionCreateNestedManyWithoutPlayerInput
+  trophies?: Prisma.TrophyCreateNestedManyWithoutPlayerInput
+  chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutSenderInput
+  pvpMatches1?: Prisma.PvPMatchCreateNestedManyWithoutPlayer1Input
+  pvpMatches2?: Prisma.PvPMatchCreateNestedManyWithoutPlayer2Input
+  wonPvPMatches?: Prisma.PvPMatchCreateNestedManyWithoutWinnerInput
 }
 
 export type PlayerUncheckedCreateWithoutInventoryInput = {
@@ -650,11 +865,20 @@ export type PlayerUncheckedCreateWithoutInventoryInput = {
   level?: number
   xp?: number
   pityCounter?: number
+  eloRating?: number
+  matchesPlayed?: number
+  lastLogin?: Date | string
   createdAt?: Date | string
   updatedAt?: Date | string
   battles1?: Prisma.BattleUncheckedCreateNestedManyWithoutPlayer1Input
   battles2?: Prisma.BattleUncheckedCreateNestedManyWithoutPlayer2Input
   wonBattles?: Prisma.BattleUncheckedCreateNestedManyWithoutWinnerInput
+  missions?: Prisma.UserMissionUncheckedCreateNestedManyWithoutPlayerInput
+  trophies?: Prisma.TrophyUncheckedCreateNestedManyWithoutPlayerInput
+  chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutSenderInput
+  pvpMatches1?: Prisma.PvPMatchUncheckedCreateNestedManyWithoutPlayer1Input
+  pvpMatches2?: Prisma.PvPMatchUncheckedCreateNestedManyWithoutPlayer2Input
+  wonPvPMatches?: Prisma.PvPMatchUncheckedCreateNestedManyWithoutWinnerInput
 }
 
 export type PlayerCreateOrConnectWithoutInventoryInput = {
@@ -683,11 +907,20 @@ export type PlayerUpdateWithoutInventoryInput = {
   level?: Prisma.IntFieldUpdateOperationsInput | number
   xp?: Prisma.IntFieldUpdateOperationsInput | number
   pityCounter?: Prisma.IntFieldUpdateOperationsInput | number
+  eloRating?: Prisma.IntFieldUpdateOperationsInput | number
+  matchesPlayed?: Prisma.IntFieldUpdateOperationsInput | number
+  lastLogin?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   battles1?: Prisma.BattleUpdateManyWithoutPlayer1NestedInput
   battles2?: Prisma.BattleUpdateManyWithoutPlayer2NestedInput
   wonBattles?: Prisma.BattleUpdateManyWithoutWinnerNestedInput
+  missions?: Prisma.UserMissionUpdateManyWithoutPlayerNestedInput
+  trophies?: Prisma.TrophyUpdateManyWithoutPlayerNestedInput
+  chatMessages?: Prisma.ChatMessageUpdateManyWithoutSenderNestedInput
+  pvpMatches1?: Prisma.PvPMatchUpdateManyWithoutPlayer1NestedInput
+  pvpMatches2?: Prisma.PvPMatchUpdateManyWithoutPlayer2NestedInput
+  wonPvPMatches?: Prisma.PvPMatchUpdateManyWithoutWinnerNestedInput
 }
 
 export type PlayerUncheckedUpdateWithoutInventoryInput = {
@@ -700,11 +933,20 @@ export type PlayerUncheckedUpdateWithoutInventoryInput = {
   level?: Prisma.IntFieldUpdateOperationsInput | number
   xp?: Prisma.IntFieldUpdateOperationsInput | number
   pityCounter?: Prisma.IntFieldUpdateOperationsInput | number
+  eloRating?: Prisma.IntFieldUpdateOperationsInput | number
+  matchesPlayed?: Prisma.IntFieldUpdateOperationsInput | number
+  lastLogin?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   battles1?: Prisma.BattleUncheckedUpdateManyWithoutPlayer1NestedInput
   battles2?: Prisma.BattleUncheckedUpdateManyWithoutPlayer2NestedInput
   wonBattles?: Prisma.BattleUncheckedUpdateManyWithoutWinnerNestedInput
+  missions?: Prisma.UserMissionUncheckedUpdateManyWithoutPlayerNestedInput
+  trophies?: Prisma.TrophyUncheckedUpdateManyWithoutPlayerNestedInput
+  chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutSenderNestedInput
+  pvpMatches1?: Prisma.PvPMatchUncheckedUpdateManyWithoutPlayer1NestedInput
+  pvpMatches2?: Prisma.PvPMatchUncheckedUpdateManyWithoutPlayer2NestedInput
+  wonPvPMatches?: Prisma.PvPMatchUncheckedUpdateManyWithoutWinnerNestedInput
 }
 
 export type PlayerCreateWithoutBattles1Input = {
@@ -717,11 +959,20 @@ export type PlayerCreateWithoutBattles1Input = {
   level?: number
   xp?: number
   pityCounter?: number
+  eloRating?: number
+  matchesPlayed?: number
+  lastLogin?: Date | string
   createdAt?: Date | string
   updatedAt?: Date | string
   battles2?: Prisma.BattleCreateNestedManyWithoutPlayer2Input
   wonBattles?: Prisma.BattleCreateNestedManyWithoutWinnerInput
   inventory?: Prisma.InventoryCreateNestedManyWithoutPlayerInput
+  missions?: Prisma.UserMissionCreateNestedManyWithoutPlayerInput
+  trophies?: Prisma.TrophyCreateNestedManyWithoutPlayerInput
+  chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutSenderInput
+  pvpMatches1?: Prisma.PvPMatchCreateNestedManyWithoutPlayer1Input
+  pvpMatches2?: Prisma.PvPMatchCreateNestedManyWithoutPlayer2Input
+  wonPvPMatches?: Prisma.PvPMatchCreateNestedManyWithoutWinnerInput
 }
 
 export type PlayerUncheckedCreateWithoutBattles1Input = {
@@ -734,11 +985,20 @@ export type PlayerUncheckedCreateWithoutBattles1Input = {
   level?: number
   xp?: number
   pityCounter?: number
+  eloRating?: number
+  matchesPlayed?: number
+  lastLogin?: Date | string
   createdAt?: Date | string
   updatedAt?: Date | string
   battles2?: Prisma.BattleUncheckedCreateNestedManyWithoutPlayer2Input
   wonBattles?: Prisma.BattleUncheckedCreateNestedManyWithoutWinnerInput
   inventory?: Prisma.InventoryUncheckedCreateNestedManyWithoutPlayerInput
+  missions?: Prisma.UserMissionUncheckedCreateNestedManyWithoutPlayerInput
+  trophies?: Prisma.TrophyUncheckedCreateNestedManyWithoutPlayerInput
+  chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutSenderInput
+  pvpMatches1?: Prisma.PvPMatchUncheckedCreateNestedManyWithoutPlayer1Input
+  pvpMatches2?: Prisma.PvPMatchUncheckedCreateNestedManyWithoutPlayer2Input
+  wonPvPMatches?: Prisma.PvPMatchUncheckedCreateNestedManyWithoutWinnerInput
 }
 
 export type PlayerCreateOrConnectWithoutBattles1Input = {
@@ -756,11 +1016,20 @@ export type PlayerCreateWithoutBattles2Input = {
   level?: number
   xp?: number
   pityCounter?: number
+  eloRating?: number
+  matchesPlayed?: number
+  lastLogin?: Date | string
   createdAt?: Date | string
   updatedAt?: Date | string
   battles1?: Prisma.BattleCreateNestedManyWithoutPlayer1Input
   wonBattles?: Prisma.BattleCreateNestedManyWithoutWinnerInput
   inventory?: Prisma.InventoryCreateNestedManyWithoutPlayerInput
+  missions?: Prisma.UserMissionCreateNestedManyWithoutPlayerInput
+  trophies?: Prisma.TrophyCreateNestedManyWithoutPlayerInput
+  chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutSenderInput
+  pvpMatches1?: Prisma.PvPMatchCreateNestedManyWithoutPlayer1Input
+  pvpMatches2?: Prisma.PvPMatchCreateNestedManyWithoutPlayer2Input
+  wonPvPMatches?: Prisma.PvPMatchCreateNestedManyWithoutWinnerInput
 }
 
 export type PlayerUncheckedCreateWithoutBattles2Input = {
@@ -773,11 +1042,20 @@ export type PlayerUncheckedCreateWithoutBattles2Input = {
   level?: number
   xp?: number
   pityCounter?: number
+  eloRating?: number
+  matchesPlayed?: number
+  lastLogin?: Date | string
   createdAt?: Date | string
   updatedAt?: Date | string
   battles1?: Prisma.BattleUncheckedCreateNestedManyWithoutPlayer1Input
   wonBattles?: Prisma.BattleUncheckedCreateNestedManyWithoutWinnerInput
   inventory?: Prisma.InventoryUncheckedCreateNestedManyWithoutPlayerInput
+  missions?: Prisma.UserMissionUncheckedCreateNestedManyWithoutPlayerInput
+  trophies?: Prisma.TrophyUncheckedCreateNestedManyWithoutPlayerInput
+  chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutSenderInput
+  pvpMatches1?: Prisma.PvPMatchUncheckedCreateNestedManyWithoutPlayer1Input
+  pvpMatches2?: Prisma.PvPMatchUncheckedCreateNestedManyWithoutPlayer2Input
+  wonPvPMatches?: Prisma.PvPMatchUncheckedCreateNestedManyWithoutWinnerInput
 }
 
 export type PlayerCreateOrConnectWithoutBattles2Input = {
@@ -795,11 +1073,20 @@ export type PlayerCreateWithoutWonBattlesInput = {
   level?: number
   xp?: number
   pityCounter?: number
+  eloRating?: number
+  matchesPlayed?: number
+  lastLogin?: Date | string
   createdAt?: Date | string
   updatedAt?: Date | string
   battles1?: Prisma.BattleCreateNestedManyWithoutPlayer1Input
   battles2?: Prisma.BattleCreateNestedManyWithoutPlayer2Input
   inventory?: Prisma.InventoryCreateNestedManyWithoutPlayerInput
+  missions?: Prisma.UserMissionCreateNestedManyWithoutPlayerInput
+  trophies?: Prisma.TrophyCreateNestedManyWithoutPlayerInput
+  chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutSenderInput
+  pvpMatches1?: Prisma.PvPMatchCreateNestedManyWithoutPlayer1Input
+  pvpMatches2?: Prisma.PvPMatchCreateNestedManyWithoutPlayer2Input
+  wonPvPMatches?: Prisma.PvPMatchCreateNestedManyWithoutWinnerInput
 }
 
 export type PlayerUncheckedCreateWithoutWonBattlesInput = {
@@ -812,11 +1099,20 @@ export type PlayerUncheckedCreateWithoutWonBattlesInput = {
   level?: number
   xp?: number
   pityCounter?: number
+  eloRating?: number
+  matchesPlayed?: number
+  lastLogin?: Date | string
   createdAt?: Date | string
   updatedAt?: Date | string
   battles1?: Prisma.BattleUncheckedCreateNestedManyWithoutPlayer1Input
   battles2?: Prisma.BattleUncheckedCreateNestedManyWithoutPlayer2Input
   inventory?: Prisma.InventoryUncheckedCreateNestedManyWithoutPlayerInput
+  missions?: Prisma.UserMissionUncheckedCreateNestedManyWithoutPlayerInput
+  trophies?: Prisma.TrophyUncheckedCreateNestedManyWithoutPlayerInput
+  chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutSenderInput
+  pvpMatches1?: Prisma.PvPMatchUncheckedCreateNestedManyWithoutPlayer1Input
+  pvpMatches2?: Prisma.PvPMatchUncheckedCreateNestedManyWithoutPlayer2Input
+  wonPvPMatches?: Prisma.PvPMatchUncheckedCreateNestedManyWithoutWinnerInput
 }
 
 export type PlayerCreateOrConnectWithoutWonBattlesInput = {
@@ -845,11 +1141,20 @@ export type PlayerUpdateWithoutBattles1Input = {
   level?: Prisma.IntFieldUpdateOperationsInput | number
   xp?: Prisma.IntFieldUpdateOperationsInput | number
   pityCounter?: Prisma.IntFieldUpdateOperationsInput | number
+  eloRating?: Prisma.IntFieldUpdateOperationsInput | number
+  matchesPlayed?: Prisma.IntFieldUpdateOperationsInput | number
+  lastLogin?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   battles2?: Prisma.BattleUpdateManyWithoutPlayer2NestedInput
   wonBattles?: Prisma.BattleUpdateManyWithoutWinnerNestedInput
   inventory?: Prisma.InventoryUpdateManyWithoutPlayerNestedInput
+  missions?: Prisma.UserMissionUpdateManyWithoutPlayerNestedInput
+  trophies?: Prisma.TrophyUpdateManyWithoutPlayerNestedInput
+  chatMessages?: Prisma.ChatMessageUpdateManyWithoutSenderNestedInput
+  pvpMatches1?: Prisma.PvPMatchUpdateManyWithoutPlayer1NestedInput
+  pvpMatches2?: Prisma.PvPMatchUpdateManyWithoutPlayer2NestedInput
+  wonPvPMatches?: Prisma.PvPMatchUpdateManyWithoutWinnerNestedInput
 }
 
 export type PlayerUncheckedUpdateWithoutBattles1Input = {
@@ -862,11 +1167,20 @@ export type PlayerUncheckedUpdateWithoutBattles1Input = {
   level?: Prisma.IntFieldUpdateOperationsInput | number
   xp?: Prisma.IntFieldUpdateOperationsInput | number
   pityCounter?: Prisma.IntFieldUpdateOperationsInput | number
+  eloRating?: Prisma.IntFieldUpdateOperationsInput | number
+  matchesPlayed?: Prisma.IntFieldUpdateOperationsInput | number
+  lastLogin?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   battles2?: Prisma.BattleUncheckedUpdateManyWithoutPlayer2NestedInput
   wonBattles?: Prisma.BattleUncheckedUpdateManyWithoutWinnerNestedInput
   inventory?: Prisma.InventoryUncheckedUpdateManyWithoutPlayerNestedInput
+  missions?: Prisma.UserMissionUncheckedUpdateManyWithoutPlayerNestedInput
+  trophies?: Prisma.TrophyUncheckedUpdateManyWithoutPlayerNestedInput
+  chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutSenderNestedInput
+  pvpMatches1?: Prisma.PvPMatchUncheckedUpdateManyWithoutPlayer1NestedInput
+  pvpMatches2?: Prisma.PvPMatchUncheckedUpdateManyWithoutPlayer2NestedInput
+  wonPvPMatches?: Prisma.PvPMatchUncheckedUpdateManyWithoutWinnerNestedInput
 }
 
 export type PlayerUpsertWithoutBattles2Input = {
@@ -890,11 +1204,20 @@ export type PlayerUpdateWithoutBattles2Input = {
   level?: Prisma.IntFieldUpdateOperationsInput | number
   xp?: Prisma.IntFieldUpdateOperationsInput | number
   pityCounter?: Prisma.IntFieldUpdateOperationsInput | number
+  eloRating?: Prisma.IntFieldUpdateOperationsInput | number
+  matchesPlayed?: Prisma.IntFieldUpdateOperationsInput | number
+  lastLogin?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   battles1?: Prisma.BattleUpdateManyWithoutPlayer1NestedInput
   wonBattles?: Prisma.BattleUpdateManyWithoutWinnerNestedInput
   inventory?: Prisma.InventoryUpdateManyWithoutPlayerNestedInput
+  missions?: Prisma.UserMissionUpdateManyWithoutPlayerNestedInput
+  trophies?: Prisma.TrophyUpdateManyWithoutPlayerNestedInput
+  chatMessages?: Prisma.ChatMessageUpdateManyWithoutSenderNestedInput
+  pvpMatches1?: Prisma.PvPMatchUpdateManyWithoutPlayer1NestedInput
+  pvpMatches2?: Prisma.PvPMatchUpdateManyWithoutPlayer2NestedInput
+  wonPvPMatches?: Prisma.PvPMatchUpdateManyWithoutWinnerNestedInput
 }
 
 export type PlayerUncheckedUpdateWithoutBattles2Input = {
@@ -907,11 +1230,20 @@ export type PlayerUncheckedUpdateWithoutBattles2Input = {
   level?: Prisma.IntFieldUpdateOperationsInput | number
   xp?: Prisma.IntFieldUpdateOperationsInput | number
   pityCounter?: Prisma.IntFieldUpdateOperationsInput | number
+  eloRating?: Prisma.IntFieldUpdateOperationsInput | number
+  matchesPlayed?: Prisma.IntFieldUpdateOperationsInput | number
+  lastLogin?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   battles1?: Prisma.BattleUncheckedUpdateManyWithoutPlayer1NestedInput
   wonBattles?: Prisma.BattleUncheckedUpdateManyWithoutWinnerNestedInput
   inventory?: Prisma.InventoryUncheckedUpdateManyWithoutPlayerNestedInput
+  missions?: Prisma.UserMissionUncheckedUpdateManyWithoutPlayerNestedInput
+  trophies?: Prisma.TrophyUncheckedUpdateManyWithoutPlayerNestedInput
+  chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutSenderNestedInput
+  pvpMatches1?: Prisma.PvPMatchUncheckedUpdateManyWithoutPlayer1NestedInput
+  pvpMatches2?: Prisma.PvPMatchUncheckedUpdateManyWithoutPlayer2NestedInput
+  wonPvPMatches?: Prisma.PvPMatchUncheckedUpdateManyWithoutWinnerNestedInput
 }
 
 export type PlayerUpsertWithoutWonBattlesInput = {
@@ -935,11 +1267,20 @@ export type PlayerUpdateWithoutWonBattlesInput = {
   level?: Prisma.IntFieldUpdateOperationsInput | number
   xp?: Prisma.IntFieldUpdateOperationsInput | number
   pityCounter?: Prisma.IntFieldUpdateOperationsInput | number
+  eloRating?: Prisma.IntFieldUpdateOperationsInput | number
+  matchesPlayed?: Prisma.IntFieldUpdateOperationsInput | number
+  lastLogin?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   battles1?: Prisma.BattleUpdateManyWithoutPlayer1NestedInput
   battles2?: Prisma.BattleUpdateManyWithoutPlayer2NestedInput
   inventory?: Prisma.InventoryUpdateManyWithoutPlayerNestedInput
+  missions?: Prisma.UserMissionUpdateManyWithoutPlayerNestedInput
+  trophies?: Prisma.TrophyUpdateManyWithoutPlayerNestedInput
+  chatMessages?: Prisma.ChatMessageUpdateManyWithoutSenderNestedInput
+  pvpMatches1?: Prisma.PvPMatchUpdateManyWithoutPlayer1NestedInput
+  pvpMatches2?: Prisma.PvPMatchUpdateManyWithoutPlayer2NestedInput
+  wonPvPMatches?: Prisma.PvPMatchUpdateManyWithoutWinnerNestedInput
 }
 
 export type PlayerUncheckedUpdateWithoutWonBattlesInput = {
@@ -952,11 +1293,740 @@ export type PlayerUncheckedUpdateWithoutWonBattlesInput = {
   level?: Prisma.IntFieldUpdateOperationsInput | number
   xp?: Prisma.IntFieldUpdateOperationsInput | number
   pityCounter?: Prisma.IntFieldUpdateOperationsInput | number
+  eloRating?: Prisma.IntFieldUpdateOperationsInput | number
+  matchesPlayed?: Prisma.IntFieldUpdateOperationsInput | number
+  lastLogin?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   battles1?: Prisma.BattleUncheckedUpdateManyWithoutPlayer1NestedInput
   battles2?: Prisma.BattleUncheckedUpdateManyWithoutPlayer2NestedInput
   inventory?: Prisma.InventoryUncheckedUpdateManyWithoutPlayerNestedInput
+  missions?: Prisma.UserMissionUncheckedUpdateManyWithoutPlayerNestedInput
+  trophies?: Prisma.TrophyUncheckedUpdateManyWithoutPlayerNestedInput
+  chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutSenderNestedInput
+  pvpMatches1?: Prisma.PvPMatchUncheckedUpdateManyWithoutPlayer1NestedInput
+  pvpMatches2?: Prisma.PvPMatchUncheckedUpdateManyWithoutPlayer2NestedInput
+  wonPvPMatches?: Prisma.PvPMatchUncheckedUpdateManyWithoutWinnerNestedInput
+}
+
+export type PlayerCreateWithoutMissionsInput = {
+  id?: string
+  username: string
+  email?: string | null
+  googleId?: string | null
+  avatarUrl?: string | null
+  credits?: number
+  level?: number
+  xp?: number
+  pityCounter?: number
+  eloRating?: number
+  matchesPlayed?: number
+  lastLogin?: Date | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  battles1?: Prisma.BattleCreateNestedManyWithoutPlayer1Input
+  battles2?: Prisma.BattleCreateNestedManyWithoutPlayer2Input
+  wonBattles?: Prisma.BattleCreateNestedManyWithoutWinnerInput
+  inventory?: Prisma.InventoryCreateNestedManyWithoutPlayerInput
+  trophies?: Prisma.TrophyCreateNestedManyWithoutPlayerInput
+  chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutSenderInput
+  pvpMatches1?: Prisma.PvPMatchCreateNestedManyWithoutPlayer1Input
+  pvpMatches2?: Prisma.PvPMatchCreateNestedManyWithoutPlayer2Input
+  wonPvPMatches?: Prisma.PvPMatchCreateNestedManyWithoutWinnerInput
+}
+
+export type PlayerUncheckedCreateWithoutMissionsInput = {
+  id?: string
+  username: string
+  email?: string | null
+  googleId?: string | null
+  avatarUrl?: string | null
+  credits?: number
+  level?: number
+  xp?: number
+  pityCounter?: number
+  eloRating?: number
+  matchesPlayed?: number
+  lastLogin?: Date | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  battles1?: Prisma.BattleUncheckedCreateNestedManyWithoutPlayer1Input
+  battles2?: Prisma.BattleUncheckedCreateNestedManyWithoutPlayer2Input
+  wonBattles?: Prisma.BattleUncheckedCreateNestedManyWithoutWinnerInput
+  inventory?: Prisma.InventoryUncheckedCreateNestedManyWithoutPlayerInput
+  trophies?: Prisma.TrophyUncheckedCreateNestedManyWithoutPlayerInput
+  chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutSenderInput
+  pvpMatches1?: Prisma.PvPMatchUncheckedCreateNestedManyWithoutPlayer1Input
+  pvpMatches2?: Prisma.PvPMatchUncheckedCreateNestedManyWithoutPlayer2Input
+  wonPvPMatches?: Prisma.PvPMatchUncheckedCreateNestedManyWithoutWinnerInput
+}
+
+export type PlayerCreateOrConnectWithoutMissionsInput = {
+  where: Prisma.PlayerWhereUniqueInput
+  create: Prisma.XOR<Prisma.PlayerCreateWithoutMissionsInput, Prisma.PlayerUncheckedCreateWithoutMissionsInput>
+}
+
+export type PlayerUpsertWithoutMissionsInput = {
+  update: Prisma.XOR<Prisma.PlayerUpdateWithoutMissionsInput, Prisma.PlayerUncheckedUpdateWithoutMissionsInput>
+  create: Prisma.XOR<Prisma.PlayerCreateWithoutMissionsInput, Prisma.PlayerUncheckedCreateWithoutMissionsInput>
+  where?: Prisma.PlayerWhereInput
+}
+
+export type PlayerUpdateToOneWithWhereWithoutMissionsInput = {
+  where?: Prisma.PlayerWhereInput
+  data: Prisma.XOR<Prisma.PlayerUpdateWithoutMissionsInput, Prisma.PlayerUncheckedUpdateWithoutMissionsInput>
+}
+
+export type PlayerUpdateWithoutMissionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  credits?: Prisma.IntFieldUpdateOperationsInput | number
+  level?: Prisma.IntFieldUpdateOperationsInput | number
+  xp?: Prisma.IntFieldUpdateOperationsInput | number
+  pityCounter?: Prisma.IntFieldUpdateOperationsInput | number
+  eloRating?: Prisma.IntFieldUpdateOperationsInput | number
+  matchesPlayed?: Prisma.IntFieldUpdateOperationsInput | number
+  lastLogin?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  battles1?: Prisma.BattleUpdateManyWithoutPlayer1NestedInput
+  battles2?: Prisma.BattleUpdateManyWithoutPlayer2NestedInput
+  wonBattles?: Prisma.BattleUpdateManyWithoutWinnerNestedInput
+  inventory?: Prisma.InventoryUpdateManyWithoutPlayerNestedInput
+  trophies?: Prisma.TrophyUpdateManyWithoutPlayerNestedInput
+  chatMessages?: Prisma.ChatMessageUpdateManyWithoutSenderNestedInput
+  pvpMatches1?: Prisma.PvPMatchUpdateManyWithoutPlayer1NestedInput
+  pvpMatches2?: Prisma.PvPMatchUpdateManyWithoutPlayer2NestedInput
+  wonPvPMatches?: Prisma.PvPMatchUpdateManyWithoutWinnerNestedInput
+}
+
+export type PlayerUncheckedUpdateWithoutMissionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  credits?: Prisma.IntFieldUpdateOperationsInput | number
+  level?: Prisma.IntFieldUpdateOperationsInput | number
+  xp?: Prisma.IntFieldUpdateOperationsInput | number
+  pityCounter?: Prisma.IntFieldUpdateOperationsInput | number
+  eloRating?: Prisma.IntFieldUpdateOperationsInput | number
+  matchesPlayed?: Prisma.IntFieldUpdateOperationsInput | number
+  lastLogin?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  battles1?: Prisma.BattleUncheckedUpdateManyWithoutPlayer1NestedInput
+  battles2?: Prisma.BattleUncheckedUpdateManyWithoutPlayer2NestedInput
+  wonBattles?: Prisma.BattleUncheckedUpdateManyWithoutWinnerNestedInput
+  inventory?: Prisma.InventoryUncheckedUpdateManyWithoutPlayerNestedInput
+  trophies?: Prisma.TrophyUncheckedUpdateManyWithoutPlayerNestedInput
+  chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutSenderNestedInput
+  pvpMatches1?: Prisma.PvPMatchUncheckedUpdateManyWithoutPlayer1NestedInput
+  pvpMatches2?: Prisma.PvPMatchUncheckedUpdateManyWithoutPlayer2NestedInput
+  wonPvPMatches?: Prisma.PvPMatchUncheckedUpdateManyWithoutWinnerNestedInput
+}
+
+export type PlayerCreateWithoutTrophiesInput = {
+  id?: string
+  username: string
+  email?: string | null
+  googleId?: string | null
+  avatarUrl?: string | null
+  credits?: number
+  level?: number
+  xp?: number
+  pityCounter?: number
+  eloRating?: number
+  matchesPlayed?: number
+  lastLogin?: Date | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  battles1?: Prisma.BattleCreateNestedManyWithoutPlayer1Input
+  battles2?: Prisma.BattleCreateNestedManyWithoutPlayer2Input
+  wonBattles?: Prisma.BattleCreateNestedManyWithoutWinnerInput
+  inventory?: Prisma.InventoryCreateNestedManyWithoutPlayerInput
+  missions?: Prisma.UserMissionCreateNestedManyWithoutPlayerInput
+  chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutSenderInput
+  pvpMatches1?: Prisma.PvPMatchCreateNestedManyWithoutPlayer1Input
+  pvpMatches2?: Prisma.PvPMatchCreateNestedManyWithoutPlayer2Input
+  wonPvPMatches?: Prisma.PvPMatchCreateNestedManyWithoutWinnerInput
+}
+
+export type PlayerUncheckedCreateWithoutTrophiesInput = {
+  id?: string
+  username: string
+  email?: string | null
+  googleId?: string | null
+  avatarUrl?: string | null
+  credits?: number
+  level?: number
+  xp?: number
+  pityCounter?: number
+  eloRating?: number
+  matchesPlayed?: number
+  lastLogin?: Date | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  battles1?: Prisma.BattleUncheckedCreateNestedManyWithoutPlayer1Input
+  battles2?: Prisma.BattleUncheckedCreateNestedManyWithoutPlayer2Input
+  wonBattles?: Prisma.BattleUncheckedCreateNestedManyWithoutWinnerInput
+  inventory?: Prisma.InventoryUncheckedCreateNestedManyWithoutPlayerInput
+  missions?: Prisma.UserMissionUncheckedCreateNestedManyWithoutPlayerInput
+  chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutSenderInput
+  pvpMatches1?: Prisma.PvPMatchUncheckedCreateNestedManyWithoutPlayer1Input
+  pvpMatches2?: Prisma.PvPMatchUncheckedCreateNestedManyWithoutPlayer2Input
+  wonPvPMatches?: Prisma.PvPMatchUncheckedCreateNestedManyWithoutWinnerInput
+}
+
+export type PlayerCreateOrConnectWithoutTrophiesInput = {
+  where: Prisma.PlayerWhereUniqueInput
+  create: Prisma.XOR<Prisma.PlayerCreateWithoutTrophiesInput, Prisma.PlayerUncheckedCreateWithoutTrophiesInput>
+}
+
+export type PlayerUpsertWithoutTrophiesInput = {
+  update: Prisma.XOR<Prisma.PlayerUpdateWithoutTrophiesInput, Prisma.PlayerUncheckedUpdateWithoutTrophiesInput>
+  create: Prisma.XOR<Prisma.PlayerCreateWithoutTrophiesInput, Prisma.PlayerUncheckedCreateWithoutTrophiesInput>
+  where?: Prisma.PlayerWhereInput
+}
+
+export type PlayerUpdateToOneWithWhereWithoutTrophiesInput = {
+  where?: Prisma.PlayerWhereInput
+  data: Prisma.XOR<Prisma.PlayerUpdateWithoutTrophiesInput, Prisma.PlayerUncheckedUpdateWithoutTrophiesInput>
+}
+
+export type PlayerUpdateWithoutTrophiesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  credits?: Prisma.IntFieldUpdateOperationsInput | number
+  level?: Prisma.IntFieldUpdateOperationsInput | number
+  xp?: Prisma.IntFieldUpdateOperationsInput | number
+  pityCounter?: Prisma.IntFieldUpdateOperationsInput | number
+  eloRating?: Prisma.IntFieldUpdateOperationsInput | number
+  matchesPlayed?: Prisma.IntFieldUpdateOperationsInput | number
+  lastLogin?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  battles1?: Prisma.BattleUpdateManyWithoutPlayer1NestedInput
+  battles2?: Prisma.BattleUpdateManyWithoutPlayer2NestedInput
+  wonBattles?: Prisma.BattleUpdateManyWithoutWinnerNestedInput
+  inventory?: Prisma.InventoryUpdateManyWithoutPlayerNestedInput
+  missions?: Prisma.UserMissionUpdateManyWithoutPlayerNestedInput
+  chatMessages?: Prisma.ChatMessageUpdateManyWithoutSenderNestedInput
+  pvpMatches1?: Prisma.PvPMatchUpdateManyWithoutPlayer1NestedInput
+  pvpMatches2?: Prisma.PvPMatchUpdateManyWithoutPlayer2NestedInput
+  wonPvPMatches?: Prisma.PvPMatchUpdateManyWithoutWinnerNestedInput
+}
+
+export type PlayerUncheckedUpdateWithoutTrophiesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  credits?: Prisma.IntFieldUpdateOperationsInput | number
+  level?: Prisma.IntFieldUpdateOperationsInput | number
+  xp?: Prisma.IntFieldUpdateOperationsInput | number
+  pityCounter?: Prisma.IntFieldUpdateOperationsInput | number
+  eloRating?: Prisma.IntFieldUpdateOperationsInput | number
+  matchesPlayed?: Prisma.IntFieldUpdateOperationsInput | number
+  lastLogin?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  battles1?: Prisma.BattleUncheckedUpdateManyWithoutPlayer1NestedInput
+  battles2?: Prisma.BattleUncheckedUpdateManyWithoutPlayer2NestedInput
+  wonBattles?: Prisma.BattleUncheckedUpdateManyWithoutWinnerNestedInput
+  inventory?: Prisma.InventoryUncheckedUpdateManyWithoutPlayerNestedInput
+  missions?: Prisma.UserMissionUncheckedUpdateManyWithoutPlayerNestedInput
+  chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutSenderNestedInput
+  pvpMatches1?: Prisma.PvPMatchUncheckedUpdateManyWithoutPlayer1NestedInput
+  pvpMatches2?: Prisma.PvPMatchUncheckedUpdateManyWithoutPlayer2NestedInput
+  wonPvPMatches?: Prisma.PvPMatchUncheckedUpdateManyWithoutWinnerNestedInput
+}
+
+export type PlayerCreateWithoutChatMessagesInput = {
+  id?: string
+  username: string
+  email?: string | null
+  googleId?: string | null
+  avatarUrl?: string | null
+  credits?: number
+  level?: number
+  xp?: number
+  pityCounter?: number
+  eloRating?: number
+  matchesPlayed?: number
+  lastLogin?: Date | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  battles1?: Prisma.BattleCreateNestedManyWithoutPlayer1Input
+  battles2?: Prisma.BattleCreateNestedManyWithoutPlayer2Input
+  wonBattles?: Prisma.BattleCreateNestedManyWithoutWinnerInput
+  inventory?: Prisma.InventoryCreateNestedManyWithoutPlayerInput
+  missions?: Prisma.UserMissionCreateNestedManyWithoutPlayerInput
+  trophies?: Prisma.TrophyCreateNestedManyWithoutPlayerInput
+  pvpMatches1?: Prisma.PvPMatchCreateNestedManyWithoutPlayer1Input
+  pvpMatches2?: Prisma.PvPMatchCreateNestedManyWithoutPlayer2Input
+  wonPvPMatches?: Prisma.PvPMatchCreateNestedManyWithoutWinnerInput
+}
+
+export type PlayerUncheckedCreateWithoutChatMessagesInput = {
+  id?: string
+  username: string
+  email?: string | null
+  googleId?: string | null
+  avatarUrl?: string | null
+  credits?: number
+  level?: number
+  xp?: number
+  pityCounter?: number
+  eloRating?: number
+  matchesPlayed?: number
+  lastLogin?: Date | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  battles1?: Prisma.BattleUncheckedCreateNestedManyWithoutPlayer1Input
+  battles2?: Prisma.BattleUncheckedCreateNestedManyWithoutPlayer2Input
+  wonBattles?: Prisma.BattleUncheckedCreateNestedManyWithoutWinnerInput
+  inventory?: Prisma.InventoryUncheckedCreateNestedManyWithoutPlayerInput
+  missions?: Prisma.UserMissionUncheckedCreateNestedManyWithoutPlayerInput
+  trophies?: Prisma.TrophyUncheckedCreateNestedManyWithoutPlayerInput
+  pvpMatches1?: Prisma.PvPMatchUncheckedCreateNestedManyWithoutPlayer1Input
+  pvpMatches2?: Prisma.PvPMatchUncheckedCreateNestedManyWithoutPlayer2Input
+  wonPvPMatches?: Prisma.PvPMatchUncheckedCreateNestedManyWithoutWinnerInput
+}
+
+export type PlayerCreateOrConnectWithoutChatMessagesInput = {
+  where: Prisma.PlayerWhereUniqueInput
+  create: Prisma.XOR<Prisma.PlayerCreateWithoutChatMessagesInput, Prisma.PlayerUncheckedCreateWithoutChatMessagesInput>
+}
+
+export type PlayerUpsertWithoutChatMessagesInput = {
+  update: Prisma.XOR<Prisma.PlayerUpdateWithoutChatMessagesInput, Prisma.PlayerUncheckedUpdateWithoutChatMessagesInput>
+  create: Prisma.XOR<Prisma.PlayerCreateWithoutChatMessagesInput, Prisma.PlayerUncheckedCreateWithoutChatMessagesInput>
+  where?: Prisma.PlayerWhereInput
+}
+
+export type PlayerUpdateToOneWithWhereWithoutChatMessagesInput = {
+  where?: Prisma.PlayerWhereInput
+  data: Prisma.XOR<Prisma.PlayerUpdateWithoutChatMessagesInput, Prisma.PlayerUncheckedUpdateWithoutChatMessagesInput>
+}
+
+export type PlayerUpdateWithoutChatMessagesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  credits?: Prisma.IntFieldUpdateOperationsInput | number
+  level?: Prisma.IntFieldUpdateOperationsInput | number
+  xp?: Prisma.IntFieldUpdateOperationsInput | number
+  pityCounter?: Prisma.IntFieldUpdateOperationsInput | number
+  eloRating?: Prisma.IntFieldUpdateOperationsInput | number
+  matchesPlayed?: Prisma.IntFieldUpdateOperationsInput | number
+  lastLogin?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  battles1?: Prisma.BattleUpdateManyWithoutPlayer1NestedInput
+  battles2?: Prisma.BattleUpdateManyWithoutPlayer2NestedInput
+  wonBattles?: Prisma.BattleUpdateManyWithoutWinnerNestedInput
+  inventory?: Prisma.InventoryUpdateManyWithoutPlayerNestedInput
+  missions?: Prisma.UserMissionUpdateManyWithoutPlayerNestedInput
+  trophies?: Prisma.TrophyUpdateManyWithoutPlayerNestedInput
+  pvpMatches1?: Prisma.PvPMatchUpdateManyWithoutPlayer1NestedInput
+  pvpMatches2?: Prisma.PvPMatchUpdateManyWithoutPlayer2NestedInput
+  wonPvPMatches?: Prisma.PvPMatchUpdateManyWithoutWinnerNestedInput
+}
+
+export type PlayerUncheckedUpdateWithoutChatMessagesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  credits?: Prisma.IntFieldUpdateOperationsInput | number
+  level?: Prisma.IntFieldUpdateOperationsInput | number
+  xp?: Prisma.IntFieldUpdateOperationsInput | number
+  pityCounter?: Prisma.IntFieldUpdateOperationsInput | number
+  eloRating?: Prisma.IntFieldUpdateOperationsInput | number
+  matchesPlayed?: Prisma.IntFieldUpdateOperationsInput | number
+  lastLogin?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  battles1?: Prisma.BattleUncheckedUpdateManyWithoutPlayer1NestedInput
+  battles2?: Prisma.BattleUncheckedUpdateManyWithoutPlayer2NestedInput
+  wonBattles?: Prisma.BattleUncheckedUpdateManyWithoutWinnerNestedInput
+  inventory?: Prisma.InventoryUncheckedUpdateManyWithoutPlayerNestedInput
+  missions?: Prisma.UserMissionUncheckedUpdateManyWithoutPlayerNestedInput
+  trophies?: Prisma.TrophyUncheckedUpdateManyWithoutPlayerNestedInput
+  pvpMatches1?: Prisma.PvPMatchUncheckedUpdateManyWithoutPlayer1NestedInput
+  pvpMatches2?: Prisma.PvPMatchUncheckedUpdateManyWithoutPlayer2NestedInput
+  wonPvPMatches?: Prisma.PvPMatchUncheckedUpdateManyWithoutWinnerNestedInput
+}
+
+export type PlayerCreateWithoutPvpMatches1Input = {
+  id?: string
+  username: string
+  email?: string | null
+  googleId?: string | null
+  avatarUrl?: string | null
+  credits?: number
+  level?: number
+  xp?: number
+  pityCounter?: number
+  eloRating?: number
+  matchesPlayed?: number
+  lastLogin?: Date | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  battles1?: Prisma.BattleCreateNestedManyWithoutPlayer1Input
+  battles2?: Prisma.BattleCreateNestedManyWithoutPlayer2Input
+  wonBattles?: Prisma.BattleCreateNestedManyWithoutWinnerInput
+  inventory?: Prisma.InventoryCreateNestedManyWithoutPlayerInput
+  missions?: Prisma.UserMissionCreateNestedManyWithoutPlayerInput
+  trophies?: Prisma.TrophyCreateNestedManyWithoutPlayerInput
+  chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutSenderInput
+  pvpMatches2?: Prisma.PvPMatchCreateNestedManyWithoutPlayer2Input
+  wonPvPMatches?: Prisma.PvPMatchCreateNestedManyWithoutWinnerInput
+}
+
+export type PlayerUncheckedCreateWithoutPvpMatches1Input = {
+  id?: string
+  username: string
+  email?: string | null
+  googleId?: string | null
+  avatarUrl?: string | null
+  credits?: number
+  level?: number
+  xp?: number
+  pityCounter?: number
+  eloRating?: number
+  matchesPlayed?: number
+  lastLogin?: Date | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  battles1?: Prisma.BattleUncheckedCreateNestedManyWithoutPlayer1Input
+  battles2?: Prisma.BattleUncheckedCreateNestedManyWithoutPlayer2Input
+  wonBattles?: Prisma.BattleUncheckedCreateNestedManyWithoutWinnerInput
+  inventory?: Prisma.InventoryUncheckedCreateNestedManyWithoutPlayerInput
+  missions?: Prisma.UserMissionUncheckedCreateNestedManyWithoutPlayerInput
+  trophies?: Prisma.TrophyUncheckedCreateNestedManyWithoutPlayerInput
+  chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutSenderInput
+  pvpMatches2?: Prisma.PvPMatchUncheckedCreateNestedManyWithoutPlayer2Input
+  wonPvPMatches?: Prisma.PvPMatchUncheckedCreateNestedManyWithoutWinnerInput
+}
+
+export type PlayerCreateOrConnectWithoutPvpMatches1Input = {
+  where: Prisma.PlayerWhereUniqueInput
+  create: Prisma.XOR<Prisma.PlayerCreateWithoutPvpMatches1Input, Prisma.PlayerUncheckedCreateWithoutPvpMatches1Input>
+}
+
+export type PlayerCreateWithoutPvpMatches2Input = {
+  id?: string
+  username: string
+  email?: string | null
+  googleId?: string | null
+  avatarUrl?: string | null
+  credits?: number
+  level?: number
+  xp?: number
+  pityCounter?: number
+  eloRating?: number
+  matchesPlayed?: number
+  lastLogin?: Date | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  battles1?: Prisma.BattleCreateNestedManyWithoutPlayer1Input
+  battles2?: Prisma.BattleCreateNestedManyWithoutPlayer2Input
+  wonBattles?: Prisma.BattleCreateNestedManyWithoutWinnerInput
+  inventory?: Prisma.InventoryCreateNestedManyWithoutPlayerInput
+  missions?: Prisma.UserMissionCreateNestedManyWithoutPlayerInput
+  trophies?: Prisma.TrophyCreateNestedManyWithoutPlayerInput
+  chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutSenderInput
+  pvpMatches1?: Prisma.PvPMatchCreateNestedManyWithoutPlayer1Input
+  wonPvPMatches?: Prisma.PvPMatchCreateNestedManyWithoutWinnerInput
+}
+
+export type PlayerUncheckedCreateWithoutPvpMatches2Input = {
+  id?: string
+  username: string
+  email?: string | null
+  googleId?: string | null
+  avatarUrl?: string | null
+  credits?: number
+  level?: number
+  xp?: number
+  pityCounter?: number
+  eloRating?: number
+  matchesPlayed?: number
+  lastLogin?: Date | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  battles1?: Prisma.BattleUncheckedCreateNestedManyWithoutPlayer1Input
+  battles2?: Prisma.BattleUncheckedCreateNestedManyWithoutPlayer2Input
+  wonBattles?: Prisma.BattleUncheckedCreateNestedManyWithoutWinnerInput
+  inventory?: Prisma.InventoryUncheckedCreateNestedManyWithoutPlayerInput
+  missions?: Prisma.UserMissionUncheckedCreateNestedManyWithoutPlayerInput
+  trophies?: Prisma.TrophyUncheckedCreateNestedManyWithoutPlayerInput
+  chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutSenderInput
+  pvpMatches1?: Prisma.PvPMatchUncheckedCreateNestedManyWithoutPlayer1Input
+  wonPvPMatches?: Prisma.PvPMatchUncheckedCreateNestedManyWithoutWinnerInput
+}
+
+export type PlayerCreateOrConnectWithoutPvpMatches2Input = {
+  where: Prisma.PlayerWhereUniqueInput
+  create: Prisma.XOR<Prisma.PlayerCreateWithoutPvpMatches2Input, Prisma.PlayerUncheckedCreateWithoutPvpMatches2Input>
+}
+
+export type PlayerCreateWithoutWonPvPMatchesInput = {
+  id?: string
+  username: string
+  email?: string | null
+  googleId?: string | null
+  avatarUrl?: string | null
+  credits?: number
+  level?: number
+  xp?: number
+  pityCounter?: number
+  eloRating?: number
+  matchesPlayed?: number
+  lastLogin?: Date | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  battles1?: Prisma.BattleCreateNestedManyWithoutPlayer1Input
+  battles2?: Prisma.BattleCreateNestedManyWithoutPlayer2Input
+  wonBattles?: Prisma.BattleCreateNestedManyWithoutWinnerInput
+  inventory?: Prisma.InventoryCreateNestedManyWithoutPlayerInput
+  missions?: Prisma.UserMissionCreateNestedManyWithoutPlayerInput
+  trophies?: Prisma.TrophyCreateNestedManyWithoutPlayerInput
+  chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutSenderInput
+  pvpMatches1?: Prisma.PvPMatchCreateNestedManyWithoutPlayer1Input
+  pvpMatches2?: Prisma.PvPMatchCreateNestedManyWithoutPlayer2Input
+}
+
+export type PlayerUncheckedCreateWithoutWonPvPMatchesInput = {
+  id?: string
+  username: string
+  email?: string | null
+  googleId?: string | null
+  avatarUrl?: string | null
+  credits?: number
+  level?: number
+  xp?: number
+  pityCounter?: number
+  eloRating?: number
+  matchesPlayed?: number
+  lastLogin?: Date | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  battles1?: Prisma.BattleUncheckedCreateNestedManyWithoutPlayer1Input
+  battles2?: Prisma.BattleUncheckedCreateNestedManyWithoutPlayer2Input
+  wonBattles?: Prisma.BattleUncheckedCreateNestedManyWithoutWinnerInput
+  inventory?: Prisma.InventoryUncheckedCreateNestedManyWithoutPlayerInput
+  missions?: Prisma.UserMissionUncheckedCreateNestedManyWithoutPlayerInput
+  trophies?: Prisma.TrophyUncheckedCreateNestedManyWithoutPlayerInput
+  chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutSenderInput
+  pvpMatches1?: Prisma.PvPMatchUncheckedCreateNestedManyWithoutPlayer1Input
+  pvpMatches2?: Prisma.PvPMatchUncheckedCreateNestedManyWithoutPlayer2Input
+}
+
+export type PlayerCreateOrConnectWithoutWonPvPMatchesInput = {
+  where: Prisma.PlayerWhereUniqueInput
+  create: Prisma.XOR<Prisma.PlayerCreateWithoutWonPvPMatchesInput, Prisma.PlayerUncheckedCreateWithoutWonPvPMatchesInput>
+}
+
+export type PlayerUpsertWithoutPvpMatches1Input = {
+  update: Prisma.XOR<Prisma.PlayerUpdateWithoutPvpMatches1Input, Prisma.PlayerUncheckedUpdateWithoutPvpMatches1Input>
+  create: Prisma.XOR<Prisma.PlayerCreateWithoutPvpMatches1Input, Prisma.PlayerUncheckedCreateWithoutPvpMatches1Input>
+  where?: Prisma.PlayerWhereInput
+}
+
+export type PlayerUpdateToOneWithWhereWithoutPvpMatches1Input = {
+  where?: Prisma.PlayerWhereInput
+  data: Prisma.XOR<Prisma.PlayerUpdateWithoutPvpMatches1Input, Prisma.PlayerUncheckedUpdateWithoutPvpMatches1Input>
+}
+
+export type PlayerUpdateWithoutPvpMatches1Input = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  credits?: Prisma.IntFieldUpdateOperationsInput | number
+  level?: Prisma.IntFieldUpdateOperationsInput | number
+  xp?: Prisma.IntFieldUpdateOperationsInput | number
+  pityCounter?: Prisma.IntFieldUpdateOperationsInput | number
+  eloRating?: Prisma.IntFieldUpdateOperationsInput | number
+  matchesPlayed?: Prisma.IntFieldUpdateOperationsInput | number
+  lastLogin?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  battles1?: Prisma.BattleUpdateManyWithoutPlayer1NestedInput
+  battles2?: Prisma.BattleUpdateManyWithoutPlayer2NestedInput
+  wonBattles?: Prisma.BattleUpdateManyWithoutWinnerNestedInput
+  inventory?: Prisma.InventoryUpdateManyWithoutPlayerNestedInput
+  missions?: Prisma.UserMissionUpdateManyWithoutPlayerNestedInput
+  trophies?: Prisma.TrophyUpdateManyWithoutPlayerNestedInput
+  chatMessages?: Prisma.ChatMessageUpdateManyWithoutSenderNestedInput
+  pvpMatches2?: Prisma.PvPMatchUpdateManyWithoutPlayer2NestedInput
+  wonPvPMatches?: Prisma.PvPMatchUpdateManyWithoutWinnerNestedInput
+}
+
+export type PlayerUncheckedUpdateWithoutPvpMatches1Input = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  credits?: Prisma.IntFieldUpdateOperationsInput | number
+  level?: Prisma.IntFieldUpdateOperationsInput | number
+  xp?: Prisma.IntFieldUpdateOperationsInput | number
+  pityCounter?: Prisma.IntFieldUpdateOperationsInput | number
+  eloRating?: Prisma.IntFieldUpdateOperationsInput | number
+  matchesPlayed?: Prisma.IntFieldUpdateOperationsInput | number
+  lastLogin?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  battles1?: Prisma.BattleUncheckedUpdateManyWithoutPlayer1NestedInput
+  battles2?: Prisma.BattleUncheckedUpdateManyWithoutPlayer2NestedInput
+  wonBattles?: Prisma.BattleUncheckedUpdateManyWithoutWinnerNestedInput
+  inventory?: Prisma.InventoryUncheckedUpdateManyWithoutPlayerNestedInput
+  missions?: Prisma.UserMissionUncheckedUpdateManyWithoutPlayerNestedInput
+  trophies?: Prisma.TrophyUncheckedUpdateManyWithoutPlayerNestedInput
+  chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutSenderNestedInput
+  pvpMatches2?: Prisma.PvPMatchUncheckedUpdateManyWithoutPlayer2NestedInput
+  wonPvPMatches?: Prisma.PvPMatchUncheckedUpdateManyWithoutWinnerNestedInput
+}
+
+export type PlayerUpsertWithoutPvpMatches2Input = {
+  update: Prisma.XOR<Prisma.PlayerUpdateWithoutPvpMatches2Input, Prisma.PlayerUncheckedUpdateWithoutPvpMatches2Input>
+  create: Prisma.XOR<Prisma.PlayerCreateWithoutPvpMatches2Input, Prisma.PlayerUncheckedCreateWithoutPvpMatches2Input>
+  where?: Prisma.PlayerWhereInput
+}
+
+export type PlayerUpdateToOneWithWhereWithoutPvpMatches2Input = {
+  where?: Prisma.PlayerWhereInput
+  data: Prisma.XOR<Prisma.PlayerUpdateWithoutPvpMatches2Input, Prisma.PlayerUncheckedUpdateWithoutPvpMatches2Input>
+}
+
+export type PlayerUpdateWithoutPvpMatches2Input = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  credits?: Prisma.IntFieldUpdateOperationsInput | number
+  level?: Prisma.IntFieldUpdateOperationsInput | number
+  xp?: Prisma.IntFieldUpdateOperationsInput | number
+  pityCounter?: Prisma.IntFieldUpdateOperationsInput | number
+  eloRating?: Prisma.IntFieldUpdateOperationsInput | number
+  matchesPlayed?: Prisma.IntFieldUpdateOperationsInput | number
+  lastLogin?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  battles1?: Prisma.BattleUpdateManyWithoutPlayer1NestedInput
+  battles2?: Prisma.BattleUpdateManyWithoutPlayer2NestedInput
+  wonBattles?: Prisma.BattleUpdateManyWithoutWinnerNestedInput
+  inventory?: Prisma.InventoryUpdateManyWithoutPlayerNestedInput
+  missions?: Prisma.UserMissionUpdateManyWithoutPlayerNestedInput
+  trophies?: Prisma.TrophyUpdateManyWithoutPlayerNestedInput
+  chatMessages?: Prisma.ChatMessageUpdateManyWithoutSenderNestedInput
+  pvpMatches1?: Prisma.PvPMatchUpdateManyWithoutPlayer1NestedInput
+  wonPvPMatches?: Prisma.PvPMatchUpdateManyWithoutWinnerNestedInput
+}
+
+export type PlayerUncheckedUpdateWithoutPvpMatches2Input = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  credits?: Prisma.IntFieldUpdateOperationsInput | number
+  level?: Prisma.IntFieldUpdateOperationsInput | number
+  xp?: Prisma.IntFieldUpdateOperationsInput | number
+  pityCounter?: Prisma.IntFieldUpdateOperationsInput | number
+  eloRating?: Prisma.IntFieldUpdateOperationsInput | number
+  matchesPlayed?: Prisma.IntFieldUpdateOperationsInput | number
+  lastLogin?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  battles1?: Prisma.BattleUncheckedUpdateManyWithoutPlayer1NestedInput
+  battles2?: Prisma.BattleUncheckedUpdateManyWithoutPlayer2NestedInput
+  wonBattles?: Prisma.BattleUncheckedUpdateManyWithoutWinnerNestedInput
+  inventory?: Prisma.InventoryUncheckedUpdateManyWithoutPlayerNestedInput
+  missions?: Prisma.UserMissionUncheckedUpdateManyWithoutPlayerNestedInput
+  trophies?: Prisma.TrophyUncheckedUpdateManyWithoutPlayerNestedInput
+  chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutSenderNestedInput
+  pvpMatches1?: Prisma.PvPMatchUncheckedUpdateManyWithoutPlayer1NestedInput
+  wonPvPMatches?: Prisma.PvPMatchUncheckedUpdateManyWithoutWinnerNestedInput
+}
+
+export type PlayerUpsertWithoutWonPvPMatchesInput = {
+  update: Prisma.XOR<Prisma.PlayerUpdateWithoutWonPvPMatchesInput, Prisma.PlayerUncheckedUpdateWithoutWonPvPMatchesInput>
+  create: Prisma.XOR<Prisma.PlayerCreateWithoutWonPvPMatchesInput, Prisma.PlayerUncheckedCreateWithoutWonPvPMatchesInput>
+  where?: Prisma.PlayerWhereInput
+}
+
+export type PlayerUpdateToOneWithWhereWithoutWonPvPMatchesInput = {
+  where?: Prisma.PlayerWhereInput
+  data: Prisma.XOR<Prisma.PlayerUpdateWithoutWonPvPMatchesInput, Prisma.PlayerUncheckedUpdateWithoutWonPvPMatchesInput>
+}
+
+export type PlayerUpdateWithoutWonPvPMatchesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  credits?: Prisma.IntFieldUpdateOperationsInput | number
+  level?: Prisma.IntFieldUpdateOperationsInput | number
+  xp?: Prisma.IntFieldUpdateOperationsInput | number
+  pityCounter?: Prisma.IntFieldUpdateOperationsInput | number
+  eloRating?: Prisma.IntFieldUpdateOperationsInput | number
+  matchesPlayed?: Prisma.IntFieldUpdateOperationsInput | number
+  lastLogin?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  battles1?: Prisma.BattleUpdateManyWithoutPlayer1NestedInput
+  battles2?: Prisma.BattleUpdateManyWithoutPlayer2NestedInput
+  wonBattles?: Prisma.BattleUpdateManyWithoutWinnerNestedInput
+  inventory?: Prisma.InventoryUpdateManyWithoutPlayerNestedInput
+  missions?: Prisma.UserMissionUpdateManyWithoutPlayerNestedInput
+  trophies?: Prisma.TrophyUpdateManyWithoutPlayerNestedInput
+  chatMessages?: Prisma.ChatMessageUpdateManyWithoutSenderNestedInput
+  pvpMatches1?: Prisma.PvPMatchUpdateManyWithoutPlayer1NestedInput
+  pvpMatches2?: Prisma.PvPMatchUpdateManyWithoutPlayer2NestedInput
+}
+
+export type PlayerUncheckedUpdateWithoutWonPvPMatchesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  credits?: Prisma.IntFieldUpdateOperationsInput | number
+  level?: Prisma.IntFieldUpdateOperationsInput | number
+  xp?: Prisma.IntFieldUpdateOperationsInput | number
+  pityCounter?: Prisma.IntFieldUpdateOperationsInput | number
+  eloRating?: Prisma.IntFieldUpdateOperationsInput | number
+  matchesPlayed?: Prisma.IntFieldUpdateOperationsInput | number
+  lastLogin?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  battles1?: Prisma.BattleUncheckedUpdateManyWithoutPlayer1NestedInput
+  battles2?: Prisma.BattleUncheckedUpdateManyWithoutPlayer2NestedInput
+  wonBattles?: Prisma.BattleUncheckedUpdateManyWithoutWinnerNestedInput
+  inventory?: Prisma.InventoryUncheckedUpdateManyWithoutPlayerNestedInput
+  missions?: Prisma.UserMissionUncheckedUpdateManyWithoutPlayerNestedInput
+  trophies?: Prisma.TrophyUncheckedUpdateManyWithoutPlayerNestedInput
+  chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutSenderNestedInput
+  pvpMatches1?: Prisma.PvPMatchUncheckedUpdateManyWithoutPlayer1NestedInput
+  pvpMatches2?: Prisma.PvPMatchUncheckedUpdateManyWithoutPlayer2NestedInput
 }
 
 
@@ -969,6 +2039,12 @@ export type PlayerCountOutputType = {
   battles2: number
   wonBattles: number
   inventory: number
+  missions: number
+  trophies: number
+  chatMessages: number
+  pvpMatches1: number
+  pvpMatches2: number
+  wonPvPMatches: number
 }
 
 export type PlayerCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -976,6 +2052,12 @@ export type PlayerCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions
   battles2?: boolean | PlayerCountOutputTypeCountBattles2Args
   wonBattles?: boolean | PlayerCountOutputTypeCountWonBattlesArgs
   inventory?: boolean | PlayerCountOutputTypeCountInventoryArgs
+  missions?: boolean | PlayerCountOutputTypeCountMissionsArgs
+  trophies?: boolean | PlayerCountOutputTypeCountTrophiesArgs
+  chatMessages?: boolean | PlayerCountOutputTypeCountChatMessagesArgs
+  pvpMatches1?: boolean | PlayerCountOutputTypeCountPvpMatches1Args
+  pvpMatches2?: boolean | PlayerCountOutputTypeCountPvpMatches2Args
+  wonPvPMatches?: boolean | PlayerCountOutputTypeCountWonPvPMatchesArgs
 }
 
 /**
@@ -1016,6 +2098,48 @@ export type PlayerCountOutputTypeCountInventoryArgs<ExtArgs extends runtime.Type
   where?: Prisma.InventoryWhereInput
 }
 
+/**
+ * PlayerCountOutputType without action
+ */
+export type PlayerCountOutputTypeCountMissionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.UserMissionWhereInput
+}
+
+/**
+ * PlayerCountOutputType without action
+ */
+export type PlayerCountOutputTypeCountTrophiesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.TrophyWhereInput
+}
+
+/**
+ * PlayerCountOutputType without action
+ */
+export type PlayerCountOutputTypeCountChatMessagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ChatMessageWhereInput
+}
+
+/**
+ * PlayerCountOutputType without action
+ */
+export type PlayerCountOutputTypeCountPvpMatches1Args<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.PvPMatchWhereInput
+}
+
+/**
+ * PlayerCountOutputType without action
+ */
+export type PlayerCountOutputTypeCountPvpMatches2Args<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.PvPMatchWhereInput
+}
+
+/**
+ * PlayerCountOutputType without action
+ */
+export type PlayerCountOutputTypeCountWonPvPMatchesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.PvPMatchWhereInput
+}
+
 
 export type PlayerSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1027,12 +2151,21 @@ export type PlayerSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   level?: boolean
   xp?: boolean
   pityCounter?: boolean
+  eloRating?: boolean
+  matchesPlayed?: boolean
+  lastLogin?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   battles1?: boolean | Prisma.Player$battles1Args<ExtArgs>
   battles2?: boolean | Prisma.Player$battles2Args<ExtArgs>
   wonBattles?: boolean | Prisma.Player$wonBattlesArgs<ExtArgs>
   inventory?: boolean | Prisma.Player$inventoryArgs<ExtArgs>
+  missions?: boolean | Prisma.Player$missionsArgs<ExtArgs>
+  trophies?: boolean | Prisma.Player$trophiesArgs<ExtArgs>
+  chatMessages?: boolean | Prisma.Player$chatMessagesArgs<ExtArgs>
+  pvpMatches1?: boolean | Prisma.Player$pvpMatches1Args<ExtArgs>
+  pvpMatches2?: boolean | Prisma.Player$pvpMatches2Args<ExtArgs>
+  wonPvPMatches?: boolean | Prisma.Player$wonPvPMatchesArgs<ExtArgs>
   _count?: boolean | Prisma.PlayerCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["player"]>
 
@@ -1048,16 +2181,25 @@ export type PlayerSelectScalar = {
   level?: boolean
   xp?: boolean
   pityCounter?: boolean
+  eloRating?: boolean
+  matchesPlayed?: boolean
+  lastLogin?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type PlayerOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "username" | "email" | "googleId" | "avatarUrl" | "credits" | "level" | "xp" | "pityCounter" | "createdAt" | "updatedAt", ExtArgs["result"]["player"]>
+export type PlayerOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "username" | "email" | "googleId" | "avatarUrl" | "credits" | "level" | "xp" | "pityCounter" | "eloRating" | "matchesPlayed" | "lastLogin" | "createdAt" | "updatedAt", ExtArgs["result"]["player"]>
 export type PlayerInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   battles1?: boolean | Prisma.Player$battles1Args<ExtArgs>
   battles2?: boolean | Prisma.Player$battles2Args<ExtArgs>
   wonBattles?: boolean | Prisma.Player$wonBattlesArgs<ExtArgs>
   inventory?: boolean | Prisma.Player$inventoryArgs<ExtArgs>
+  missions?: boolean | Prisma.Player$missionsArgs<ExtArgs>
+  trophies?: boolean | Prisma.Player$trophiesArgs<ExtArgs>
+  chatMessages?: boolean | Prisma.Player$chatMessagesArgs<ExtArgs>
+  pvpMatches1?: boolean | Prisma.Player$pvpMatches1Args<ExtArgs>
+  pvpMatches2?: boolean | Prisma.Player$pvpMatches2Args<ExtArgs>
+  wonPvPMatches?: boolean | Prisma.Player$wonPvPMatchesArgs<ExtArgs>
   _count?: boolean | Prisma.PlayerCountOutputTypeDefaultArgs<ExtArgs>
 }
 
@@ -1068,6 +2210,12 @@ export type $PlayerPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     battles2: Prisma.$BattlePayload<ExtArgs>[]
     wonBattles: Prisma.$BattlePayload<ExtArgs>[]
     inventory: Prisma.$InventoryPayload<ExtArgs>[]
+    missions: Prisma.$UserMissionPayload<ExtArgs>[]
+    trophies: Prisma.$TrophyPayload<ExtArgs>[]
+    chatMessages: Prisma.$ChatMessagePayload<ExtArgs>[]
+    pvpMatches1: Prisma.$PvPMatchPayload<ExtArgs>[]
+    pvpMatches2: Prisma.$PvPMatchPayload<ExtArgs>[]
+    wonPvPMatches: Prisma.$PvPMatchPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1079,6 +2227,9 @@ export type $PlayerPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     level: number
     xp: number
     pityCounter: number
+    eloRating: number
+    matchesPlayed: number
+    lastLogin: Date
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["player"]>
@@ -1425,6 +2576,12 @@ export interface Prisma__PlayerClient<T, Null = never, ExtArgs extends runtime.T
   battles2<T extends Prisma.Player$battles2Args<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Player$battles2Args<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BattlePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   wonBattles<T extends Prisma.Player$wonBattlesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Player$wonBattlesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BattlePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   inventory<T extends Prisma.Player$inventoryArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Player$inventoryArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$InventoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  missions<T extends Prisma.Player$missionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Player$missionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserMissionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  trophies<T extends Prisma.Player$trophiesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Player$trophiesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TrophyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  chatMessages<T extends Prisma.Player$chatMessagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Player$chatMessagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ChatMessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  pvpMatches1<T extends Prisma.Player$pvpMatches1Args<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Player$pvpMatches1Args<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PvPMatchPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  pvpMatches2<T extends Prisma.Player$pvpMatches2Args<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Player$pvpMatches2Args<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PvPMatchPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  wonPvPMatches<T extends Prisma.Player$wonPvPMatchesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Player$wonPvPMatchesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PvPMatchPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1463,6 +2620,9 @@ export interface PlayerFieldRefs {
   readonly level: Prisma.FieldRef<"Player", 'Int'>
   readonly xp: Prisma.FieldRef<"Player", 'Int'>
   readonly pityCounter: Prisma.FieldRef<"Player", 'Int'>
+  readonly eloRating: Prisma.FieldRef<"Player", 'Int'>
+  readonly matchesPlayed: Prisma.FieldRef<"Player", 'Int'>
+  readonly lastLogin: Prisma.FieldRef<"Player", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"Player", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Player", 'DateTime'>
 }
@@ -1906,6 +3066,150 @@ export type Player$inventoryArgs<ExtArgs extends runtime.Types.Extensions.Intern
   take?: number
   skip?: number
   distinct?: Prisma.InventoryScalarFieldEnum | Prisma.InventoryScalarFieldEnum[]
+}
+
+/**
+ * Player.missions
+ */
+export type Player$missionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the UserMission
+   */
+  select?: Prisma.UserMissionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the UserMission
+   */
+  omit?: Prisma.UserMissionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UserMissionInclude<ExtArgs> | null
+  where?: Prisma.UserMissionWhereInput
+  orderBy?: Prisma.UserMissionOrderByWithRelationInput | Prisma.UserMissionOrderByWithRelationInput[]
+  cursor?: Prisma.UserMissionWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.UserMissionScalarFieldEnum | Prisma.UserMissionScalarFieldEnum[]
+}
+
+/**
+ * Player.trophies
+ */
+export type Player$trophiesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Trophy
+   */
+  select?: Prisma.TrophySelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Trophy
+   */
+  omit?: Prisma.TrophyOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TrophyInclude<ExtArgs> | null
+  where?: Prisma.TrophyWhereInput
+  orderBy?: Prisma.TrophyOrderByWithRelationInput | Prisma.TrophyOrderByWithRelationInput[]
+  cursor?: Prisma.TrophyWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.TrophyScalarFieldEnum | Prisma.TrophyScalarFieldEnum[]
+}
+
+/**
+ * Player.chatMessages
+ */
+export type Player$chatMessagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ChatMessage
+   */
+  select?: Prisma.ChatMessageSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ChatMessage
+   */
+  omit?: Prisma.ChatMessageOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ChatMessageInclude<ExtArgs> | null
+  where?: Prisma.ChatMessageWhereInput
+  orderBy?: Prisma.ChatMessageOrderByWithRelationInput | Prisma.ChatMessageOrderByWithRelationInput[]
+  cursor?: Prisma.ChatMessageWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ChatMessageScalarFieldEnum | Prisma.ChatMessageScalarFieldEnum[]
+}
+
+/**
+ * Player.pvpMatches1
+ */
+export type Player$pvpMatches1Args<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the PvPMatch
+   */
+  select?: Prisma.PvPMatchSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the PvPMatch
+   */
+  omit?: Prisma.PvPMatchOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PvPMatchInclude<ExtArgs> | null
+  where?: Prisma.PvPMatchWhereInput
+  orderBy?: Prisma.PvPMatchOrderByWithRelationInput | Prisma.PvPMatchOrderByWithRelationInput[]
+  cursor?: Prisma.PvPMatchWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.PvPMatchScalarFieldEnum | Prisma.PvPMatchScalarFieldEnum[]
+}
+
+/**
+ * Player.pvpMatches2
+ */
+export type Player$pvpMatches2Args<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the PvPMatch
+   */
+  select?: Prisma.PvPMatchSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the PvPMatch
+   */
+  omit?: Prisma.PvPMatchOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PvPMatchInclude<ExtArgs> | null
+  where?: Prisma.PvPMatchWhereInput
+  orderBy?: Prisma.PvPMatchOrderByWithRelationInput | Prisma.PvPMatchOrderByWithRelationInput[]
+  cursor?: Prisma.PvPMatchWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.PvPMatchScalarFieldEnum | Prisma.PvPMatchScalarFieldEnum[]
+}
+
+/**
+ * Player.wonPvPMatches
+ */
+export type Player$wonPvPMatchesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the PvPMatch
+   */
+  select?: Prisma.PvPMatchSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the PvPMatch
+   */
+  omit?: Prisma.PvPMatchOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PvPMatchInclude<ExtArgs> | null
+  where?: Prisma.PvPMatchWhereInput
+  orderBy?: Prisma.PvPMatchOrderByWithRelationInput | Prisma.PvPMatchOrderByWithRelationInput[]
+  cursor?: Prisma.PvPMatchWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.PvPMatchScalarFieldEnum | Prisma.PvPMatchScalarFieldEnum[]
 }
 
 /**

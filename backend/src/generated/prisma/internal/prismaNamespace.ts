@@ -386,7 +386,12 @@ export const ModelName = {
   Player: 'Player',
   Card: 'Card',
   Inventory: 'Inventory',
-  Battle: 'Battle'
+  Battle: 'Battle',
+  Mission: 'Mission',
+  UserMission: 'UserMission',
+  Trophy: 'Trophy',
+  ChatMessage: 'ChatMessage',
+  PvPMatch: 'PvPMatch'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -402,7 +407,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "player" | "card" | "inventory" | "battle"
+    modelProps: "player" | "card" | "inventory" | "battle" | "mission" | "userMission" | "trophy" | "chatMessage" | "pvPMatch"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -670,6 +675,336 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    Mission: {
+      payload: Prisma.$MissionPayload<ExtArgs>
+      fields: Prisma.MissionFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.MissionFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MissionPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.MissionFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MissionPayload>
+        }
+        findFirst: {
+          args: Prisma.MissionFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MissionPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.MissionFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MissionPayload>
+        }
+        findMany: {
+          args: Prisma.MissionFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MissionPayload>[]
+        }
+        create: {
+          args: Prisma.MissionCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MissionPayload>
+        }
+        createMany: {
+          args: Prisma.MissionCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        delete: {
+          args: Prisma.MissionDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MissionPayload>
+        }
+        update: {
+          args: Prisma.MissionUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MissionPayload>
+        }
+        deleteMany: {
+          args: Prisma.MissionDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.MissionUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        upsert: {
+          args: Prisma.MissionUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MissionPayload>
+        }
+        aggregate: {
+          args: Prisma.MissionAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateMission>
+        }
+        groupBy: {
+          args: Prisma.MissionGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MissionGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.MissionCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MissionCountAggregateOutputType> | number
+        }
+      }
+    }
+    UserMission: {
+      payload: Prisma.$UserMissionPayload<ExtArgs>
+      fields: Prisma.UserMissionFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.UserMissionFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserMissionPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.UserMissionFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserMissionPayload>
+        }
+        findFirst: {
+          args: Prisma.UserMissionFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserMissionPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.UserMissionFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserMissionPayload>
+        }
+        findMany: {
+          args: Prisma.UserMissionFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserMissionPayload>[]
+        }
+        create: {
+          args: Prisma.UserMissionCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserMissionPayload>
+        }
+        createMany: {
+          args: Prisma.UserMissionCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        delete: {
+          args: Prisma.UserMissionDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserMissionPayload>
+        }
+        update: {
+          args: Prisma.UserMissionUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserMissionPayload>
+        }
+        deleteMany: {
+          args: Prisma.UserMissionDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.UserMissionUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        upsert: {
+          args: Prisma.UserMissionUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserMissionPayload>
+        }
+        aggregate: {
+          args: Prisma.UserMissionAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateUserMission>
+        }
+        groupBy: {
+          args: Prisma.UserMissionGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.UserMissionGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.UserMissionCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.UserMissionCountAggregateOutputType> | number
+        }
+      }
+    }
+    Trophy: {
+      payload: Prisma.$TrophyPayload<ExtArgs>
+      fields: Prisma.TrophyFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.TrophyFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TrophyPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.TrophyFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TrophyPayload>
+        }
+        findFirst: {
+          args: Prisma.TrophyFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TrophyPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.TrophyFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TrophyPayload>
+        }
+        findMany: {
+          args: Prisma.TrophyFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TrophyPayload>[]
+        }
+        create: {
+          args: Prisma.TrophyCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TrophyPayload>
+        }
+        createMany: {
+          args: Prisma.TrophyCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        delete: {
+          args: Prisma.TrophyDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TrophyPayload>
+        }
+        update: {
+          args: Prisma.TrophyUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TrophyPayload>
+        }
+        deleteMany: {
+          args: Prisma.TrophyDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.TrophyUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        upsert: {
+          args: Prisma.TrophyUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TrophyPayload>
+        }
+        aggregate: {
+          args: Prisma.TrophyAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateTrophy>
+        }
+        groupBy: {
+          args: Prisma.TrophyGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.TrophyGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.TrophyCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.TrophyCountAggregateOutputType> | number
+        }
+      }
+    }
+    ChatMessage: {
+      payload: Prisma.$ChatMessagePayload<ExtArgs>
+      fields: Prisma.ChatMessageFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ChatMessageFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatMessagePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ChatMessageFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatMessagePayload>
+        }
+        findFirst: {
+          args: Prisma.ChatMessageFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatMessagePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ChatMessageFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatMessagePayload>
+        }
+        findMany: {
+          args: Prisma.ChatMessageFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatMessagePayload>[]
+        }
+        create: {
+          args: Prisma.ChatMessageCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatMessagePayload>
+        }
+        createMany: {
+          args: Prisma.ChatMessageCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        delete: {
+          args: Prisma.ChatMessageDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatMessagePayload>
+        }
+        update: {
+          args: Prisma.ChatMessageUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatMessagePayload>
+        }
+        deleteMany: {
+          args: Prisma.ChatMessageDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ChatMessageUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        upsert: {
+          args: Prisma.ChatMessageUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatMessagePayload>
+        }
+        aggregate: {
+          args: Prisma.ChatMessageAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateChatMessage>
+        }
+        groupBy: {
+          args: Prisma.ChatMessageGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ChatMessageGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ChatMessageCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ChatMessageCountAggregateOutputType> | number
+        }
+      }
+    }
+    PvPMatch: {
+      payload: Prisma.$PvPMatchPayload<ExtArgs>
+      fields: Prisma.PvPMatchFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.PvPMatchFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PvPMatchPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.PvPMatchFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PvPMatchPayload>
+        }
+        findFirst: {
+          args: Prisma.PvPMatchFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PvPMatchPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.PvPMatchFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PvPMatchPayload>
+        }
+        findMany: {
+          args: Prisma.PvPMatchFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PvPMatchPayload>[]
+        }
+        create: {
+          args: Prisma.PvPMatchCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PvPMatchPayload>
+        }
+        createMany: {
+          args: Prisma.PvPMatchCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        delete: {
+          args: Prisma.PvPMatchDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PvPMatchPayload>
+        }
+        update: {
+          args: Prisma.PvPMatchUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PvPMatchPayload>
+        }
+        deleteMany: {
+          args: Prisma.PvPMatchDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.PvPMatchUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        upsert: {
+          args: Prisma.PvPMatchUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PvPMatchPayload>
+        }
+        aggregate: {
+          args: Prisma.PvPMatchAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregatePvPMatch>
+        }
+        groupBy: {
+          args: Prisma.PvPMatchGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PvPMatchGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.PvPMatchCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PvPMatchCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -719,6 +1054,9 @@ export const PlayerScalarFieldEnum = {
   level: 'level',
   xp: 'xp',
   pityCounter: 'pityCounter',
+  eloRating: 'eloRating',
+  matchesPlayed: 'matchesPlayed',
+  lastLogin: 'lastLogin',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -733,6 +1071,8 @@ export const CardScalarFieldEnum = {
   imageUrl: 'imageUrl',
   wikiUrl: 'wikiUrl',
   rarity: 'rarity',
+  tier: 'tier',
+  category: 'category',
   hp: 'hp',
   atk: 'atk',
   def: 'def',
@@ -768,6 +1108,66 @@ export const BattleScalarFieldEnum = {
 } as const
 
 export type BattleScalarFieldEnum = (typeof BattleScalarFieldEnum)[keyof typeof BattleScalarFieldEnum]
+
+
+export const MissionScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  description: 'description',
+  rewardCredits: 'rewardCredits',
+  type: 'type',
+  criteria: 'criteria'
+} as const
+
+export type MissionScalarFieldEnum = (typeof MissionScalarFieldEnum)[keyof typeof MissionScalarFieldEnum]
+
+
+export const UserMissionScalarFieldEnum = {
+  id: 'id',
+  playerId: 'playerId',
+  missionId: 'missionId',
+  progress: 'progress',
+  isCompleted: 'isCompleted',
+  isClaimed: 'isClaimed'
+} as const
+
+export type UserMissionScalarFieldEnum = (typeof UserMissionScalarFieldEnum)[keyof typeof UserMissionScalarFieldEnum]
+
+
+export const TrophyScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  description: 'description',
+  icon: 'icon',
+  playerId: 'playerId',
+  unlockedAt: 'unlockedAt'
+} as const
+
+export type TrophyScalarFieldEnum = (typeof TrophyScalarFieldEnum)[keyof typeof TrophyScalarFieldEnum]
+
+
+export const ChatMessageScalarFieldEnum = {
+  id: 'id',
+  senderId: 'senderId',
+  content: 'content',
+  timestamp: 'timestamp',
+  channel: 'channel'
+} as const
+
+export type ChatMessageScalarFieldEnum = (typeof ChatMessageScalarFieldEnum)[keyof typeof ChatMessageScalarFieldEnum]
+
+
+export const PvPMatchScalarFieldEnum = {
+  id: 'id',
+  player1Id: 'player1Id',
+  player2Id: 'player2Id',
+  status: 'status',
+  winnerId: 'winnerId',
+  logs: 'logs',
+  createdAt: 'createdAt'
+} as const
+
+export type PvPMatchScalarFieldEnum = (typeof PvPMatchScalarFieldEnum)[keyof typeof PvPMatchScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -851,6 +1251,50 @@ export const BattleOrderByRelevanceFieldEnum = {
 export type BattleOrderByRelevanceFieldEnum = (typeof BattleOrderByRelevanceFieldEnum)[keyof typeof BattleOrderByRelevanceFieldEnum]
 
 
+export const MissionOrderByRelevanceFieldEnum = {
+  title: 'title',
+  description: 'description'
+} as const
+
+export type MissionOrderByRelevanceFieldEnum = (typeof MissionOrderByRelevanceFieldEnum)[keyof typeof MissionOrderByRelevanceFieldEnum]
+
+
+export const UserMissionOrderByRelevanceFieldEnum = {
+  playerId: 'playerId'
+} as const
+
+export type UserMissionOrderByRelevanceFieldEnum = (typeof UserMissionOrderByRelevanceFieldEnum)[keyof typeof UserMissionOrderByRelevanceFieldEnum]
+
+
+export const TrophyOrderByRelevanceFieldEnum = {
+  name: 'name',
+  description: 'description',
+  icon: 'icon',
+  playerId: 'playerId'
+} as const
+
+export type TrophyOrderByRelevanceFieldEnum = (typeof TrophyOrderByRelevanceFieldEnum)[keyof typeof TrophyOrderByRelevanceFieldEnum]
+
+
+export const ChatMessageOrderByRelevanceFieldEnum = {
+  senderId: 'senderId',
+  content: 'content',
+  channel: 'channel'
+} as const
+
+export type ChatMessageOrderByRelevanceFieldEnum = (typeof ChatMessageOrderByRelevanceFieldEnum)[keyof typeof ChatMessageOrderByRelevanceFieldEnum]
+
+
+export const PvPMatchOrderByRelevanceFieldEnum = {
+  id: 'id',
+  player1Id: 'player1Id',
+  player2Id: 'player2Id',
+  winnerId: 'winnerId'
+} as const
+
+export type PvPMatchOrderByRelevanceFieldEnum = (typeof PvPMatchOrderByRelevanceFieldEnum)[keyof typeof PvPMatchOrderByRelevanceFieldEnum]
+
+
 
 /**
  * Field references
@@ -886,6 +1330,20 @@ export type EnumRarityFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaMod
 
 
 /**
+ * Reference to a field of type 'Tier'
+ */
+export type EnumTierFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Tier'>
+    
+
+
+/**
+ * Reference to a field of type 'Category'
+ */
+export type EnumCategoryFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Category'>
+    
+
+
+/**
  * Reference to a field of type 'Float'
  */
 export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
@@ -917,6 +1375,20 @@ export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$Prisma
  * Reference to a field of type 'BattleStatus'
  */
 export type EnumBattleStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BattleStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'MissionType'
+ */
+export type EnumMissionTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MissionType'>
+    
+
+
+/**
+ * Reference to a field of type 'PvPStatus'
+ */
+export type EnumPvPStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PvPStatus'>
     
 
 /**
@@ -1018,6 +1490,11 @@ export type GlobalOmitConfig = {
   card?: Prisma.CardOmit
   inventory?: Prisma.InventoryOmit
   battle?: Prisma.BattleOmit
+  mission?: Prisma.MissionOmit
+  userMission?: Prisma.UserMissionOmit
+  trophy?: Prisma.TrophyOmit
+  chatMessage?: Prisma.ChatMessageOmit
+  pvPMatch?: Prisma.PvPMatchOmit
 }
 
 /* Types for Logging */

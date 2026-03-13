@@ -36,3 +36,28 @@ export type Inventory = Prisma.InventoryModel
  * 
  */
 export type Battle = Prisma.BattleModel
+/**
+ * Model Mission
+ * 
+ */
+export type Mission = Prisma.MissionModel
+/**
+ * Model UserMission
+ * 
+ */
+export type UserMission = Prisma.UserMissionModel
+/**
+ * Model Trophy
+ * 
+ */
+export type Trophy = Prisma.TrophyModel
+/**
+ * Model ChatMessage
+ * 
+ */
+export type ChatMessage = Prisma.ChatMessageModel
+/**
+ * Model PvPMatch
+ * 
+ */
+export type PvPMatch = Prisma.PvPMatchModel
