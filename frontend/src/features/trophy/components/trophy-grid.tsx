@@ -18,17 +18,20 @@ const TrophyCard: React.FC<{ trophy: Trophy; index: number }> = ({ trophy, index
   const [isHovered, setIsHovered] = useState(false);
 
   // Determine glow color based on rarity
-  const glowClass = trophy.rarity === 'GOLD' 
-    ? 'border-yellow-500/50 shadow-[0_0_15px_rgba(234,179,8,0.3)] hover:shadow-[0_0_25px_rgba(234,179,8,0.5)]'
-    : 'border-purple-500/50 shadow-[0_0_15px_rgba(168,85,247,0.3)] hover:shadow-[0_0_25px_rgba(168,85,247,0.5)]';
-  
-  const textGlowClass = trophy.rarity === 'GOLD'
-    ? 'text-yellow-400 drop-shadow-[0_0_5px_rgba(234,179,8,0.8)]'
-    : 'text-purple-400 drop-shadow-[0_0_5px_rgba(168,85,247,0.8)]';
+  const glowClass =
+    trophy.rarity === 'GOLD'
+      ? 'border-yellow-500/50 shadow-[0_0_15px_rgba(234,179,8,0.3)] hover:shadow-[0_0_25px_rgba(234,179,8,0.5)]'
+      : 'border-purple-500/50 shadow-[0_0_15px_rgba(168,85,247,0.3)] hover:shadow-[0_0_25px_rgba(168,85,247,0.5)]';
 
-  const bgGradient = trophy.rarity === 'GOLD'
-    ? 'from-yellow-500/5 to-transparent'
-    : 'from-purple-500/5 to-transparent';
+  const textGlowClass =
+    trophy.rarity === 'GOLD'
+      ? 'text-yellow-400 drop-shadow-[0_0_5px_rgba(234,179,8,0.8)]'
+      : 'text-purple-400 drop-shadow-[0_0_5px_rgba(168,85,247,0.8)]';
+
+  const bgGradient =
+    trophy.rarity === 'GOLD'
+      ? 'from-yellow-500/5 to-transparent'
+      : 'from-purple-500/5 to-transparent';
 
   return (
     <motion.div
@@ -41,7 +44,7 @@ const TrophyCard: React.FC<{ trophy: Trophy; index: number }> = ({ trophy, index
         'relative group aspect-square flex flex-col items-center justify-center p-4',
         'bg-black/40 border-2 backdrop-blur-sm overflow-hidden',
         'transition-all duration-300 ease-out cursor-default',
-        glowClass
+        glowClass,
       )}
     >
       {/* HUD Corners */}
@@ -51,17 +54,19 @@ const TrophyCard: React.FC<{ trophy: Trophy; index: number }> = ({ trophy, index
       <div className="absolute bottom-0 right-0 size-2 border-b-2 border-r-2 border-current opacity-40" />
 
       {/* Background scanline effect */}
-      <div className={cn(
-        "absolute inset-0 bg-gradient-to-b opacity-20 pointer-events-none",
-        bgGradient
-      )} />
+      <div
+        className={cn(
+          'absolute inset-0 bg-gradient-to-b opacity-20 pointer-events-none',
+          bgGradient,
+        )}
+      />
 
       {/* Icon Area */}
       <div className="relative z-10 mb-3">
         <motion.div
           animate={isHovered ? { rotate: [0, -10, 10, 0], scale: 1.1 } : {}}
           transition={{ duration: 0.5 }}
-          className={cn("size-12 flex items-center justify-center", textGlowClass)}
+          className={cn('size-12 flex items-center justify-center', textGlowClass)}
         >
           {/* Use the provided icon URL if available, otherwise default icon */}
           {trophy.icon && trophy.icon.startsWith('http') ? (
@@ -70,17 +75,19 @@ const TrophyCard: React.FC<{ trophy: Trophy; index: number }> = ({ trophy, index
             <TrophyIcon className="size-10" />
           )}
         </motion.div>
-        
+
         {trophy.rarity === 'GOLD' && (
           <Sparkles className="absolute -top-1 -right-1 size-4 text-yellow-400 animate-pulse" />
         )}
       </div>
 
       {/* Trophy Name */}
-      <h3 className={cn(
-        "relative z-10 text-xs font-black uppercase tracking-[0.2em] text-center font-mono",
-        textGlowClass
-      )}>
+      <h3
+        className={cn(
+          'relative z-10 text-xs font-black uppercase tracking-[0.2em] text-center font-mono',
+          textGlowClass,
+        )}
+      >
         {trophy.name}
       </h3>
 
@@ -93,7 +100,7 @@ const TrophyCard: React.FC<{ trophy: Trophy; index: number }> = ({ trophy, index
             exit={{ opacity: 0, y: 5 }}
             className="absolute inset-0 z-20 bg-black/90 p-4 flex flex-col items-center justify-center text-center"
           >
-            <div className={cn("text-[10px] font-mono uppercase mb-2 opacity-50", textGlowClass)}>
+            <div className={cn('text-[10px] font-mono uppercase mb-2 opacity-50', textGlowClass)}>
               DATA_EXTRACTED
             </div>
             <p className="text-[11px] font-mono leading-relaxed text-white/90 uppercase tracking-tight">
@@ -107,9 +114,11 @@ const TrophyCard: React.FC<{ trophy: Trophy; index: number }> = ({ trophy, index
       </AnimatePresence>
 
       {/* Hover decoration */}
-      <div className={cn(
-        "absolute inset-0 border border-white/0 transition-colors group-hover:border-white/10 pointer-events-none"
-      )} />
+      <div
+        className={cn(
+          'absolute inset-0 border border-white/0 transition-colors group-hover:border-white/10 pointer-events-none',
+        )}
+      />
     </motion.div>
   );
 };

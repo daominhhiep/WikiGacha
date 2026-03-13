@@ -11,7 +11,15 @@ import axios from 'axios';
 // External counter for unique IDs
 let particleBurstIdCounter = 0;
 
-const Particle = ({ color, angle, distance }: { color: string; angle: number; distance: number }) => {
+const Particle = ({
+  color,
+  angle,
+  distance,
+}: {
+  color: string;
+  angle: number;
+  distance: number;
+}) => {
   return (
     <motion.div
       initial={{ x: 0, y: 0, opacity: 1, scale: 1 }}
@@ -218,7 +226,11 @@ const GachaReveal: React.FC<GachaRevealProps> = ({
             </div>
           ) : isLoading ? (
             Array.from({ length: 5 }).map((_, i) => (
-              <motion.div key={`placeholder-${i}`} variants={itemVariants} className="flex-shrink-0">
+              <motion.div
+                key={`placeholder-${i}`}
+                variants={itemVariants}
+                className="flex-shrink-0"
+              >
                 <div className="h-[22rem] w-48 border-2 border-primary/10 bg-black/40 p-3 flex flex-col items-center justify-center gap-4 opacity-30 overflow-hidden relative">
                   <div className="absolute inset-0 bg-gradient-to-b from-transparent via-primary/5 to-transparent h-1/3 w-full animate-scan" />
                   <Loader2 className="size-10 animate-spin text-primary/40" />

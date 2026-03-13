@@ -50,6 +50,8 @@ const navItems = [
   { label: 'Gacha', path: '/gacha' },
   { label: 'Collection', path: '/collection' },
   { label: 'Battle', path: '/battle' },
+  { label: 'Missions', path: '/missions' },
+  { label: 'Trophies', path: '/trophies' },
 ];
 
 export function Navbar() {

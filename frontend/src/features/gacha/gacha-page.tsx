@@ -70,8 +70,8 @@ const GachaPage: React.FC = () => {
           Wikipedia Pack
         </h1>
         <p className="text-[10px] font-mono text-muted-foreground max-w-lg mx-auto opacity-80 uppercase leading-tight">
-          Accessing the infinite multiverse library. Extract article data and convert to combat-ready
-          assets.
+          Accessing the infinite multiverse library. Extract article data and convert to
+          combat-ready assets.
         </p>
       </div>
 

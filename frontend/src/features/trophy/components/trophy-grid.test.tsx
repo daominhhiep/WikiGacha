@@ -41,14 +41,14 @@ describe('TrophyGrid', () => {
 
   it('shows description when hovered', async () => {
     render(<TrophyGrid trophies={mockTrophies} />);
-    
+
     const trophyName = screen.getByText('First Blood');
     const card = trophyName.closest('.relative');
-    
+
     if (card) {
       fireEvent.mouseEnter(card);
     }
-    
+
     expect(screen.getByText('DATA_EXTRACTED')).toBeInTheDocument();
     expect(screen.getByText('First win in battle')).toBeInTheDocument();
   });
