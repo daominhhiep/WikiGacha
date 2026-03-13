@@ -1,8 +1,8 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Card from '@/components/card';
-import { InventoryItem } from './use-collection';
-import { Star, Clock, Filter, Search } from 'lucide-react';
+import type { InventoryItem } from './use-collection';
+import { Star, Clock, Search } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface CollectionGridProps {

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useCollection, useToggleFavorite, InventoryItem } from './use-collection';
+import { useCollection, useToggleFavorite, type InventoryItem } from './use-collection';
 import CollectionGrid from './collection-grid';
 import CardDetail from './card-detail';
 import CollectionFilters, { SortOption } from './collection-filters';

@@ -2,7 +2,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { vi, describe, it, expect } from 'vitest';
 import CardDetail from './card-detail';
 import { Rarity } from '@/components/card';
-import { InventoryItem } from './use-collection';
+import type { InventoryItem } from './use-collection';
 
 const mockItem: InventoryItem = {
   id: 'inv-1',
