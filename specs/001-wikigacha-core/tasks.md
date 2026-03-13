@@ -72,15 +72,15 @@
 **Independent Test**: Navigate to Collection view, see all cards owned by the player, click one to see full Wikipedia summary.
 
 ### Tests for User Story 2
-- [ ] T021 [P] [US2] Unit test for Inventory service in `backend/src/modules/collection/collection.service.spec.ts`
-- [ ] T022 [US2] Integration test for `GET /collection` in `backend/test/collection.e2e-spec.ts`
+- [x] T021 [P] [US2] Unit test for Inventory service in `backend/src/modules/collection/collection.service.spec.ts`
+- [x] T022 [US2] Integration test for `GET /collection` in `backend/test/collection.e2e-spec.ts`
 
 ### Implementation for User Story 2
-- [ ] T023 [P] [US2] Implement Inventory Service to fetch player cards in `backend/src/modules/collection/collection.service.ts`
-- [ ] T024 [US2] Implement Collection Controller and `GET /collection` in `backend/src/modules/collection/collection.controller.ts`
-- [ ] T025 [P] [US2] Create Collection Grid component in `frontend/src/features/collection/CollectionGrid.tsx`
-- [ ] T026 [US2] Implement Card Detail Modal with Wikipedia summary in `frontend/src/features/collection/CardDetail.tsx`
-- [ ] T027 [US2] Add filtering/sorting by rarity in `frontend/src/features/collection/CollectionFilters.tsx`
+- [x] T023 [P] [US2] Implement Inventory Service to fetch player cards in `backend/src/modules/collection/collection.service.ts`
+- [x] T024 [US2] Implement Collection Controller and `GET /collection` in `backend/src/modules/collection/collection.controller.ts`
+- [x] T025 [P] [US2] Create Collection Grid component in `frontend/src/features/collection/CollectionGrid.tsx`
+- [x] T026 [US2] Implement Card Detail Modal with Wikipedia summary in `frontend/src/features/collection/CardDetail.tsx`
+- [x] T027 [US2] Add filtering/sorting by rarity in `frontend/src/features/collection/CollectionFilters.tsx`
 
 **Checkpoint**: User Story 2 is functional. Collection can be browsed and managed.
 

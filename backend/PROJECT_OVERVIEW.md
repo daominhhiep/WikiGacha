@@ -18,6 +18,18 @@ Wikigacha is a multiverse-themed gacha game where every Wikipedia article is a c
 ## 🧬 Design System (Cyberpunk)
 - **Anti-Softness Rule:** No rounded corners (`rounded-none`).
 - **HUD Elements:** Decorative scanning lines and HUD corners.
+- **Rarity System (Q-Score):**
+  Based on Wikipedia article quality score from **WikiRank (0-100)**. [WikiRank](https://wikirank.net/)
+  
+  | Rank | Meaning | Q-Score | Multiplier |
+  | :--- | :--- | :--- | :--- |
+  | **LR** | Legend Rare | 100 (Peak Quality) | 1.5x |
+  | **UR** | Ultra Rare | 90+ | 1.3x |
+  | **SSR** | Super Special Rare | 80+ | 1.1x |
+  | **SR** | Super Rare | 60+ | 0.9x |
+  | **R** | Rare | 35+ | 0.7x |
+  | **UC** | Uncommon | 20+ | 0.5x |
+  | **C** | Common | Below 20 | 0.3x |
 - **Color Palette:** Neon Cyan (R), Purple (SR), and Gold (SSR) accents on a deep space background.
 - **Monospace Typography:** All numeric data and IDs use `JetBrains Mono` or `Fira Code`.
 

@@ -32,6 +32,8 @@ export type CardAvgAggregateOutputType = {
   def: number | null
   pageViews: number | null
   languageCount: number | null
+  quality: number | null
+  popularity: number | null
 }
 
 export type CardSumAggregateOutputType = {
@@ -40,6 +42,8 @@ export type CardSumAggregateOutputType = {
   def: number | null
   pageViews: number | null
   languageCount: number | null
+  quality: number | null
+  popularity: number | null
 }
 
 export type CardMinAggregateOutputType = {
@@ -54,6 +58,8 @@ export type CardMinAggregateOutputType = {
   def: number | null
   pageViews: number | null
   languageCount: number | null
+  quality: number | null
+  popularity: number | null
   createdAt: Date | null
 }
 
@@ -69,6 +75,8 @@ export type CardMaxAggregateOutputType = {
   def: number | null
   pageViews: number | null
   languageCount: number | null
+  quality: number | null
+  popularity: number | null
   createdAt: Date | null
 }
 
@@ -84,6 +92,8 @@ export type CardCountAggregateOutputType = {
   def: number
   pageViews: number
   languageCount: number
+  quality: number
+  popularity: number
   createdAt: number
   _all: number
 }
@@ -95,6 +105,8 @@ export type CardAvgAggregateInputType = {
   def?: true
   pageViews?: true
   languageCount?: true
+  quality?: true
+  popularity?: true
 }
 
 export type CardSumAggregateInputType = {
@@ -103,6 +115,8 @@ export type CardSumAggregateInputType = {
   def?: true
   pageViews?: true
   languageCount?: true
+  quality?: true
+  popularity?: true
 }
 
 export type CardMinAggregateInputType = {
@@ -117,6 +131,8 @@ export type CardMinAggregateInputType = {
   def?: true
   pageViews?: true
   languageCount?: true
+  quality?: true
+  popularity?: true
   createdAt?: true
 }
 
@@ -132,6 +148,8 @@ export type CardMaxAggregateInputType = {
   def?: true
   pageViews?: true
   languageCount?: true
+  quality?: true
+  popularity?: true
   createdAt?: true
 }
 
@@ -147,6 +165,8 @@ export type CardCountAggregateInputType = {
   def?: true
   pageViews?: true
   languageCount?: true
+  quality?: true
+  popularity?: true
   createdAt?: true
   _all?: true
 }
@@ -249,6 +269,8 @@ export type CardGroupByOutputType = {
   def: number
   pageViews: number
   languageCount: number
+  quality: number
+  popularity: number
   createdAt: Date
   _count: CardCountAggregateOutputType | null
   _avg: CardAvgAggregateOutputType | null
@@ -287,6 +309,8 @@ export type CardWhereInput = {
   def?: Prisma.IntFilter<"Card"> | number
   pageViews?: Prisma.IntFilter<"Card"> | number
   languageCount?: Prisma.IntFilter<"Card"> | number
+  quality?: Prisma.FloatFilter<"Card"> | number
+  popularity?: Prisma.FloatFilter<"Card"> | number
   createdAt?: Prisma.DateTimeFilter<"Card"> | Date | string
   inventory?: Prisma.InventoryListRelationFilter
 }
@@ -303,6 +327,8 @@ export type CardOrderByWithRelationInput = {
   def?: Prisma.SortOrder
   pageViews?: Prisma.SortOrder
   languageCount?: Prisma.SortOrder
+  quality?: Prisma.SortOrder
+  popularity?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   inventory?: Prisma.InventoryOrderByRelationAggregateInput
   _relevance?: Prisma.CardOrderByRelevanceInput
@@ -323,6 +349,8 @@ export type CardWhereUniqueInput = Prisma.AtLeast<{
   def?: Prisma.IntFilter<"Card"> | number
   pageViews?: Prisma.IntFilter<"Card"> | number
   languageCount?: Prisma.IntFilter<"Card"> | number
+  quality?: Prisma.FloatFilter<"Card"> | number
+  popularity?: Prisma.FloatFilter<"Card"> | number
   createdAt?: Prisma.DateTimeFilter<"Card"> | Date | string
   inventory?: Prisma.InventoryListRelationFilter
 }, "id">
@@ -339,6 +367,8 @@ export type CardOrderByWithAggregationInput = {
   def?: Prisma.SortOrder
   pageViews?: Prisma.SortOrder
   languageCount?: Prisma.SortOrder
+  quality?: Prisma.SortOrder
+  popularity?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.CardCountOrderByAggregateInput
   _avg?: Prisma.CardAvgOrderByAggregateInput
@@ -362,6 +392,8 @@ export type CardScalarWhereWithAggregatesInput = {
   def?: Prisma.IntWithAggregatesFilter<"Card"> | number
   pageViews?: Prisma.IntWithAggregatesFilter<"Card"> | number
   languageCount?: Prisma.IntWithAggregatesFilter<"Card"> | number
+  quality?: Prisma.FloatWithAggregatesFilter<"Card"> | number
+  popularity?: Prisma.FloatWithAggregatesFilter<"Card"> | number
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Card"> | Date | string
 }
 
@@ -377,6 +409,8 @@ export type CardCreateInput = {
   def: number
   pageViews: number
   languageCount: number
+  quality?: number
+  popularity?: number
   createdAt?: Date | string
   inventory?: Prisma.InventoryCreateNestedManyWithoutCardInput
 }
@@ -393,6 +427,8 @@ export type CardUncheckedCreateInput = {
   def: number
   pageViews: number
   languageCount: number
+  quality?: number
+  popularity?: number
   createdAt?: Date | string
   inventory?: Prisma.InventoryUncheckedCreateNestedManyWithoutCardInput
 }
@@ -409,6 +445,8 @@ export type CardUpdateInput = {
   def?: Prisma.IntFieldUpdateOperationsInput | number
   pageViews?: Prisma.IntFieldUpdateOperationsInput | number
   languageCount?: Prisma.IntFieldUpdateOperationsInput | number
+  quality?: Prisma.FloatFieldUpdateOperationsInput | number
+  popularity?: Prisma.FloatFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   inventory?: Prisma.InventoryUpdateManyWithoutCardNestedInput
 }
@@ -425,6 +463,8 @@ export type CardUncheckedUpdateInput = {
   def?: Prisma.IntFieldUpdateOperationsInput | number
   pageViews?: Prisma.IntFieldUpdateOperationsInput | number
   languageCount?: Prisma.IntFieldUpdateOperationsInput | number
+  quality?: Prisma.FloatFieldUpdateOperationsInput | number
+  popularity?: Prisma.FloatFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   inventory?: Prisma.InventoryUncheckedUpdateManyWithoutCardNestedInput
 }
@@ -441,6 +481,8 @@ export type CardCreateManyInput = {
   def: number
   pageViews: number
   languageCount: number
+  quality?: number
+  popularity?: number
   createdAt?: Date | string
 }
 
@@ -456,6 +498,8 @@ export type CardUpdateManyMutationInput = {
   def?: Prisma.IntFieldUpdateOperationsInput | number
   pageViews?: Prisma.IntFieldUpdateOperationsInput | number
   languageCount?: Prisma.IntFieldUpdateOperationsInput | number
+  quality?: Prisma.FloatFieldUpdateOperationsInput | number
+  popularity?: Prisma.FloatFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -471,6 +515,8 @@ export type CardUncheckedUpdateManyInput = {
   def?: Prisma.IntFieldUpdateOperationsInput | number
   pageViews?: Prisma.IntFieldUpdateOperationsInput | number
   languageCount?: Prisma.IntFieldUpdateOperationsInput | number
+  quality?: Prisma.FloatFieldUpdateOperationsInput | number
+  popularity?: Prisma.FloatFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -492,6 +538,8 @@ export type CardCountOrderByAggregateInput = {
   def?: Prisma.SortOrder
   pageViews?: Prisma.SortOrder
   languageCount?: Prisma.SortOrder
+  quality?: Prisma.SortOrder
+  popularity?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -501,6 +549,8 @@ export type CardAvgOrderByAggregateInput = {
   def?: Prisma.SortOrder
   pageViews?: Prisma.SortOrder
   languageCount?: Prisma.SortOrder
+  quality?: Prisma.SortOrder
+  popularity?: Prisma.SortOrder
 }
 
 export type CardMaxOrderByAggregateInput = {
@@ -515,6 +565,8 @@ export type CardMaxOrderByAggregateInput = {
   def?: Prisma.SortOrder
   pageViews?: Prisma.SortOrder
   languageCount?: Prisma.SortOrder
+  quality?: Prisma.SortOrder
+  popularity?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -530,6 +582,8 @@ export type CardMinOrderByAggregateInput = {
   def?: Prisma.SortOrder
   pageViews?: Prisma.SortOrder
   languageCount?: Prisma.SortOrder
+  quality?: Prisma.SortOrder
+  popularity?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -539,6 +593,8 @@ export type CardSumOrderByAggregateInput = {
   def?: Prisma.SortOrder
   pageViews?: Prisma.SortOrder
   languageCount?: Prisma.SortOrder
+  quality?: Prisma.SortOrder
+  popularity?: Prisma.SortOrder
 }
 
 export type CardScalarRelationFilter = {
@@ -548,6 +604,14 @@ export type CardScalarRelationFilter = {
 
 export type EnumRarityFieldUpdateOperationsInput = {
   set?: $Enums.Rarity
+}
+
+export type FloatFieldUpdateOperationsInput = {
+  set?: number
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
 }
 
 export type CardCreateNestedOneWithoutInventoryInput = {
@@ -576,6 +640,8 @@ export type CardCreateWithoutInventoryInput = {
   def: number
   pageViews: number
   languageCount: number
+  quality?: number
+  popularity?: number
   createdAt?: Date | string
 }
 
@@ -591,6 +657,8 @@ export type CardUncheckedCreateWithoutInventoryInput = {
   def: number
   pageViews: number
   languageCount: number
+  quality?: number
+  popularity?: number
   createdAt?: Date | string
 }
 
@@ -622,6 +690,8 @@ export type CardUpdateWithoutInventoryInput = {
   def?: Prisma.IntFieldUpdateOperationsInput | number
   pageViews?: Prisma.IntFieldUpdateOperationsInput | number
   languageCount?: Prisma.IntFieldUpdateOperationsInput | number
+  quality?: Prisma.FloatFieldUpdateOperationsInput | number
+  popularity?: Prisma.FloatFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -637,6 +707,8 @@ export type CardUncheckedUpdateWithoutInventoryInput = {
   def?: Prisma.IntFieldUpdateOperationsInput | number
   pageViews?: Prisma.IntFieldUpdateOperationsInput | number
   languageCount?: Prisma.IntFieldUpdateOperationsInput | number
+  quality?: Prisma.FloatFieldUpdateOperationsInput | number
+  popularity?: Prisma.FloatFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -683,6 +755,8 @@ export type CardSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   def?: boolean
   pageViews?: boolean
   languageCount?: boolean
+  quality?: boolean
+  popularity?: boolean
   createdAt?: boolean
   inventory?: boolean | Prisma.Card$inventoryArgs<ExtArgs>
   _count?: boolean | Prisma.CardCountOutputTypeDefaultArgs<ExtArgs>
@@ -702,10 +776,12 @@ export type CardSelectScalar = {
   def?: boolean
   pageViews?: boolean
   languageCount?: boolean
+  quality?: boolean
+  popularity?: boolean
   createdAt?: boolean
 }
 
-export type CardOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "summary" | "imageUrl" | "wikiUrl" | "rarity" | "hp" | "atk" | "def" | "pageViews" | "languageCount" | "createdAt", ExtArgs["result"]["card"]>
+export type CardOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "summary" | "imageUrl" | "wikiUrl" | "rarity" | "hp" | "atk" | "def" | "pageViews" | "languageCount" | "quality" | "popularity" | "createdAt", ExtArgs["result"]["card"]>
 export type CardInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   inventory?: boolean | Prisma.Card$inventoryArgs<ExtArgs>
   _count?: boolean | Prisma.CardCountOutputTypeDefaultArgs<ExtArgs>
@@ -728,6 +804,8 @@ export type $CardPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     def: number
     pageViews: number
     languageCount: number
+    quality: number
+    popularity: number
     createdAt: Date
   }, ExtArgs["result"]["card"]>
   composites: {}
@@ -1110,6 +1188,8 @@ export interface CardFieldRefs {
   readonly def: Prisma.FieldRef<"Card", 'Int'>
   readonly pageViews: Prisma.FieldRef<"Card", 'Int'>
   readonly languageCount: Prisma.FieldRef<"Card", 'Int'>
+  readonly quality: Prisma.FieldRef<"Card", 'Float'>
+  readonly popularity: Prisma.FieldRef<"Card", 'Float'>
   readonly createdAt: Prisma.FieldRef<"Card", 'DateTime'>
 }
     

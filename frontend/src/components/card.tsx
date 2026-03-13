@@ -8,11 +8,13 @@ import { ExternalLink, Heart, Sword, Shield, Sparkles } from 'lucide-react';
  * Using const object for erasableSyntaxOnly compatibility.
  */
 export const Rarity = {
-  N: 'N',
+  C: 'C',
+  UC: 'UC',
   R: 'R',
-  S: 'S',
   SR: 'SR',
   SSR: 'SSR',
+  UR: 'UR',
+  LR: 'LR',
 } as const;
 
 export type Rarity = (typeof Rarity)[keyof typeof Rarity];
@@ -50,16 +52,20 @@ interface CardProps {
 
 const getRarityBorder = (rarity: Rarity) => {
   switch (rarity) {
+    case Rarity.LR:
+      return 'border-rarity-lr shadow-[0_0_30px_rgba(168,85,247,0.8)]';
+    case Rarity.UR:
+      return 'border-rarity-ur shadow-[0_0_20px_rgba(234,179,8,0.6)]';
     case Rarity.SSR:
-      return 'border-rarity-ssr shadow-[0_0_20px_rgba(255,215,0,0.5)]';
+      return 'border-rarity-ssr shadow-[0_0_20px_rgba(239,68,68,0.5)]';
     case Rarity.SR:
-      return 'border-rarity-sr shadow-[0_0_20px_rgba(176,38,255,0.5)]';
-    case Rarity.S:
-      return 'border-rarity-s shadow-[0_0_20px_rgba(57,255,20,0.5)]';
+      return 'border-rarity-sr shadow-[0_0_20px_rgba(59,130,246,0.5)]';
     case Rarity.R:
-      return 'border-rarity-r shadow-[0_0_20px_rgba(0,240,255,0.5)]';
+      return 'border-rarity-r shadow-[0_0_20px_rgba(34,197,94,0.5)]';
+    case Rarity.UC:
+      return 'border-rarity-uc shadow-[0_0_15px_rgba(255,255,255,0.3)]';
     default:
-      return 'border-rarity-n';
+      return 'border-rarity-c';
   }
 };
 
@@ -68,16 +74,20 @@ const getRarityBorder = (rarity: Rarity) => {
  */
 const getRarityTextColor = (rarity: Rarity) => {
   switch (rarity) {
+    case Rarity.LR:
+      return 'text-rarity-lr';
+    case Rarity.UR:
+      return 'text-rarity-ur';
     case Rarity.SSR:
       return 'text-rarity-ssr';
     case Rarity.SR:
       return 'text-rarity-sr';
-    case Rarity.S:
-      return 'text-rarity-s';
     case Rarity.R:
       return 'text-rarity-r';
+    case Rarity.UC:
+      return 'text-rarity-uc';
     default:
-      return 'text-rarity-n';
+      return 'text-rarity-c';
   }
 };
 
@@ -142,24 +152,37 @@ const Card: React.FC<CardProps> = ({
             className="flex flex-col h-full"
           >
             {/* Rare Card Effects */}
-            {card.rarity === Rarity.SSR && (
+            {(card.rarity === Rarity.SSR || card.rarity === Rarity.UR || card.rarity === Rarity.LR) && (
               <>
                 <motion.div
                   animate={{ opacity: [0.1, 0.4, 0.1], rotate: 360 }}
                   transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
-                  className="absolute -inset-20 bg-gradient-to-tr from-rarity-ssr/30 via-transparent to-rarity-ssr/30 blur-[100px] z-[-1]"
+                  className={cn(
+                    "absolute -inset-20 blur-[100px] z-[-1]",
+                    card.rarity === Rarity.LR ? "bg-gradient-to-tr from-rarity-lr/30 via-transparent to-rarity-lr/30" :
+                    card.rarity === Rarity.UR ? "bg-gradient-to-tr from-rarity-ur/30 via-transparent to-rarity-ur/30" :
+                    "bg-gradient-to-tr from-rarity-ssr/30 via-transparent to-rarity-ssr/30"
+                  )}
                 />
                 <div className="absolute top-2 left-2 z-20">
-                  <Sparkles className="size-5 text-rarity-ssr animate-bounce" />
+                  <Sparkles className={cn(
+                    "size-5 animate-bounce",
+                    card.rarity === Rarity.LR ? "text-rarity-lr" :
+                    card.rarity === Rarity.UR ? "text-rarity-ur" :
+                    "text-rarity-ssr"
+                  )} />
                 </div>
               </>
             )}
 
-            {card.rarity === Rarity.SR && (
+            {(card.rarity === Rarity.SR || card.rarity === Rarity.R) && (
               <motion.div
                 animate={{ opacity: [0.1, 0.3, 0.1] }}
                 transition={{ duration: 2, repeat: Infinity }}
-                className="absolute -inset-10 bg-rarity-sr/10 blur-[60px] z-[-1]"
+                className={cn(
+                  "absolute -inset-10 blur-[60px] z-[-1]",
+                  card.rarity === Rarity.SR ? "bg-rarity-sr/10" : "bg-rarity-r/10"
+                )}
               />
             )}
 

@@ -18,6 +18,7 @@ vi.mock('../auth/auth-store', () => ({
   useAuthStore: vi.fn(() => ({
     accessToken: 'fake-token',
     deductCredits: vi.fn(),
+    updatePlayerStats: vi.fn(),
   })),
 }));
 
@@ -64,7 +65,7 @@ describe('useOpenPack', () => {
         summary: 'Summary content',
         imageUrl: 'http://image.url',
         wikiUrl: 'http://wiki.url',
-        rarity: Rarity.N,
+        rarity: Rarity.C,
         hp: 100,
         atk: 20,
         def: 15,

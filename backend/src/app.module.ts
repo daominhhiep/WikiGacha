@@ -6,6 +6,7 @@ import { PrismaModule } from './common/prisma/prisma.module';
 import { RedisModule } from './common/redis/redis.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { CardModule } from './modules/card/card.module';
+import { CollectionModule } from './modules/collection/collection.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { CardModule } from './modules/card/card.module';
     RedisModule,
     AuthModule,
     CardModule,
+    CollectionModule,
   ],
   controllers: [AppController],
   providers: [AppService],

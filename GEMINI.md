@@ -34,6 +34,7 @@ TypeScript (Node.js 20+): Follow standard conventions
 @./docs/testing.md
 @./docs/ux-ui-guideline.md
 @./docs/mcp-management.md
+@./docs/pull_request_template.md
 ```
 
 

@@ -22,6 +22,14 @@ describe('Story 1: Guest User Opens Pack (e2e)', () => {
         content_urls: { desktop: { page: `https://en.wikipedia.org/wiki/${title}` } },
       }),
     ),
+    getArticleStats: jest.fn().mockResolvedValue({
+      pageViews: 1000,
+      languageCount: 5,
+    }),
+    getGlobalStats: jest.fn().mockResolvedValue({
+      articleCount: 7000000,
+      totalMonthlyViews: 10500000000,
+    }),
   };
 
   const mockRedisService = {

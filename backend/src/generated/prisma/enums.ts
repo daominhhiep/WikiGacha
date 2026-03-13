@@ -10,11 +10,13 @@
 */
 
 export const Rarity = {
-  N: 'N',
+  C: 'C',
+  UC: 'UC',
   R: 'R',
-  S: 'S',
   SR: 'SR',
-  SSR: 'SSR'
+  SSR: 'SSR',
+  UR: 'UR',
+  LR: 'LR'
 } as const
 
 export type Rarity = (typeof Rarity)[keyof typeof Rarity]

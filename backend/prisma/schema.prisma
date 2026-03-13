@@ -37,6 +37,8 @@ model Card {
   def           Int
   pageViews     Int
   languageCount Int
+  quality       Float       @default(0)
+  popularity    Float       @default(0)
   createdAt     DateTime    @default(now())
   inventory     Inventory[]
 }
@@ -72,11 +74,13 @@ model Battle {
 }
 
 enum Rarity {
-  N
+  C
+  UC
   R
-  S
   SR
   SSR
+  UR
+  LR
 }
 
 enum BattleStatus {
