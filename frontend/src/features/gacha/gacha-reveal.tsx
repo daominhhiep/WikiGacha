@@ -205,9 +205,8 @@ const GachaReveal: React.FC<GachaRevealProps> = ({
     const timeoutIds: ReturnType<typeof setTimeout>[] = [];
 
     cards.forEach((card, index) => {
-      // ONLY auto-reveal C, UC, R cards. SR, SSR, UR and LR require manual click.
+      // ONLY auto-reveal C, UC, R, SR cards. SSR, UR and LR require manual click.
       const isManualRarity =
-        card.rarity === Rarity.SR ||
         card.rarity === Rarity.SSR ||
         card.rarity === Rarity.UR ||
         card.rarity === Rarity.LR;
@@ -217,7 +216,7 @@ const GachaReveal: React.FC<GachaRevealProps> = ({
         () => {
           handleReveal(card, index);
         },
-        (index + 1) * 200,
+        (index + 1) * 150,
       );
       timeoutIds.push(tid);
     });
