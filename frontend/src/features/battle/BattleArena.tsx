@@ -27,16 +27,16 @@ const ArenaCard: React.FC<{
       layout
       animate={
         isAttacking
-          ? { y: side === 'p1' ? -40 : 40, scale: 1.1, zIndex: 50 }
+          ? { y: side === 'p1' ? -80 : 80, scale: 1.3, zIndex: 50 }
           : isDefending
             ? { x: [0, -10, 10, -10, 10, 0], scale: 0.95 }
             : { y: 0, scale: 1, zIndex: 10 }
       }
       className={cn(
-        'relative w-20 sm:w-28 aspect-[3/4] border-2 bg-black/60 overflow-hidden transition-colors duration-300',
+        'relative w-28 sm:w-36 aspect-[3/4] border-2 bg-black/60 overflow-hidden transition-colors duration-300',
         currentHp <= 0 ? 'border-red-900 grayscale opacity-40' : 'border-primary/20',
-        isAttacking && 'border-primary shadow-[0_0_20px_rgba(0,240,255,0.5)]',
-        isDefending && 'border-red-500 shadow-[0_0_20px_rgba(239,68,68,0.5)]',
+        isAttacking && 'border-primary shadow-[0_0_30px_rgba(0,240,255,0.6)]',
+        isDefending && 'border-red-500 shadow-[0_0_30px_rgba(239,68,68,0.6)]',
       )}
     >
       {card.imageUrl ? (
@@ -54,20 +54,20 @@ const ArenaCard: React.FC<{
       <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
 
       {/* Title & Rarity */}
-      <div className="absolute bottom-0 left-0 right-0 p-1.5">
-        <p className="text-[7px] font-black uppercase truncate text-white leading-none mb-1">
+      <div className="absolute bottom-0 left-0 right-0 p-2">
+        <p className="text-[10px] font-black uppercase truncate text-white leading-none mb-1">
           {card.title}
         </p>
         <div className="flex items-center justify-between">
-          <span className="text-[5px] font-mono text-primary/80 uppercase">{card.rarity}</span>
-          <span className="text-[7px] font-mono font-bold text-white">
+          <span className="text-[6px] font-mono text-primary/80 uppercase">{card.rarity}</span>
+          <span className="text-[10px] font-mono font-bold text-white">
             {currentHp}/{card.maxHp}
           </span>
         </div>
       </div>
 
       {/* HP Bar */}
-      <div className="absolute top-0 left-0 right-0 h-1 bg-black/40">
+      <div className="absolute top-0 left-0 right-0 h-1.5 bg-black/40">
         <motion.div
           initial={{ width: '100%' }}
           animate={{ width: `${hpPercentage}%` }}
@@ -81,7 +81,7 @@ const ArenaCard: React.FC<{
       {/* Defeated Overlay */}
       {currentHp <= 0 && (
         <div className="absolute inset-0 flex items-center justify-center bg-red-950/40">
-          <ShieldAlert className="size-6 text-red-500" />
+          <ShieldAlert className="size-10 text-red-500" />
         </div>
       )}
     </motion.div>
@@ -163,15 +163,15 @@ const BattleArena: React.FC<BattleArenaProps> = ({ result, onComplete }) => {
   };
 
   return (
-    <div className="relative w-full h-[calc(100vh-180px)] min-h-[500px] bg-black border-2 border-primary/10 overflow-hidden flex flex-col md:flex-row">
+    <div className="relative w-full h-[calc(100vh-180px)] min-h-[600px] bg-black border-2 border-primary/10 overflow-hidden flex flex-col md:flex-row">
       {/* HUD Grid Overlay */}
       <div className="absolute inset-0 opacity-10 pointer-events-none bg-[linear-gradient(rgba(0,240,255,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(0,240,255,0.1)_1px,transparent_1px)] bg-[length:40px_40px]" />
       <div className="absolute inset-0 opacity-5 pointer-events-none bg-[radial-gradient(circle_at_center,rgba(0,240,255,0.2)_0%,transparent_70%)]" />
 
       {/* Main Arena */}
-      <div className="flex-1 relative flex flex-col items-center justify-between p-2 py-6">
+      <div className="flex-1 relative flex flex-col items-center justify-between p-4 py-12">
         {/* Opponent Side */}
-        <div className="flex flex-row justify-center gap-1 sm:gap-2 w-full overflow-visible">
+        <div className="flex flex-row justify-center gap-2 sm:gap-6 w-full overflow-visible">
           {result.participants.p2.cards.map((card) => (
             <ArenaCard
               key={card.instanceId}
@@ -185,7 +185,7 @@ const BattleArena: React.FC<BattleArenaProps> = ({ result, onComplete }) => {
         </div>
 
         {/* Combat Stats Center */}
-        <div className="flex flex-col items-center gap-1 z-20">
+        <div className="flex flex-col items-center gap-2 z-20">
           <AnimatePresence mode="wait">
             {currentEntry ? (
               <motion.div
@@ -195,10 +195,10 @@ const BattleArena: React.FC<BattleArenaProps> = ({ result, onComplete }) => {
                 exit={{ opacity: 0, scale: 1.5 }}
                 className="flex flex-col items-center"
               >
-                <div className="bg-red-500 text-black font-black px-4 py-0.5 skew-x-[-12deg] text-base">
+                <div className="bg-red-500 text-black font-black px-10 py-2 skew-x-[-12deg] text-4xl shadow-[0_0_40px_rgba(239,68,68,0.6)]">
                   -{currentEntry.damage} DMG
                 </div>
-                <div className="text-[8px] font-mono text-primary/60 mt-1 uppercase tracking-[0.1em]">
+                <div className="text-[14px] font-mono text-primary/80 mt-4 uppercase tracking-[0.4em] font-black">
                   [ {currentEntry.attackerName} ] ATK [ {currentEntry.defenderName} ]
                 </div>
               </motion.div>
@@ -206,7 +206,7 @@ const BattleArena: React.FC<BattleArenaProps> = ({ result, onComplete }) => {
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="text-primary font-mono text-[10px] uppercase animate-pulse"
+                className="text-primary font-mono text-xs uppercase animate-pulse"
               >
                 [ INITIALIZING_COMBAT_SEQUENCE... ]
               </motion.div>
@@ -215,7 +215,7 @@ const BattleArena: React.FC<BattleArenaProps> = ({ result, onComplete }) => {
         </div>
 
         {/* Player Side */}
-        <div className="flex flex-row justify-center gap-1 sm:gap-2 w-full overflow-visible">
+        <div className="flex flex-row justify-center gap-2 sm:gap-6 w-full overflow-visible">
           {result.participants.p1.cards.map((card) => (
             <ArenaCard
               key={card.instanceId}
@@ -229,38 +229,38 @@ const BattleArena: React.FC<BattleArenaProps> = ({ result, onComplete }) => {
         </div>
 
         {/* Bottom Controls */}
-        <div className="absolute bottom-2 left-4 right-4 flex items-center justify-between">
+        <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between">
           <div className="flex gap-2">
             <Button
               variant="outline"
               size="icon"
-              className="rounded-none border-primary/20 h-8 w-8"
+              className="rounded-none border-primary/20 h-10 w-10"
               onClick={() => setIsPaused(!isPlaying)}
               disabled={isFinished}
             >
-              {isPlaying ? <Pause className="size-3" /> : <Play className="size-3" />}
+              {isPlaying ? <Pause className="size-4" /> : <Play className="size-4" />}
             </Button>
             <Button
               variant="outline"
               size="icon"
-              className={cn('rounded-none border-primary/20 h-8 w-8', speed < 500 && 'bg-primary/20')}
+              className={cn('rounded-none border-primary/20 h-10 w-10', speed < 500 && 'bg-primary/20')}
               onClick={() => setSpeed((prev) => (prev === 1000 ? 300 : 1000))}
             >
-              <FastForward className="size-3" />
+              <FastForward className="size-4" />
             </Button>
           </div>
 
           {isFinished ? (
             <Button
               onClick={onComplete}
-              className="rounded-none bg-primary text-black font-black uppercase text-xs h-8"
+              className="rounded-none bg-primary text-black font-black uppercase text-sm h-10 px-8"
             >
-              VIEW_RESULTS <ChevronRight className="size-3 ml-2" />
+              VIEW_RESULTS <ChevronRight className="size-4 ml-2" />
             </Button>
           ) : (
             <Button
               variant="ghost"
-              className="rounded-none text-[8px] font-mono text-primary/40 hover:text-primary h-8"
+              className="rounded-none text-[10px] font-mono text-primary/40 hover:text-primary h-10"
               onClick={handleSkip}
             >
               [ SKIP_SIMULATION ]
@@ -270,13 +270,13 @@ const BattleArena: React.FC<BattleArenaProps> = ({ result, onComplete }) => {
       </div>
 
       {/* Combat Log Sidebar */}
-      <div className="w-full md:w-64 bg-black/80 border-l border-primary/10 flex flex-col font-mono">
-        <div className="p-3 border-b border-primary/10 bg-primary/5">
-          <h4 className="text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
+      <div className="w-full md:w-72 bg-black/80 border-l border-primary/10 flex flex-col font-mono">
+        <div className="p-4 border-b border-primary/10 bg-primary/5">
+          <h4 className="text-xs font-black uppercase tracking-widest flex items-center gap-2">
             <Heart className="size-3 text-red-500" /> COMBAT_LOG
           </h4>
         </div>
-        <div className="flex-1 overflow-y-auto p-3 space-y-2 text-[8px] scrollbar-hide">
+        <div className="flex-1 overflow-y-auto p-4 space-y-3 text-[9px] scrollbar-hide">
           {visibleLogs.map((idx) => {
             const entry = result.log[idx];
             return (
@@ -284,9 +284,9 @@ const BattleArena: React.FC<BattleArenaProps> = ({ result, onComplete }) => {
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 key={idx}
-                className="border-l-2 border-primary/20 pl-2 py-0.5"
+                className="border-l-2 border-primary/20 pl-2 py-1"
               >
-                <p className="text-primary/40 mb-0.5">
+                <p className="text-primary/40 mb-1">
                   TURN_{entry.turn.toString().padStart(3, '0')}
                 </p>
                 <p>
@@ -297,7 +297,7 @@ const BattleArena: React.FC<BattleArenaProps> = ({ result, onComplete }) => {
                   <span className="text-white font-bold">{entry.defenderName}</span>
                 </p>
                 {entry.isDefeated && (
-                  <p className="text-red-500 font-black mt-0.5 uppercase">[ UNIT_DEFEATED ]</p>
+                  <p className="text-red-500 font-black mt-1 uppercase">[ UNIT_DEFEATED ]</p>
                 )}
               </motion.div>
             );
@@ -306,8 +306,8 @@ const BattleArena: React.FC<BattleArenaProps> = ({ result, onComplete }) => {
         </div>
 
         {/* Turn Progress */}
-        <div className="p-3 bg-primary/5 border-t border-primary/10">
-          <div className="flex justify-between text-[8px] mb-1">
+        <div className="p-4 bg-primary/5 border-t border-primary/10">
+          <div className="flex justify-between text-[10px] mb-2">
             <span className="text-primary/60 uppercase">SIM_PROGRESS</span>
             <span className="text-primary font-black">
               {Math.round(((turnIndex + 1) / result.log.length) * 100)}%
