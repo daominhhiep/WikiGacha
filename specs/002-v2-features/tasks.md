@@ -18,7 +18,7 @@
 
 **Purpose**: Core infrastructure and database schema updates
 
-- [ ] T005 Update Prisma schema with `Mission`, `UserMission`, `Trophy`, `ChatMessage`, `PvPMatch` in `backend/prisma/schema.prisma`
+- [x] T005 Update Prisma schema with `Mission`, `UserMission`, `Trophy`, `ChatMessage`, `PvPMatch` in `backend/prisma/schema.prisma`
 - [ ] T006 Update `Card` model with `tier` and `category` enums in `backend/prisma/schema.prisma`
 - [ ] T007 Run prisma migration: `npx prisma migrate dev --name v2_entities` in `backend/`
 - [ ] T008 [P] Create `SocketModule` and `BaseGateway` for shared WebSocket logic in `backend/src/modules/socket/`
