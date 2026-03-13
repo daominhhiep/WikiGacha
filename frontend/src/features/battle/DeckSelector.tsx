@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useInfiniteCollection, type InventoryItem } from '../collection/use-infinite-collection';
+import { useInfiniteCollection, type InventoryItem } from '../collection/use-collection';
 import { useBattleStore } from './use-battle';
 import Card, { Rarity } from '@/components/card';
 import { Button } from '@/components/ui/button';
@@ -20,18 +20,14 @@ const DeckSelector: React.FC<DeckSelectorProps> = ({ onStartBattle, isStarting =
   const [rarityFilter, setRarityFilter] = useState<string>('ALL');
 
   // Fetch collection
-  const {
-    data,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-    isLoading,
-  } = useInfiniteCollection({
-    rarity: rarityFilter === 'ALL' ? undefined : (rarityFilter as any),
-  });
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } = useInfiniteCollection(
+    {
+      rarity: rarityFilter === 'ALL' ? undefined : (rarityFilter as any),
+    },
+  );
 
   const allCards = data?.pages.flatMap((page) => page.items) || [];
-  
+
   // Find full card data for selected IDs to display in the top bar
   const selectedCards = selectedCardIds
     .map((id) => allCards.find((item) => item.cardId === id))
@@ -56,7 +52,7 @@ const DeckSelector: React.FC<DeckSelectorProps> = ({ onStartBattle, isStarting =
             [ STATUS: SELECT_UP_TO_{maxDeckSize}_UNITS_FOR_COMBAT_ENGAGEMENT ]
           </p>
         </div>
-        
+
         <div className="flex items-center gap-4">
           <Button
             variant="outline"
@@ -67,7 +63,7 @@ const DeckSelector: React.FC<DeckSelectorProps> = ({ onStartBattle, isStarting =
           >
             <Trash2 className="size-3 mr-2" /> CLEAR_ALL
           </Button>
-          
+
           <Button
             size="lg"
             onClick={handleStart}
@@ -90,7 +86,7 @@ const DeckSelector: React.FC<DeckSelectorProps> = ({ onStartBattle, isStarting =
       <div className="bg-black/40 border border-primary/10 p-6 relative overflow-hidden">
         {/* HUD Decorative background */}
         <div className="absolute inset-0 opacity-5 pointer-events-none bg-[linear-gradient(45deg,transparent_25%,rgba(0,240,255,0.2)_50%,transparent_75%)] bg-[length:20px_20px]" />
-        
+
         <div className="flex items-center gap-2 mb-4">
           <div className="size-2 bg-primary" />
           <span className="text-xs font-mono font-bold uppercase tracking-widest text-primary/80">
@@ -102,35 +98,42 @@ const DeckSelector: React.FC<DeckSelectorProps> = ({ onStartBattle, isStarting =
           {Array.from({ length: maxDeckSize }).map((_, index) => {
             const cardItem = selectedCards[index];
             return (
-              <div 
+              <div
                 key={`slot-${index}`}
                 className={cn(
-                  "aspect-[3/4] border-2 border-dashed flex items-center justify-center relative transition-all duration-300",
-                  cardItem 
-                    ? "border-primary/40 bg-primary/5" 
-                    : "border-primary/10 bg-black/20"
+                  'aspect-[3/4] border-2 border-dashed flex items-center justify-center relative transition-all duration-300',
+                  cardItem ? 'border-primary/40 bg-primary/5' : 'border-primary/10 bg-black/20',
                 )}
               >
                 {cardItem ? (
-                  <div className="relative group cursor-pointer w-full h-full" onClick={() => toggleCard(cardItem.cardId)}>
-                    <img 
-                      src={cardItem.card.imageUrl} 
+                  <div
+                    className="relative group cursor-pointer w-full h-full"
+                    onClick={() => toggleCard(cardItem.cardId)}
+                  >
+                    <img
+                      src={cardItem.card.imageUrl}
                       alt={cardItem.card.title}
                       className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
                     <div className="absolute bottom-2 left-2 right-2">
-                      <p className="text-[10px] font-black uppercase truncate text-white">{cardItem.card.title}</p>
-                      <p className={cn(
-                        "text-[8px] font-mono font-bold",
-                        cardItem.card.rarity === Rarity.LR ? "text-rarity-lr" : "text-primary"
-                      )}>
+                      <p className="text-[10px] font-black uppercase truncate text-white">
+                        {cardItem.card.title}
+                      </p>
+                      <p
+                        className={cn(
+                          'text-[8px] font-mono font-bold',
+                          cardItem.card.rarity === Rarity.LR ? 'text-rarity-lr' : 'text-primary',
+                        )}
+                      >
                         {cardItem.card.rarity}
                       </p>
                     </div>
                     {/* Remove button overlay on hover */}
                     <div className="absolute inset-0 bg-red-500/20 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-                      <span className="bg-black px-2 py-1 text-[8px] font-mono text-red-500 border border-red-500">REMOVE_UNIT</span>
+                      <span className="bg-black px-2 py-1 text-[8px] font-mono text-red-500 border border-red-500">
+                        REMOVE_UNIT
+                      </span>
                     </div>
                   </div>
                 ) : (
@@ -141,7 +144,7 @@ const DeckSelector: React.FC<DeckSelectorProps> = ({ onStartBattle, isStarting =
                     <span className="text-[8px] font-mono">EMPTY_SLOT</span>
                   </div>
                 )}
-                
+
                 {/* Decorative corners for each slot */}
                 <div className="absolute top-0 left-0 size-1.5 border-t border-l border-primary/40" />
                 <div className="absolute top-0 right-0 size-1.5 border-t border-r border-primary/40" />
@@ -157,22 +160,26 @@ const DeckSelector: React.FC<DeckSelectorProps> = ({ onStartBattle, isStarting =
       <div className="flex flex-col gap-6">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-             <div className="size-2 bg-primary animate-pulse" />
-             <h3 className="text-xl font-black uppercase italic tracking-tighter">DATA_REPOSITORY</h3>
+            <div className="size-2 bg-primary animate-pulse" />
+            <h3 className="text-xl font-black uppercase italic tracking-tighter">
+              DATA_REPOSITORY
+            </h3>
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="text-[10px] font-mono text-primary/60 uppercase">FILTER_BY_RARITY:</span>
+            <span className="text-[10px] font-mono text-primary/60 uppercase">
+              FILTER_BY_RARITY:
+            </span>
             <div className="flex gap-1">
               {['ALL', ...Object.values(Rarity)].map((r) => (
                 <button
                   key={r}
                   onClick={() => setRarityFilter(r)}
                   className={cn(
-                    "px-2 py-1 text-[10px] font-mono border transition-all",
-                    rarityFilter === r 
-                      ? "bg-primary text-black border-primary font-bold" 
-                      : "bg-black/40 text-primary/40 border-primary/20 hover:border-primary/40"
+                    'px-2 py-1 text-[10px] font-mono border transition-all',
+                    rarityFilter === r
+                      ? 'bg-primary text-black border-primary font-bold'
+                      : 'bg-black/40 text-primary/40 border-primary/20 hover:border-primary/40',
                   )}
                 >
                   {r}
@@ -185,12 +192,16 @@ const DeckSelector: React.FC<DeckSelectorProps> = ({ onStartBattle, isStarting =
         {isLoading ? (
           <div className="flex flex-col items-center justify-center py-20 gap-4 opacity-50">
             <Loader2 className="size-12 animate-spin text-primary" />
-            <p className="font-mono text-xs animate-pulse tracking-[0.2em]">[ SCANNING_REPOSITORY... ]</p>
+            <p className="font-mono text-xs animate-pulse tracking-[0.2em]">
+              [ SCANNING_REPOSITORY... ]
+            </p>
           </div>
         ) : allCards.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 gap-4 border-2 border-dashed border-primary/10 bg-black/20">
             <ShieldAlert className="size-12 text-primary/20" />
-            <p className="font-mono text-sm text-primary/40 tracking-widest uppercase">NO_UNITS_DETECTED_IN_DATABASE</p>
+            <p className="font-mono text-sm text-primary/40 tracking-widest uppercase">
+              NO_UNITS_DETECTED_IN_DATABASE
+            </p>
           </div>
         ) : (
           <>
@@ -200,25 +211,22 @@ const DeckSelector: React.FC<DeckSelectorProps> = ({ onStartBattle, isStarting =
                 const isMaxReached = selectedCardIds.length >= maxDeckSize;
 
                 return (
-                  <div 
-                    key={item.id} 
-                    className="relative"
-                    onClick={() => toggleCard(item.cardId)}
-                  >
-                    <Card 
-                      card={item.card} 
+                  <div key={item.id} className="relative" onClick={() => toggleCard(item.cardId)}>
+                    <Card
+                      card={item.card}
                       className={cn(
-                        "cursor-pointer transition-transform duration-300",
-                        isSelected && "ring-4 ring-primary ring-offset-4 ring-offset-black scale-95 opacity-50",
-                        !isSelected && isMaxReached && "grayscale opacity-50"
+                        'cursor-pointer transition-transform duration-300',
+                        isSelected &&
+                          'ring-4 ring-primary ring-offset-4 ring-offset-black scale-95 opacity-50',
+                        !isSelected && isMaxReached && 'grayscale opacity-50',
                       )}
                     />
-                    
+
                     {isSelected && (
                       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                         <div className="bg-primary text-black font-black px-4 py-2 border-2 border-black uppercase tracking-widest shadow-[0_0_20px_rgba(0,240,255,0.5)]">
-                           SELECTED
-                         </div>
+                        <div className="bg-primary text-black font-black px-4 py-2 border-2 border-black uppercase tracking-widest shadow-[0_0_20px_rgba(0,240,255,0.5)]">
+                          SELECTED
+                        </div>
                       </div>
                     )}
                   </div>

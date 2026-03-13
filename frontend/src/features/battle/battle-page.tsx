@@ -34,10 +34,10 @@ const BattlePage: React.FC = () => {
         <button
           onClick={() => setPhase('DECK_SELECTION')}
           className={cn(
-            "flex items-center gap-2 px-4 py-2 font-mono text-xs font-black uppercase tracking-widest transition-all",
+            'flex items-center gap-2 px-4 py-2 font-mono text-xs font-black uppercase tracking-widest transition-all',
             phase === 'DECK_SELECTION' || phase === 'IN_BATTLE' || phase === 'RESULTS'
-              ? "text-primary border-b-2 border-primary"
-              : "text-muted-foreground hover:text-primary/60"
+              ? 'text-primary border-b-2 border-primary'
+              : 'text-muted-foreground hover:text-primary/60',
           )}
         >
           <Swords className="size-4" /> COMBAT_ZONE
@@ -45,10 +45,10 @@ const BattlePage: React.FC = () => {
         <button
           onClick={() => setPhase('HISTORY')}
           className={cn(
-            "flex items-center gap-2 px-4 py-2 font-mono text-xs font-black uppercase tracking-widest transition-all",
+            'flex items-center gap-2 px-4 py-2 font-mono text-xs font-black uppercase tracking-widest transition-all',
             phase === 'HISTORY'
-              ? "text-primary border-b-2 border-primary"
-              : "text-muted-foreground hover:text-primary/60"
+              ? 'text-primary border-b-2 border-primary'
+              : 'text-muted-foreground hover:text-primary/60',
           )}
         >
           <History className="size-4" /> BATTLE_LOGS
@@ -57,10 +57,7 @@ const BattlePage: React.FC = () => {
 
       <div className="container mx-auto">
         {phase === 'DECK_SELECTION' && (
-          <DeckSelector 
-            onStartBattle={handleStartBattle} 
-            isStarting={isStartingBattle} 
-          />
+          <DeckSelector onStartBattle={handleStartBattle} isStarting={isStartingBattle} />
         )}
 
         {phase === 'IN_BATTLE' && (
@@ -70,19 +67,23 @@ const BattlePage: React.FC = () => {
               <Swords className="size-24 text-primary relative animate-bounce" />
             </div>
             <div className="text-center space-y-4">
-              <h2 className="text-4xl font-black uppercase italic tracking-tighter">SIMULATION_ACTIVE</h2>
+              <h2 className="text-4xl font-black uppercase italic tracking-tighter">
+                SIMULATION_ACTIVE
+              </h2>
               <p className="font-mono text-sm text-primary/60 animate-pulse tracking-[0.3em]">
                 [ DATA_CLASH_IN_PROGRESS... ]
               </p>
               <div className="mt-8 p-4 border border-primary/20 bg-black/40 font-mono text-[10px] text-left max-w-md mx-auto">
                 <p className="text-primary/40 mb-2">// BATTLE_ID: {lastResult?.battleId}</p>
-                <p className="text-green-500">[ SUCCESS ] Simulation generated {lastResult?.log.length} interaction cycles.</p>
-                <p className="text-primary/60 mt-4">Note: Battle Visualizer (T034) is currently under development. Showing raw data logs for now.</p>
+                <p className="text-green-500">
+                  [ SUCCESS ] Simulation generated {lastResult?.log.length} interaction cycles.
+                </p>
+                <p className="text-primary/60 mt-4">
+                  Note: Battle Visualizer (T034) is currently under development. Showing raw data
+                  logs for now.
+                </p>
               </div>
-              <Button 
-                onClick={() => setPhase('DECK_SELECTION')}
-                className="rounded-none mt-8"
-              >
+              <Button onClick={() => setPhase('DECK_SELECTION')} className="rounded-none mt-8">
                 RETURN_TO_BASE
               </Button>
             </div>
@@ -94,7 +95,7 @@ const BattlePage: React.FC = () => {
             <h3 className="text-2xl font-black uppercase italic tracking-tight flex items-center gap-3 mb-8">
               <History className="size-6 text-primary" /> PAST_ENGAGEMENTS
             </h3>
-            
+
             {isLoadingHistory ? (
               <div className="flex justify-center py-20">
                 <Loader2 className="size-8 animate-spin text-primary/40" />
@@ -106,15 +107,19 @@ const BattlePage: React.FC = () => {
             ) : (
               <div className="grid gap-4">
                 {battleHistory.map((battle) => (
-                  <div 
+                  <div
                     key={battle.id}
                     className="bg-black/40 border border-primary/10 p-4 flex items-center justify-between group hover:border-primary/40 transition-colors"
                   >
                     <div className="flex items-center gap-6">
-                      <div className={cn(
-                        "size-12 flex items-center justify-center font-black text-xl italic skew-x-[-12deg]",
-                        battle.winnerId === battle.player1Id ? "bg-primary text-black" : "bg-red-500/20 text-red-500"
-                      )}>
+                      <div
+                        className={cn(
+                          'size-12 flex items-center justify-center font-black text-xl italic skew-x-[-12deg]',
+                          battle.winnerId === battle.player1Id
+                            ? 'bg-primary text-black'
+                            : 'bg-red-500/20 text-red-500',
+                        )}
+                      >
                         {battle.winnerId === battle.player1Id ? 'W' : 'L'}
                       </div>
                       <div>
@@ -122,14 +127,19 @@ const BattlePage: React.FC = () => {
                           {new Date(battle.createdAt).toLocaleString()}
                         </p>
                         <p className="text-sm font-black uppercase tracking-widest">
-                          {battle.player1.username} <span className="text-primary/40 mx-2">VS</span> {battle.player2?.username || 'AI_BOT'}
+                          {battle.player1.username} <span className="text-primary/40 mx-2">VS</span>{' '}
+                          {battle.player2?.username || 'AI_BOT'}
                         </p>
                       </div>
                     </div>
-                    
+
                     <div className="text-right">
-                       <p className="text-[10px] font-mono uppercase tracking-widest text-primary/60">STATUS: {battle.status}</p>
-                       <p className="text-[10px] font-mono uppercase tracking-widest text-primary/60 font-black">ID: {battle.id.slice(0, 8)}...</p>
+                      <p className="text-[10px] font-mono uppercase tracking-widest text-primary/60">
+                        STATUS: {battle.status}
+                      </p>
+                      <p className="text-[10px] font-mono uppercase tracking-widest text-primary/60 font-black">
+                        ID: {battle.id.slice(0, 8)}...
+                      </p>
                     </div>
                   </div>
                 ))}
