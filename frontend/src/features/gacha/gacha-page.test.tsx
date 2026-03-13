@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import GachaPage from './gacha-page';
 import { useOpenPack, useGachaStore } from './use-gacha';
@@ -9,6 +9,16 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 vi.mock('./use-gacha', () => ({
   useOpenPack: vi.fn(),
   useGachaStore: vi.fn(),
+}));
+
+vi.mock('./gacha-reveal', () => ({
+  default: ({ isLoading, error, cards }: any) => (
+    <div data-testid="gacha-reveal">
+      {isLoading && <span>LOADING_STATE</span>}
+      {error && <span>ERROR_STATE</span>}
+      {cards && <span>HAS_CARDS</span>}
+    </div>
+  ),
 }));
 
 vi.mock('../auth/auth-store', () => ({
@@ -79,23 +89,28 @@ describe('GachaPage', () => {
     expect(screen.getByText('BREACHING_FIREWALL...')).toBeInTheDocument();
   });
 
-  it('disables the button when cards are opened but not yet revealed (transition state)', () => {
-    (useGachaStore as any).mockReturnValue({
-      lastOpenedCards: [{ id: '1', title: 'Test Card' }],
-      reset: mockReset,
-    });
-
-    render(<GachaPage />, { wrapper });
-    const button = screen.getByRole('button');
-    expect(button).toBeDisabled();
-    expect(screen.getByText('DATA_EXTRACTED...')).toBeInTheDocument();
-  });
-
-  it('calls openPack when button is clicked', () => {
+  it('calls openPack when button is clicked and shows reveal immediately', () => {
     render(<GachaPage />, { wrapper });
     const button = screen.getByText('INITIATE_BREACH');
     fireEvent.click(button);
-    expect(mockOpenPack).toHaveBeenCalledWith('BASIC', expect.any(Object));
+    expect(mockOpenPack).toHaveBeenCalledWith('BASIC');
+    expect(screen.getByTestId('gacha-reveal')).toBeInTheDocument();
+  });
+
+  it('shows error state in GachaReveal when apiError is present', () => {
+    (useOpenPack as any).mockReturnValue({
+      mutate: mockOpenPack,
+      isPending: false,
+      error: new Error('TEST_ERROR'),
+    });
+
+    render(<GachaPage />, { wrapper });
+    
+    // Trigger transition
+    fireEvent.click(screen.getByText('INITIATE_BREACH'));
+    
+    expect(screen.getByTestId('gacha-reveal')).toBeInTheDocument();
+    expect(screen.getByText('ERROR_STATE')).toBeInTheDocument();
   });
 
   it('shows login required when not authenticated', () => {

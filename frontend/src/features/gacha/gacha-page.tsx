@@ -30,16 +30,8 @@ const GachaPage: React.FC = () => {
   const handleOpenPack = () => {
     if (!accessToken || isOpening || !!lastOpenedCards) return;
 
-    openPack('BASIC', {
-      onSuccess: (data) => {
-        if (data.newCards && data.newCards.length > 0) {
-          // Delay reveal slightly for effect
-          setTimeout(() => {
-            setShowReveal(true);
-          }, 800);
-        }
-      },
-    });
+    setShowReveal(true);
+    openPack('BASIC');
   };
 
   const handleRevealComplete = () => {
@@ -48,7 +40,7 @@ const GachaPage: React.FC = () => {
   };
 
   // If we are showing the reveal animation, render the GachaReveal component
-  if (showReveal && lastOpenedCards) {
+  if (showReveal) {
     return (
       <motion.div
         initial={{ opacity: 0 }}
@@ -56,20 +48,12 @@ const GachaPage: React.FC = () => {
         exit={{ opacity: 0 }}
         className="flex min-h-[70vh] flex-col items-center justify-center p-4"
       >
-        <div className="mb-12 text-center space-y-2">
-          <div className="flex items-center justify-center gap-4 text-primary animate-pulse">
-            <Cpu className="size-8" />
-            <h2 className="text-4xl font-black tracking-widest uppercase font-mono italic">
-              DATA_EXTRACTED
-            </h2>
-            <Cpu className="size-8" />
-          </div>
-          <div className="h-0.5 w-full bg-gradient-to-r from-transparent via-primary/50 to-transparent mt-2" />
-          <p className="text-[10px] font-mono text-muted-foreground uppercase tracking-widest mt-4">
-            Inventory synchronized with global data terminal.
-          </p>
-        </div>
-        <GachaReveal cards={lastOpenedCards} onComplete={handleRevealComplete} />
+        <GachaReveal 
+          cards={lastOpenedCards} 
+          onComplete={handleRevealComplete} 
+          isLoading={isOpening}
+          error={apiError}
+        />
       </motion.div>
     );
   }

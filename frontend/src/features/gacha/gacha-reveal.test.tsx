@@ -65,4 +65,27 @@ describe('GachaReveal', () => {
 
     expect(onComplete).toHaveBeenCalled();
   });
+
+  it('shows placeholder slots when isLoading is true', () => {
+    render(<GachaReveal cards={null} isLoading={true} />);
+    
+    expect(screen.getByText('EXTRACTING_DATA...')).toBeInTheDocument();
+    // 5 placeholders are rendered
+    const placeholders = screen.getAllByText('[ SEARCHING_ARTICLE ]');
+    expect(placeholders).toHaveLength(5);
+  });
+
+  it('shows error state when error is present', () => {
+    const onComplete = vi.fn();
+    const error = new Error('BREACH_FAILED_BY_FIREWALL');
+    render(<GachaReveal cards={null} error={error} onComplete={onComplete} />);
+    
+    expect(screen.getByText('BREACH_ABORTED')).toBeInTheDocument();
+    expect(screen.getByText('CRITICAL_BREACH_ERROR')).toBeInTheDocument();
+    expect(screen.getByText('BREACH_FAILED_BY_FIREWALL')).toBeInTheDocument();
+    
+    const terminateButton = screen.getByText('TERMINATE_SESSION');
+    fireEvent.click(terminateButton);
+    expect(onComplete).toHaveBeenCalled();
+  });
 });

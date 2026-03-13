@@ -5,6 +5,8 @@ import { cn } from '@/lib/utils';
 import Card, { Rarity } from '@/components/card';
 import type { CardData } from '@/components/card';
 import { Button } from '@/components/ui/button';
+import { Cpu, ShieldAlert, Terminal, Loader2 } from 'lucide-react';
+import axios from 'axios';
 
 // External counter for unique IDs to satisfy strict purity rules (Math.random/Date.now in render)
 let particleBurstIdCounter = 0;
@@ -43,9 +45,13 @@ const Particle = ({
  */
 interface GachaRevealProps {
   /** The list of cards to reveal. */
-  cards: CardData[];
+  cards: CardData[] | null;
   /** Callback function triggered when the user finishes viewing the revealed cards. */
   onComplete?: () => void;
+  /** Whether the gacha pack is still being opened/extracted. */
+  isLoading?: boolean;
+  /** Any API error that occurred during the breach. */
+  error?: Error | null;
 }
 
 interface BurstData {
@@ -83,14 +89,28 @@ const itemVariants: Variants = {
  * GachaReveal displays a Cyberpunk-themed manual reveal interface for newly opened cards.
  * Users must click individual cards to "decrypt" them.
  */
-const GachaReveal: React.FC<GachaRevealProps> = ({ cards: initialCards, onComplete }) => {
+const GachaReveal: React.FC<GachaRevealProps> = ({ 
+  cards: initialCards, 
+  onComplete,
+  isLoading,
+  error
+}) => {
   const [revealedIds, setRevealedIds] = useState<Set<string>>(new Set());
   const [activeBursts, setActiveBursts] = useState<BurstData[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
 
+  const getErrorMessage = (error: Error | null) => {
+    if (!error) return null;
+    if (axios.isAxiosError(error)) {
+      return (error.response?.data as any)?.error?.message || error.message || 'DATA_BREACH_FAILED';
+    }
+    return error.message;
+  };
+
   // Sort cards: Move best card to the end
   const cards = useMemo(() => {
+    if (!initialCards) return [];
     const sorted = [...initialCards];
     let bestIndex = 0;
     const rarityPower = {
@@ -116,7 +136,7 @@ const GachaReveal: React.FC<GachaRevealProps> = ({ cards: initialCards, onComple
     return sorted;
   }, [initialCards]);
 
-  const isAllRevealed = revealedIds.size === cards.length;
+  const isAllRevealed = revealedIds.size > 0 && cards.length > 0 && revealedIds.size === cards.length;
 
   const handleReveal = useCallback(
     (card: CardData, index: number) => {
@@ -180,6 +200,8 @@ const GachaReveal: React.FC<GachaRevealProps> = ({ cards: initialCards, onComple
 
   // Auto-reveal sequence: Only for N and R cards
   useEffect(() => {
+    if (isLoading || cards.length === 0) return;
+
     const timeoutIds: ReturnType<typeof setTimeout>[] = [];
 
     cards.forEach((card, index) => {
@@ -201,7 +223,7 @@ const GachaReveal: React.FC<GachaRevealProps> = ({ cards: initialCards, onComple
     });
 
     return () => timeoutIds.forEach((id) => clearTimeout(id));
-  }, [cards, handleReveal]);
+  }, [cards, isLoading, handleReveal]);
 
   return (
     <motion.div
@@ -213,67 +235,133 @@ const GachaReveal: React.FC<GachaRevealProps> = ({ cards: initialCards, onComple
       {/* Background Ambience */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--color-primary)_0%,_transparent_100%)] opacity-5 pointer-events-none" />
 
+      {/* Header Info (Visible during loading or error) */}
+      <div className="mb-8 text-center space-y-2 z-20">
+        <div className="flex items-center justify-center gap-4 text-primary animate-pulse">
+          <Cpu className="size-8" />
+          <h2 className="text-4xl font-black tracking-widest uppercase font-mono italic">
+            {error ? 'BREACH_ABORTED' : isLoading ? 'EXTRACTING_DATA...' : 'DATA_EXTRACTED'}
+          </h2>
+          <Cpu className="size-8" />
+        </div>
+        <div className="h-0.5 w-full bg-gradient-to-r from-transparent via-primary/50 to-transparent mt-2" />
+        <p className="text-[10px] font-mono text-muted-foreground uppercase tracking-widest mt-4">
+          {error 
+            ? 'Critical failure in the extraction protocol.' 
+            : isLoading 
+              ? 'Bypassing Wikipedia firewalls. Converting article metadata...'
+              : 'Inventory synchronized with global data terminal.'}
+        </p>
+      </div>
+
       {/* 5 Cards in 1 Line Roll Container */}
       <div ref={scrollRef} className="w-full overflow-x-auto no-scrollbar py-20 z-10 scroll-smooth">
         <div
           className="flex flex-nowrap justify-start lg:justify-center gap-12 px-[25vw] min-w-max"
           style={{ perspective: '2000px', transformStyle: 'preserve-3d' }}
         >
-          {cards.map((card, index) => {
-            const cardBurst = activeBursts.find((b) => b.cardId === card.id);
-            const isRevealed = revealedIds.has(card.id);
-            const isManualRarity =
-              card.rarity === Rarity.SR ||
-              card.rarity === Rarity.SSR ||
-              card.rarity === Rarity.UR ||
-              card.rarity === Rarity.LR;
-
-            return (
+          {error ? (
+            <div className="flex flex-col items-center gap-6 py-10 w-full max-w-lg mx-auto bg-red-950/20 border border-red-500/50 p-8">
+              <ShieldAlert className="size-16 text-red-500 animate-pulse" />
+              <div className="text-center font-mono space-y-4">
+                <div className="text-xl font-black text-red-500 uppercase tracking-tighter">CRITICAL_BREACH_ERROR</div>
+                <div className="text-xs text-red-400/80 leading-relaxed max-w-xs">{getErrorMessage(error)}</div>
+                <div className="pt-4">
+                  <Button
+                    onClick={onComplete}
+                    variant="destructive"
+                    className="h-12 px-8 rounded-none border border-red-500 bg-black text-red-500 hover:bg-red-500 hover:text-black transition-all uppercase italic font-black"
+                  >
+                    TERMINATE_SESSION
+                  </Button>
+                </div>
+              </div>
+            </div>
+          ) : isLoading ? (
+            // Placeholder Slots during loading
+            Array.from({ length: 5 }).map((_, i) => (
               <motion.div
-                key={card.id}
-                ref={(el) => {
-                  cardRefs.current[index] = el;
-                }}
+                key={`placeholder-${i}`}
                 variants={itemVariants}
-                className="relative flex-shrink-0 cursor-pointer"
-                onClick={() => handleReveal(card, index)}
+                className="relative flex-shrink-0"
               >
-                {/* Particle Burst Anchor */}
-                <AnimatePresence>
-                  {cardBurst && (
-                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                      {cardBurst.particles.map((p, i) => (
-                        <Particle
-                          key={`${cardBurst.id}-${i}`}
-                          angle={p.angle}
-                          distance={p.distance}
-                          color={cardBurst.color}
+                <div className="group relative h-[30rem] w-72 flex flex-col rounded-none border-2 border-primary/20 bg-black/40 backdrop-blur-sm p-4 overflow-hidden">
+                   {/* Scanning Line */}
+                  <div className="absolute inset-0 bg-gradient-to-b from-transparent via-primary/10 to-transparent h-1/3 w-full animate-scan" />
+                  
+                  <div className="flex-1 flex flex-col items-center justify-center gap-6 opacity-40">
+                    <Loader2 className="size-16 animate-spin text-primary/40" />
+                    <div className="text-center space-y-2">
+                      <div className="text-[10px] font-mono text-primary animate-pulse uppercase tracking-[0.2em]">[ SEARCHING_ARTICLE ]</div>
+                      <div className="h-1 w-24 bg-primary/20 overflow-hidden">
+                        <motion.div 
+                          animate={{ x: ['-100%', '100%'] }}
+                          transition={{ repeat: Infinity, duration: 1.5, ease: 'linear' }}
+                          className="h-full w-full bg-primary/40"
                         />
-                      ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            ))
+          ) : (
+            cards.map((card, index) => {
+              const cardBurst = activeBursts.find((b) => b.cardId === card.id);
+              const isRevealed = revealedIds.has(card.id);
+              const isManualRarity =
+                card.rarity === Rarity.SR ||
+                card.rarity === Rarity.SSR ||
+                card.rarity === Rarity.UR ||
+                card.rarity === Rarity.LR;
+
+              return (
+                <motion.div
+                  key={card.id}
+                  ref={(el) => {
+                    cardRefs.current[index] = el;
+                  }}
+                  variants={itemVariants}
+                  className="relative flex-shrink-0 cursor-pointer"
+                  onClick={() => handleReveal(card, index)}
+                >
+                  {/* Particle Burst Anchor */}
+                  <AnimatePresence>
+                    {cardBurst && (
+                      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                        {cardBurst.particles.map((p, i) => (
+                          <Particle
+                            key={`${cardBurst.id}-${i}`}
+                            angle={p.angle}
+                            distance={p.distance}
+                            color={cardBurst.color}
+                          />
+                        ))}
+                      </div>
+                    )}
+                  </AnimatePresence>
+
+                  <Card
+                    card={card}
+                    isRevealed={isRevealed}
+                    data-testid={`card-${index}`}
+                    className="shadow-[0_0_20px_rgba(0,0,0,0.5)]"
+                  />
+
+                  {!isRevealed && (
+                    <div
+                      className={cn(
+                        'absolute -bottom-4 left-1/2 -translate-x-1/2 text-black text-[8px] font-black px-2 py-0.5 uppercase italic z-20 shadow-[0_0_10px_rgba(0,240,255,0.5)]',
+                        isManualRarity ? 'bg-rarity-ssr animate-bounce' : 'bg-primary animate-pulse',
+                      )}
+                    >
+                      {isManualRarity ? '[ MANUAL_DECRYPTION_REQUIRED ]' : 'DECRYPTING...'}
                     </div>
                   )}
-                </AnimatePresence>
-
-                <Card
-                  card={card}
-                  isRevealed={isRevealed}
-                  data-testid={`card-${index}`}
-                  className="shadow-[0_0_20px_rgba(0,0,0,0.5)]"
-                />
-
-                {!isRevealed && (
-                  <div
-                    className={cn(
-                      'absolute -bottom-4 left-1/2 -translate-x-1/2 text-black text-[8px] font-black px-2 py-0.5 uppercase italic z-20 shadow-[0_0_10px_rgba(0,240,255,0.5)]',
-                      isManualRarity ? 'bg-rarity-ssr animate-bounce' : 'bg-primary animate-pulse',
-                    )}
-                  >
-                    {isManualRarity ? '[ MANUAL_DECRYPTION_REQUIRED ]' : 'DECRYPTING...'}
-                  </div>
-                )}
-              </motion.div>
-            );
-          })}
+                </motion.div>
+              );
+            })
+          )}
         </div>
       </div>
 
@@ -294,9 +382,11 @@ const GachaReveal: React.FC<GachaRevealProps> = ({ cards: initialCards, onComple
       </div>
 
       {/* Progress HUD */}
-      <div className="mt-4 font-mono text-[10px] text-muted-foreground/60 uppercase tracking-widest">
-        [ {revealedIds.size} / {cards.length} DATA_UNITS_DECRYPTED ]
-      </div>
+      {!isLoading && !error && (
+        <div className="mt-4 font-mono text-[10px] text-muted-foreground/60 uppercase tracking-widest">
+          [ {revealedIds.size} / {cards.length} DATA_UNITS_DECRYPTED ]
+        </div>
+      )}
     </motion.div>
   );
 };
