@@ -150,17 +150,23 @@ const DeckSelector: React.FC<DeckSelectorProps> = ({ onStartBattle, isStarting =
                     )}
                     <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
                     <div className="absolute bottom-2 left-2 right-2">
-                      <p className="text-[10px] font-black uppercase truncate text-white">
+                      <p className="text-[10px] font-black uppercase truncate text-white leading-none mb-1">
                         {cardItem.card.title}
                       </p>
-                      <p
-                        className={cn(
-                          'text-[8px] font-mono font-bold',
-                          cardItem.card.rarity === Rarity.LR ? 'text-rarity-lr' : 'text-primary',
-                        )}
-                      >
-                        {cardItem.card.rarity}
-                      </p>
+                      <div className="flex items-center justify-between">
+                        <p
+                          className={cn(
+                            'text-[8px] font-mono font-bold',
+                            cardItem.card.rarity === Rarity.LR ? 'text-rarity-lr' : 'text-primary',
+                          )}
+                        >
+                          {cardItem.card.rarity}
+                        </p>
+                        <div className="flex gap-2 text-[8px] font-mono font-black">
+                          <span className="text-orange-500">A:{cardItem.card.atk}</span>
+                          <span className="text-blue-500">D:{cardItem.card.def}</span>
+                        </div>
+                      </div>
                     </div>
                     {/* Remove button overlay on hover */}
                     <div className="absolute inset-0 bg-red-500/20 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">

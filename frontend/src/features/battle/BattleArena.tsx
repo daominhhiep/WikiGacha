@@ -53,16 +53,28 @@ const ArenaCard: React.FC<{
 
       <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
 
-      {/* Title & Rarity */}
+      {/* Title & Stats */}
       <div className="absolute bottom-0 left-0 right-0 p-2">
         <p className="text-[10px] font-black uppercase truncate text-white leading-none mb-1">
           {card.title}
         </p>
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between mb-1">
           <span className="text-[6px] font-mono text-primary/80 uppercase">{card.rarity}</span>
           <span className="text-[10px] font-mono font-bold text-white">
             {currentHp}/{card.maxHp}
           </span>
+        </div>
+
+        {/* ATK & DEF mini bar */}
+        <div className="flex items-center justify-between font-mono text-[8px] bg-black/40 px-1 py-0.5 border border-white/10">
+          <div className="flex items-center gap-1">
+            <span className="text-orange-500 font-black">A</span>
+            <span className="text-white/80">{card.atk}</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <span className="text-blue-500 font-black">D</span>
+            <span className="text-white/80">{card.def}</span>
+          </div>
         </div>
       </div>
 
@@ -115,13 +127,12 @@ const BattleArena: React.FC<BattleArenaProps> = ({ result, onComplete }) => {
       const nextIndex = turnIndex + 1;
       const entry = result.log[nextIndex];
 
-      // Update HP
+      // Update HP and Turn together to ensure sync
       setCardHps((prev) => ({
         ...prev,
         [entry.defenderId]: entry.hpRemaining,
       }));
 
-      // Update Logs
       setVisibleLogs((prev) => [...prev, nextIndex]);
       setTurnIndex(nextIndex);
     }, speed);
@@ -184,25 +195,28 @@ const BattleArena: React.FC<BattleArenaProps> = ({ result, onComplete }) => {
           ))}
         </div>
 
-        {/* Combat Stats Center */}
-        <div className="flex flex-col items-center gap-2 z-20">
-          <AnimatePresence mode="wait">
-            {currentEntry ? (
+        {/* Combat Stats Center - Absolutely Centered */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center justify-center z-50 pointer-events-none w-full">
+          <AnimatePresence>
+            {currentEntry && (
               <motion.div
                 key={turnIndex}
-                initial={{ opacity: 0, scale: 0.5 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 1.5 }}
+                initial={{ opacity: 0, scale: 0.5, y: 40 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 1.5, y: -40 }}
+                transition={{ duration: Math.min(0.3, speed / 1000) }}
                 className="flex flex-col items-center"
               >
-                <div className="bg-red-500 text-black font-black px-10 py-2 skew-x-[-12deg] text-4xl shadow-[0_0_40px_rgba(239,68,68,0.6)]">
+                <div className="bg-red-600 text-white font-black px-12 py-3 skew-x-[-12deg] text-5xl shadow-[0_0_50px_rgba(220,38,38,0.8)] border-y-4 border-white/20">
                   -{currentEntry.damage} DMG
                 </div>
-                <div className="text-[14px] font-mono text-primary/80 mt-4 uppercase tracking-[0.4em] font-black">
-                  [ {currentEntry.attackerName} ] ATK [ {currentEntry.defenderName} ]
+                <div className="text-[16px] font-mono text-primary mt-6 uppercase tracking-[0.5em] font-black whitespace-nowrap bg-black/80 px-4 py-1 border border-primary/30 backdrop-blur-sm">
+                  [ {currentEntry.attackerName} ] ⚔️ [ {currentEntry.defenderName} ]
                 </div>
               </motion.div>
-            ) : (
+            )}
+
+            {!currentEntry && turnIndex === -1 && (
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
