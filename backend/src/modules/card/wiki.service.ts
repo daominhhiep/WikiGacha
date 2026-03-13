@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
 import { firstValueFrom } from 'rxjs';
+import { RedisService } from '../../common/redis/redis.service';
 
 export interface WikiRandomResponse {
   query: {
@@ -55,10 +56,12 @@ export class WikiService {
   private readonly logger = new Logger(WikiService.name);
   private readonly actionApiUrl: string;
   private readonly userAgent: string;
+  private readonly CACHE_TTL = 86400; // 24 hours in seconds
 
   constructor(
     private readonly httpService: HttpService,
     private readonly configService: ConfigService,
+    private readonly redisService: RedisService,
   ) {
     this.actionApiUrl =
       this.configService.get<string>('WIKIPEDIA_API_URL') || 'https://en.wikipedia.org/w/api.php';
@@ -108,6 +111,18 @@ export class WikiService {
    * @returns Article summary data (title, extract, thumbnail, etc.)
    */
   async getArticleSummary(title: string): Promise<ArticleSummary | null> {
+    const cacheKey = `wiki:summary:${title.replace(/ /g, '_')}`;
+    
+    try {
+      const cached = await this.redisService.get(cacheKey);
+      if (cached) {
+        this.logger.debug(`Cache hit for summary: ${title}`);
+        return JSON.parse(cached);
+      }
+    } catch (err) {
+      this.logger.warn(`Redis error fetching summary for ${title}: ${err.message}`);
+    }
+
     const encodedTitle = encodeURIComponent(title.replace(/ /g, '_'));
     const summaryUrl = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodedTitle}`;
 
@@ -118,13 +133,21 @@ export class WikiService {
         }),
       );
 
-      return {
+      const result: ArticleSummary = {
         title: data.title,
         extract: data.extract,
         thumbnail: data.thumbnail?.source,
         pageid: data.pageid,
         content_urls: data.content_urls,
       };
+
+      try {
+        await this.redisService.set(cacheKey, JSON.stringify(result), 'EX', this.CACHE_TTL);
+      } catch (err) {
+        this.logger.warn(`Redis error saving summary for ${title}: ${err.message}`);
+      }
+
+      return result;
     } catch (error) {
       const wikiError = error as WikiError;
       if (wikiError.response?.status === 404) {
@@ -143,6 +166,8 @@ export class WikiService {
    * @returns Map of article data indexed by title.
    */
   async getBatchArticlesData(titles: string[]): Promise<Record<string, any>> {
+    // Note: Complex to cache partial batches, so we fetch normally.
+    // Individual summaries and stats are cached separately when needed.
     const params = {
       action: 'query',
       format: 'json',
@@ -211,6 +236,17 @@ export class WikiService {
    * @returns An object containing quality and popularity scores.
    */
   async getWikiRankScore(title: string, lang: string = 'en'): Promise<{ quality: number; popularity: number }> {
+    const cacheKey = `wiki:rank:${lang}:${title.replace(/ /g, '_')}`;
+    
+    try {
+      const cached = await this.redisService.get(cacheKey);
+      if (cached) {
+        return JSON.parse(cached);
+      }
+    } catch (err) {
+      this.logger.warn(`Redis error fetching rank for ${title}: ${err.message}`);
+    }
+
     const encodedTitle = encodeURIComponent(title.replace(/ /g, '_'));
     const url = `https://api.wikirank.net/api.php?name=${encodedTitle}&lang=${lang}`;
     this.logger.debug(`Fetching WikiRank score: ${url}`);
@@ -223,10 +259,18 @@ export class WikiService {
       );
 
       const result = response?.data?.result?.[lang];
-      return {
+      const score = {
         quality: typeof result?.quality === 'number' ? result.quality : 0,
         popularity: typeof result?.popularity === 'number' ? result.popularity : 0,
       };
+
+      try {
+        await this.redisService.set(cacheKey, JSON.stringify(score), 'EX', this.CACHE_TTL);
+      } catch (err) {
+        this.logger.warn(`Redis error saving rank for ${title}: ${err.message}`);
+      }
+
+      return score;
     } catch (error) {
       this.logger.error(`Error fetching WikiRank score for "${title}": ${error.message}`);
       return { quality: 0, popularity: 0 };
@@ -246,6 +290,17 @@ export class WikiService {
     pageAssessments?: Record<string, string>;
     length: number;
   }> {
+    const cacheKey = `wiki:stats:${title.replace(/ /g, '_')}`;
+    
+    try {
+      const cached = await this.redisService.get(cacheKey);
+      if (cached) {
+        return JSON.parse(cached);
+      }
+    } catch (err) {
+      this.logger.warn(`Redis error fetching stats for ${title}: ${err.message}`);
+    }
+
     try {
       // 1. Fetch language count, assessments and length from Action API
       const actionParams = {
@@ -302,12 +357,20 @@ export class WikiService {
         .filter((v: any) => typeof v === 'number')
         .reduce((sum: number, count: number) => sum + count, 0);
 
-      return {
+      const result = {
         pageViews: totalPageViews,
         languageCount,
         pageAssessments,
         length,
       };
+
+      try {
+        await this.redisService.set(cacheKey, JSON.stringify(result), 'EX', this.CACHE_TTL);
+      } catch (err) {
+        this.logger.warn(`Redis error saving stats for ${title}: ${err.message}`);
+      }
+
+      return result;
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Unknown error';
       this.logger.error(`Error fetching article stats for "${title}": ${message}`);
@@ -320,6 +383,17 @@ export class WikiService {
    * Fetches total article count and aggregate pageviews for the last full month.
    */
   async getGlobalStats(): Promise<{ articleCount: number; totalMonthlyViews: number }> {
+    const cacheKey = 'wiki:global_stats';
+    
+    try {
+      const cached = await this.redisService.get(cacheKey);
+      if (cached) {
+        return JSON.parse(cached);
+      }
+    } catch (err) {
+      this.logger.warn(`Redis error fetching global stats: ${err.message}`);
+    }
+
     try {
       // 1. Get article count
       const statsParams = {
@@ -364,14 +438,22 @@ export class WikiService {
         .filter((v: any) => typeof v === 'number');
       const totalMonthlyViews = viewsList.length > 0 ? Math.max(...viewsList) : 10000000000;
 
+      const result = {
+        articleCount,
+        totalMonthlyViews,
+      };
+
+      try {
+        await this.redisService.set(cacheKey, JSON.stringify(result), 'EX', this.CACHE_TTL);
+      } catch (err) {
+        this.logger.warn(`Redis error saving global stats: ${err.message}`);
+      }
+
       this.logger.log(
         `[Global Stats] articleCount=${articleCount}, totalMonthlyViews=${totalMonthlyViews}`,
       );
 
-      return {
-        articleCount,
-        totalMonthlyViews,
-      };
+      return result;
     } catch (error) {
       this.logger.error(`Error fetching global stats: ${error.message}`);
       return { articleCount: 7000000, totalMonthlyViews: 10000000000 };
