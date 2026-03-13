@@ -93,8 +93,10 @@ export class CardService {
         const isLastCard = i === titles.length - 1;
         if (isLastCard && isPityTriggered && !highRarityPulled) {
           this.logger.log(`[Pity Triggered] Forcing S+ for player ${playerId}`);
-          // Force page views to S threshold (> 50,000) if it's not already high enough
-          pageViews = Math.max(pageViews, 50001 + Math.floor(Math.random() * 950000));
+          const averageViews = await this.getAverageViews();
+          // Force page views to at least S threshold (avg * 50)
+          const minPityViews = Math.ceil(averageViews * 50);
+          pageViews = Math.max(pageViews, minPityViews + Math.floor(Math.random() * averageViews * 500));
         }
 
         const card = await this.generateCardFromWiki(wikiData, pageViews, languageCount);

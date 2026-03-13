@@ -200,9 +200,9 @@ describe('WikiService', () => {
       const mockAnalyticsResponse = {
         data: {
           items: [
-            {
-              views: 10000000000,
-            },
+            { views: 5000000000 },
+            { views: 10000000000 },
+            { views: 1000000 }, // Current (incomplete) month
           ],
         },
         status: 200,
@@ -219,7 +219,7 @@ describe('WikiService', () => {
       const result = await service.getGlobalStats();
       expect(result).toEqual({
         articleCount: 7000000,
-        totalMonthlyViews: 10000000000,
+        totalMonthlyViews: 10000000000, // Should be the MAX value
       });
       expect(httpService.get).toHaveBeenCalledWith(
         'https://en.wikipedia.org/w/api.php',

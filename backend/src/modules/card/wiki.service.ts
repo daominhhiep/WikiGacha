@@ -196,7 +196,7 @@ export class WikiService {
 
   /**
    * Fetches global Wikipedia statistics for calibration.
-   * Fetches total article count and aggregate pageviews for the last month.
+   * Fetches total article count and aggregate pageviews for the last full month.
    */
   async getGlobalStats(): Promise<{ articleCount: number; totalMonthlyViews: number }> {
     try {
@@ -219,16 +219,16 @@ export class WikiService {
       const articleCount = statsRes?.query?.statistics?.articles || 7000000;
 
       // 2. Get aggregate pageviews (monthly)
-      // Use the Analytics API
+      // Use the Analytics API. Request the last 3 months to ensure we get at least one full month.
       const today = new Date();
-      const lastMonth = new Date();
-      lastMonth.setMonth(today.getMonth() - 1);
+      const threeMonthsAgo = new Date();
+      threeMonthsAgo.setMonth(today.getMonth() - 2);
 
-      const start = lastMonth.toISOString().slice(0, 10).replace(/-/g, '');
-      const end = today.toISOString().slice(0, 10).replace(/-/g, '');
+      // Start from the beginning of a month to satisfy API granularity
+      const start = `${threeMonthsAgo.getFullYear()}${String(threeMonthsAgo.getMonth() + 1).padStart(2, '0')}0100`;
+      const end = `${today.getFullYear()}${String(today.getMonth() + 1).padStart(2, '0')}0100`;
 
-      // Endpoint: https://wikimedia.org/api/rest_v1/metrics/pageviews/aggregate/en.wikipedia/all-access/user/monthly/2023010100/2023123100
-      const analyticsUrl = `https://wikimedia.org/api/rest_v1/metrics/pageviews/aggregate/en.wikipedia/all-access/user/monthly/${start}00/${end}00`;
+      const analyticsUrl = `https://wikimedia.org/api/rest_v1/metrics/pageviews/aggregate/en.wikipedia/all-access/user/monthly/${start}/${end}`;
 
       const analyticsRes = await firstValueFrom(
         this.httpService.get<any>(analyticsUrl, {
@@ -236,7 +236,12 @@ export class WikiService {
         }),
       );
 
-      const totalMonthlyViews = analyticsRes?.items?.[0]?.views || 10000000000; // Fallback to 10B
+      // Pick the maximum monthly views from the returned list (usually the last full month)
+      const items = analyticsRes?.items || [];
+      const viewsList = items.map((item: any) => item.views).filter((v: any) => typeof v === 'number');
+      const totalMonthlyViews = viewsList.length > 0 ? Math.max(...viewsList) : 10000000000;
+
+      this.logger.log(`[Global Stats] articleCount=${articleCount}, totalMonthlyViews=${totalMonthlyViews}`);
 
       return {
         articleCount,
