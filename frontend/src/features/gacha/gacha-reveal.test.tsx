@@ -1,7 +1,7 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import GachaReveal from './gacha-reveal';
 import { Rarity } from '@/components/card';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 const mockCards = [
   {
@@ -32,6 +32,7 @@ describe('GachaReveal', () => {
   beforeEach(() => {
     // Mock scrollTo which is not implemented in JSDOM
     Element.prototype.scrollTo = vi.fn();
+    Element.prototype.scrollIntoView = vi.fn();
   });
 
   it('renders all cards provided', async () => {
@@ -41,7 +42,7 @@ describe('GachaReveal', () => {
     await waitFor(() => expect(screen.getByText('Card 1')).toBeInTheDocument(), { timeout: 2000 });
 
     // Card 2 requires manual click (SSR)
-    const card2Overlay = screen.getByText('[ MANUAL_DECRYPTION_REQUIRED ]');
+    const card2Overlay = screen.getByText('MANUAL_DECRYPT');
     fireEvent.click(card2Overlay);
 
     await waitFor(() => expect(screen.getByText('Card 2')).toBeInTheDocument(), { timeout: 2000 });
@@ -52,8 +53,8 @@ describe('GachaReveal', () => {
     render(<GachaReveal cards={mockCards} onComplete={onComplete} />);
 
     // Reveal the manual card first
-    await waitFor(() => screen.getByText('[ MANUAL_DECRYPTION_REQUIRED ]'), { timeout: 2000 });
-    fireEvent.click(screen.getByText('[ MANUAL_DECRYPTION_REQUIRED ]'));
+    await waitFor(() => screen.getByText('MANUAL_DECRYPT'), { timeout: 2000 });
+    fireEvent.click(screen.getByText('MANUAL_DECRYPT'));
 
     // Wait for all cards to be auto-revealed
     await waitFor(() => expect(screen.getByText('CONFIRM_ACQUISITION')).toBeInTheDocument(), {
@@ -69,9 +70,9 @@ describe('GachaReveal', () => {
   it('shows placeholder slots when isLoading is true', () => {
     render(<GachaReveal cards={null} isLoading={true} />);
 
-    expect(screen.getByText('EXTRACTING_DATA...')).toBeInTheDocument();
+    expect(screen.getByText('EXTRACTING...')).toBeInTheDocument();
     // 5 placeholders are rendered
-    const placeholders = screen.getAllByText('[ SEARCHING_ARTICLE ]');
+    const placeholders = screen.getAllByText('[ FETCHING ]');
     expect(placeholders).toHaveLength(5);
   });
 
@@ -81,10 +82,10 @@ describe('GachaReveal', () => {
     render(<GachaReveal cards={null} error={error} onComplete={onComplete} />);
 
     expect(screen.getByText('BREACH_ABORTED')).toBeInTheDocument();
-    expect(screen.getByText('CRITICAL_BREACH_ERROR')).toBeInTheDocument();
+    expect(screen.getByText('CRITICAL_ERROR')).toBeInTheDocument();
     expect(screen.getByText('BREACH_FAILED_BY_FIREWALL')).toBeInTheDocument();
 
-    const terminateButton = screen.getByText('TERMINATE_SESSION');
+    const terminateButton = screen.getByText('TERMINATE');
     fireEvent.click(terminateButton);
     expect(onComplete).toHaveBeenCalled();
   });

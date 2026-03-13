@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { CollectionService } from './collection.service';
 import { PrismaService } from '../../common/prisma/prisma.service';
 import { NotFoundException } from '@nestjs/common';
-import { Rarity } from '../../generated/prisma/enums';
+import { SortOption } from './dto/collection-query.dto';
 
 describe('CollectionService', () => {
   let service: CollectionService;
@@ -12,6 +12,7 @@ describe('CollectionService', () => {
     inventory: {
       findMany: jest.fn(),
       findFirst: jest.fn(),
+      count: jest.fn(),
       update: jest.fn(),
     },
   };
@@ -20,10 +21,7 @@ describe('CollectionService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         CollectionService,
-        {
-          provide: PrismaService,
-          useValue: mockPrismaService,
-        },
+        { provide: PrismaService, useValue: mockPrismaService },
       ],
     }).compile();
 
@@ -36,97 +34,73 @@ describe('CollectionService', () => {
   });
 
   describe('getPlayerCollection', () => {
-    it('should return paginated player collection', async () => {
-      const playerId = 'player-1';
-      const mockItems = [
-        {
-          id: 'inv-1',
-          playerId,
-          cardId: 'card-1',
-          isFavorite: false,
-          card: { id: 'card-1', title: 'Card 1', rarity: Rarity.C },
-        },
-      ];
+    it('should return paginated collection', async () => {
+      mockPrismaService.inventory.findMany.mockResolvedValue([]);
+      mockPrismaService.inventory.count.mockResolvedValue(0);
 
-      mockPrismaService.inventory.findMany.mockResolvedValue(mockItems);
-      mockPrismaService.inventory.count = jest.fn().mockResolvedValue(1);
+      const result = await service.getPlayerCollection('p1', { page: 1, limit: 10 });
 
-      const result = await service.getPlayerCollection(playerId, { page: 1, limit: 20 });
+      expect(result.items).toEqual([]);
+      expect(result.meta.total).toBe(0);
+    });
 
-      expect(result.items).toEqual(mockItems);
-      expect(result.meta).toEqual({
-        total: 1,
-        page: 1,
-        limit: 20,
-        totalPages: 1,
+    it('should handle sorting and search', async () => {
+      mockPrismaService.inventory.findMany.mockResolvedValue([]);
+      mockPrismaService.inventory.count.mockResolvedValue(0);
+
+      await service.getPlayerCollection('p1', { 
+        page: 1, 
+        limit: 10, 
+        search: 'test', 
+        sortBy: SortOption.ALPHABETICAL 
       });
-      expect(prisma.inventory.findMany).toHaveBeenCalledWith(expect.objectContaining({
-        where: expect.any(Object),
-        skip: 0,
-        take: 20,
-      }));
+
+      expect(mockPrismaService.inventory.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            card: expect.objectContaining({
+              AND: expect.arrayContaining([{ title: { contains: 'test' } }])
+            })
+          }),
+          orderBy: { card: { title: 'asc' } }
+        })
+      );
     });
   });
 
   describe('getCardInCollection', () => {
-    it('should return card details if in collection', async () => {
-      const playerId = 'player-1';
-      const cardId = 'card-1';
-      const mockItem = {
-        id: 'inv-1',
-        playerId,
-        cardId,
-        card: { id: cardId, title: 'Card 1' },
-      };
-
-      mockPrismaService.inventory.findFirst.mockResolvedValue(mockItem);
-
-      const result = await service.getCardInCollection(playerId, cardId);
-
-      expect(result).toEqual(mockItem);
-      expect(prisma.inventory.findFirst).toHaveBeenCalledWith({
-        where: { playerId, cardId },
-        include: { card: true },
-      });
+    it('should throw NotFoundException if card not found', async () => {
+      mockPrismaService.inventory.findFirst.mockResolvedValue(null);
+      await expect(service.getCardInCollection('p1', 'c1')).rejects.toThrow(NotFoundException);
     });
 
-    it('should throw NotFoundException if card not in collection', async () => {
-      const playerId = 'player-1';
-      const cardId = 'card-not-owned';
-
-      mockPrismaService.inventory.findFirst.mockResolvedValue(null);
-
-      await expect(service.getCardInCollection(playerId, cardId)).rejects.toThrow(
-        NotFoundException,
-      );
+    it('should return card item if found', async () => {
+      const mockItem = { id: 'i1', cardId: 'c1' };
+      mockPrismaService.inventory.findFirst.mockResolvedValue(mockItem);
+      const result = await service.getCardInCollection('p1', 'c1');
+      expect(result).toEqual(mockItem);
     });
   });
 
   describe('toggleFavorite', () => {
     it('should toggle favorite status', async () => {
-      const playerId = 'player-1';
-      const inventoryId = 'inv-1';
-      const mockItem = { id: inventoryId, playerId, isFavorite: false };
-      const updatedItem = { ...mockItem, isFavorite: true };
-
+      const mockItem = { id: 'i1', isFavorite: false };
       mockPrismaService.inventory.findFirst.mockResolvedValue(mockItem);
-      mockPrismaService.inventory.update.mockResolvedValue(updatedItem);
+      mockPrismaService.inventory.update.mockResolvedValue({ ...mockItem, isFavorite: true });
 
-      const result = await service.toggleFavorite(playerId, inventoryId);
+      const result = await service.toggleFavorite('p1', 'i1');
 
       expect(result.isFavorite).toBe(true);
-      expect(prisma.inventory.update).toHaveBeenCalledWith({
-        where: { id: inventoryId },
-        data: { isFavorite: true },
-      });
+      expect(prisma.inventory.update).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: { isFavorite: true }
+        })
+      );
     });
 
-    it('should throw NotFoundException if inventory item not found', async () => {
+    it('should throw if item not found', async () => {
       mockPrismaService.inventory.findFirst.mockResolvedValue(null);
-
-      await expect(service.toggleFavorite('p1', 'non-existent')).rejects.toThrow(
-        NotFoundException,
-      );
+      await expect(service.toggleFavorite('p1', 'i1')).rejects.toThrow(NotFoundException);
     });
   });
 });

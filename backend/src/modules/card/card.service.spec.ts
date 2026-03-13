@@ -111,4 +111,66 @@ describe('CardService', () => {
       expect(redis.set).toHaveBeenCalledWith('gacha:pool:count', '55000', 'EX', 86400);
     });
   });
+
+  describe('generateCardFromWiki', () => {
+    it('should generate card with correct stats for FA article', async () => {
+      const mockWikiData = {
+        pageid: 123,
+        title: 'FA Article',
+        extract: 'Summary',
+        content_urls: { desktop: { page: 'url' } },
+      };
+
+      mockPrismaService.card.upsert.mockImplementation(({ create }) => Promise.resolve(create));
+
+      const result = await service.generateCardFromWiki(
+        mockWikiData as any,
+        10000, // pageViews
+        10,    // languageCount
+        { enwiki: 'FA' },
+        5000,  // length
+      );
+
+      expect(result.rarity).toBe(Rarity.LR);
+      expect(result.hp).toBeGreaterThan(100);
+      expect(prisma.card.upsert).toHaveBeenCalled();
+    });
+
+    it('should use synthetic Q-Score if no assessments provided', async () => {
+      const mockWikiData = {
+        pageid: 456,
+        title: 'Normal Article',
+        extract: 'Summary',
+      };
+
+      mockPrismaService.card.upsert.mockImplementation(({ create }) => Promise.resolve(create));
+
+      const result = await service.generateCardFromWiki(
+        mockWikiData as any,
+        100,
+        2,
+        undefined,
+        1000,
+      );
+
+      expect(result.rarity).toBeDefined();
+    });
+  });
+
+  describe('refillPool', () => {
+    it('should fetch and generate multiple cards', async () => {
+      mockWikiService.getRandomArticles.mockResolvedValue(['A', 'B']);
+      mockWikiService.getBatchArticlesData.mockResolvedValue({
+        'A': { pageid: 1, title: 'A', pageViews: 10, languageCount: 1, length: 100 },
+        'B': { pageid: 2, title: 'B', pageViews: 20, languageCount: 2, length: 200 },
+      });
+      mockWikiService.getWikiRankScore.mockResolvedValue({ quality: 50, popularity: 50 });
+      mockPrismaService.card.count.mockResolvedValue(100);
+
+      await service.refillPool(2);
+
+      expect(prisma.card.upsert).toHaveBeenCalledTimes(2);
+      expect(redis.set).toHaveBeenCalledWith('gacha:pool:count', '100', 'EX', 60);
+    });
+  });
 });

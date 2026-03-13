@@ -81,7 +81,8 @@ describe('CollectionPage', () => {
     });
 
     render(<CollectionPage />, { wrapper });
-    expect(screen.getByText('Accessing_Central_Database...')).toBeInTheDocument();
+    // When loading, we still show the header but the grid is empty/skeletons
+    expect(screen.getByText('Collection')).toBeInTheDocument();
   });
 
   it('shows end of database message when no more pages', () => {

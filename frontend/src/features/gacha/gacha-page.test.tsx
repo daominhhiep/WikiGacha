@@ -87,7 +87,7 @@ describe('GachaPage', () => {
     const button = screen.getByRole('button');
     expect(button).toBeDisabled();
     // Match partial text since it has icons
-    expect(screen.getByText(/BREACHING_FIREWALL/)).toBeInTheDocument();
+    expect(screen.getByText(/BREACHING.../)).toBeInTheDocument();
   });
 
   it('calls openPack when button is clicked and shows reveal immediately', () => {

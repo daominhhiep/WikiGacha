@@ -4,17 +4,10 @@ import { ConfigService } from '@nestjs/config';
 import { WikiService } from './wiki.service';
 import { of, throwError } from 'rxjs';
 import { AxiosResponse } from 'axios';
-import { RedisService } from '../../common/redis/redis.service';
 
 describe('WikiService', () => {
   let service: WikiService;
   let httpService: HttpService;
-  let redisService: RedisService;
-
-  const mockRedisService = {
-    get: jest.fn(),
-    set: jest.fn(),
-  };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -32,16 +25,11 @@ describe('WikiService', () => {
             get: jest.fn().mockReturnValue('https://en.wikipedia.org/w/api.php'),
           },
         },
-        {
-          provide: RedisService,
-          useValue: mockRedisService,
-        },
       ],
     }).compile();
 
     service = module.get<WikiService>(WikiService);
     httpService = module.get<HttpService>(HttpService);
-    redisService = module.get<RedisService>(RedisService);
 
     jest.clearAllMocks();
   });
@@ -54,47 +42,33 @@ describe('WikiService', () => {
     const mockSummary = {
       title: 'Article 1',
       extract: 'This is a summary',
-      thumbnail: 'image.jpg',
+      thumbnail: { source: 'image.jpg' },
       pageid: 123,
       content_urls: { desktop: { page: 'https://en.wikipedia.org/wiki/Article_1' } },
     };
 
-    it('should return cached summary if available', async () => {
-      mockRedisService.get.mockResolvedValue(JSON.stringify(mockSummary));
-
-      const result = await service.getArticleSummary('Article 1');
-      
-      expect(result).toEqual(mockSummary);
-      expect(redisService.get).toHaveBeenCalledWith(expect.stringContaining('wiki:summary:Article_1'));
-      expect(httpService.get).not.toHaveBeenCalled();
-    });
-
-    it('should fetch and cache summary if not in cache', async () => {
-      mockRedisService.get.mockResolvedValue(null);
+    it('should fetch summary from Wikipedia API', async () => {
       const mockApiResponse = {
-        data: {
-          title: 'Article 1',
-          extract: 'This is a summary',
-          thumbnail: { source: 'image.jpg' },
-          pageid: 123,
-          content_urls: { desktop: { page: 'https://en.wikipedia.org/wiki/Article_1' } },
-        },
+        data: mockSummary,
       };
       jest.spyOn(httpService, 'get').mockReturnValue(of(mockApiResponse as AxiosResponse));
 
       const result = await service.getArticleSummary('Article 1');
 
-      expect(result).toEqual(mockSummary);
-      expect(redisService.set).toHaveBeenCalledWith(
-        expect.stringContaining('wiki:summary:Article_1'),
-        JSON.stringify(mockSummary),
-        'EX',
-        expect.any(Number)
+      expect(result).toEqual({
+        title: mockSummary.title,
+        extract: mockSummary.extract,
+        thumbnail: mockSummary.thumbnail.source,
+        pageid: mockSummary.pageid,
+        content_urls: mockSummary.content_urls,
+      });
+      expect(httpService.get).toHaveBeenCalledWith(
+        expect.stringContaining('/page/summary/Article_1'),
+        expect.any(Object),
       );
     });
 
     it('should return null if article is not found', async () => {
-      mockRedisService.get.mockResolvedValue(null);
       const errorResponse = {
         response: {
           status: 404,
@@ -108,27 +82,91 @@ describe('WikiService', () => {
     });
   });
 
-  describe('getArticleStats', () => {
-    const mockStats = {
-      pageViews: 300,
-      languageCount: 3,
-      pageAssessments: { enwiki: 'FA' },
-      length: 1000,
-    };
+  describe('getRandomArticles', () => {
+    it('should fetch random article titles', async () => {
+      const mockResponse = {
+        data: {
+          query: {
+            random: [{ title: 'Random 1' }, { title: 'Random 2' }],
+          },
+        },
+      };
+      jest.spyOn(httpService, 'get').mockReturnValue(of(mockResponse as AxiosResponse));
 
-    it('should return cached stats if available', async () => {
-      mockRedisService.get.mockResolvedValue(JSON.stringify(mockStats));
+      const result = await service.getRandomArticles(2);
 
-      const result = await service.getArticleStats('Article 1');
-
-      expect(result).toEqual(mockStats);
-      expect(redisService.get).toHaveBeenCalledWith(expect.stringContaining('wiki:stats:Article_1'));
-      expect(httpService.get).not.toHaveBeenCalled();
+      expect(result).toEqual(['Random 1', 'Random 2']);
+      expect(httpService.get).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({ params: expect.objectContaining({ list: 'random' }) }),
+      );
     });
+  });
 
-    it('should fetch and cache stats if not in cache', async () => {
-      mockRedisService.get.mockResolvedValue(null);
-      
+  describe('getBatchArticlesData', () => {
+    it('should fetch data for multiple articles', async () => {
+      const mockResponse = {
+        data: {
+          query: {
+            pages: {
+              '1': { pageid: 1, title: 'A', extract: 'Ext A', pageviews: { '2024-01-01': 10 } },
+              '2': { pageid: 2, title: 'B', extract: 'Ext B', pageviews: { '2024-01-01': 20 } },
+            },
+          },
+        },
+      };
+      jest.spyOn(httpService, 'get').mockReturnValue(of(mockResponse as AxiosResponse));
+
+      const result = await service.getBatchArticlesData(['A', 'B']);
+
+      expect(result['A']).toBeDefined();
+      expect(result['B']).toBeDefined();
+      expect(result['A'].pageViews).toBe(10);
+    });
+  });
+
+  describe('getWikiRankScore', () => {
+    it('should fetch scores from WikiRank', async () => {
+      const mockResponse = {
+        data: {
+          result: {
+            en: { quality: 85, popularity: 90 },
+          },
+        },
+      };
+      jest.spyOn(httpService, 'get').mockReturnValue(of(mockResponse as AxiosResponse));
+
+      const result = await service.getWikiRankScore('Article');
+
+      expect(result).toEqual({ quality: 85, popularity: 90 });
+    });
+  });
+
+  describe('getTopArticles', () => {
+    it('should fetch top articles from Wikimedia', async () => {
+      const mockResponse = {
+        data: {
+          items: [
+            {
+              articles: [
+                { article: 'Main_Page', views: 1000 },
+                { article: 'Popular_Article', views: 500 },
+              ],
+            },
+          ],
+        },
+      };
+      jest.spyOn(httpService, 'get').mockReturnValue(of(mockResponse as AxiosResponse));
+
+      const result = await service.getTopArticles(10);
+
+      expect(result).toContain('Popular Article');
+      expect(result).not.toContain('Main Page');
+    });
+  });
+
+  describe('getArticleStats', () => {
+    it('should fetch stats from Wikipedia APIs', async () => {
       const mockActionResponse = {
         data: {
           query: {
@@ -157,25 +195,43 @@ describe('WikiService', () => {
 
       const result = await service.getArticleStats('Article 1');
 
-      expect(result).toEqual(mockStats);
-      expect(redisService.set).toHaveBeenCalledWith(
-        expect.stringContaining('wiki:stats:Article_1'),
-        JSON.stringify(mockStats),
-        'EX',
-        expect.any(Number)
-      );
+      expect(result).toEqual({
+        pageViews: 300,
+        languageCount: 3,
+        pageAssessments: { enwiki: 'FA' },
+        length: 1000,
+      });
     });
   });
 
   describe('getGlobalStats', () => {
-    it('should return cached global stats if available', async () => {
-      const mockGlobalStats = { articleCount: 7000000, totalMonthlyViews: 10000000000 };
-      mockRedisService.get.mockResolvedValue(JSON.stringify(mockGlobalStats));
+    it('should fetch global stats from Wikipedia APIs', async () => {
+      const mockStatsRes = {
+        data: {
+          query: {
+            statistics: {
+              articles: 7000000,
+            },
+          },
+        },
+      };
+
+      const mockAnalyticsRes = {
+        data: {
+          items: [{ views: 10000000000 }],
+        },
+      };
+
+      jest.spyOn(httpService, 'get')
+        .mockReturnValueOnce(of(mockStatsRes as AxiosResponse))
+        .mockReturnValueOnce(of(mockAnalyticsRes as AxiosResponse));
 
       const result = await service.getGlobalStats();
 
-      expect(result).toEqual(mockGlobalStats);
-      expect(redisService.get).toHaveBeenCalledWith('wiki:global_stats');
+      expect(result).toEqual({
+        articleCount: 7000000,
+        totalMonthlyViews: 10000000000,
+      });
     });
   });
 });
