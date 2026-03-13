@@ -48,6 +48,8 @@ interface CardProps {
   showSummary?: boolean;
   /** Whether the card is currently revealed (flipped). */
   isRevealed?: boolean;
+  /** The visual size of the card. */
+  size?: 'sm' | 'md' | 'lg';
 }
 
 const getRarityBorder = (rarity: Rarity) => {
@@ -104,7 +106,14 @@ const Card: React.FC<CardProps> = ({
   style,
   showSummary = false,
   isRevealed = true,
+  size = 'md',
 }) => {
+  const sizeClasses = {
+    sm: 'h-[22rem] w-56 p-3',
+    md: 'h-[30rem] w-72 p-4',
+    lg: 'h-[36rem] w-80 p-6',
+  };
+
   return (
     <motion.div
       layout
@@ -112,7 +121,8 @@ const Card: React.FC<CardProps> = ({
       whileHover={isRevealed ? { y: -8, scale: 1.02 } : { scale: 1.05 }}
       transition={{ type: 'spring', stiffness: 400, damping: 10 }}
       className={cn(
-        'group relative h-[30rem] w-72 flex flex-col rounded-none border-2 p-4 transition-all duration-300',
+        'group relative flex flex-col rounded-none border-2 transition-all duration-300',
+        sizeClasses[size],
         isRevealed
           ? getRarityBorder(card.rarity)
           : 'border-primary/20 bg-black/80 shadow-[0_0_15px_rgba(0,240,255,0.1)]',
