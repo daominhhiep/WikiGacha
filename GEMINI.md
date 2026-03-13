@@ -3,6 +3,7 @@
 Auto-generated from all feature plans. Last updated: 2026-03-11
 
 ## Active Technologies
+- MySQL (persistent), Redis (caching) (002-v2-features)
 
 - TypeScript (Node.js 20+) + React, Vite, Shadcn UI, Tailwind CSS (Frontend); 
 - NestJS + Prisma (Backend), Wikipedia API (001-wikigacha-core)
@@ -38,6 +39,7 @@ TypeScript (Node.js 20+): Follow standard conventions
 
 
 ## Recent Changes
+- 002-v2-features: Added TypeScript (Node.js 20+)
 
 - 001-wikigacha-core: Full Core Loop Implemented (Auth -> Gacha -> Collection -> Battle). Added Redis caching, Framer Motion animations, and PvE Auto-Battle engine.
 
