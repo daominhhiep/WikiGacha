@@ -228,7 +228,7 @@ const DeckSelector: React.FC<DeckSelectorProps> = ({ onStartBattle, isStarting =
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 justify-items-center relative min-h-[400px]">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-6 justify-items-center relative min-h-[400px]">
               <AnimatePresence>
                 {allCards.map((item) => {
                   const isSelected = selectedCardIds.includes(item.cardId);
@@ -241,7 +241,7 @@ const DeckSelector: React.FC<DeckSelectorProps> = ({ onStartBattle, isStarting =
                       animate={{ opacity: 1, scale: 1 }}
                       exit={{ opacity: 0, scale: 0.9 }}
                       transition={{ duration: 0.2 }}
-                      className="relative w-56"
+                      className="relative w-full max-w-[224px]"
                       onClick={() => toggleCard(item.cardId)}
                     >
                       <Card
