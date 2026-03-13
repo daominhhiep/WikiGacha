@@ -38,18 +38,18 @@ export interface ClaimRewardResponse {
  * Custom hook for fetching the current user's missions.
  */
 export const useMissions = () => {
-  const { accessToken } = useAuthStore();
+  const { player, accessToken } = useAuthStore();
 
   return useQuery({
-    queryKey: ['missions'],
+    queryKey: ['missions', player?.id],
     queryFn: async () => {
-      if (!accessToken) {
+      if (!accessToken || !player) {
         throw new Error('AUTHENTICATION_REQUIRED: Please login to view missions.');
       }
-      const response = await api.get<UserMission[]>('/missions');
+      const response = await api.get<UserMission[]>(`/missions/${player.id}`);
       return response as unknown as UserMission[];
     },
-    enabled: !!accessToken,
+    enabled: !!accessToken && !!player,
   });
 };
 
@@ -58,17 +58,25 @@ export const useMissions = () => {
  */
 export const useClaimMissionReward = () => {
   const queryClient = useQueryClient();
-  const { accessToken } = useAuthStore();
+  const { player, accessToken, updatePlayerStats } = useAuthStore();
 
   return useMutation({
     mutationFn: async (userMissionId: number) => {
-      if (!accessToken) {
+      if (!accessToken || !player) {
         throw new Error('AUTHENTICATION_REQUIRED: Please login to claim rewards.');
       }
-      const response = await api.post<ClaimRewardResponse>(`/missions/${userMissionId}/claim`, {});
+      const response = await api.post<ClaimRewardResponse>(`/missions/claim`, {
+        userId: player.id,
+        userMissionId,
+      });
       return response as unknown as ClaimRewardResponse;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      // Update local player stats with new credit balance
+      if (data.totalCredits !== undefined) {
+        updatePlayerStats({ credits: data.totalCredits });
+      }
+
       // Invalidate the missions query to refresh progress/claimed status
       queryClient.invalidateQueries({ queryKey: ['missions'] });
       // Might want to invalidate user profile/credits too

@@ -6,6 +6,7 @@ import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { GoogleStrategy } from './strategies/google.strategy';
+import { MissionModule } from '../mission/mission.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { GoogleStrategy } from './strategies/google.strategy';
         signOptions: { expiresIn: '7d' },
       }),
     }),
+    MissionModule,
   ],
   providers: [AuthService, JwtStrategy, GoogleStrategy],
   controllers: [AuthController],

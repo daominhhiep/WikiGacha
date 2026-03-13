@@ -4,6 +4,7 @@ import { PrismaService } from '../../common/prisma/prisma.service';
 import { Player } from '../../generated/prisma/client';
 import { OAuth2Client } from 'google-auth-library';
 import { ConfigService } from '@nestjs/config';
+import { MissionService } from '../mission/mission.service';
 
 @Injectable()
 export class AuthService {
@@ -13,6 +14,7 @@ export class AuthService {
     private readonly prisma: PrismaService,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
+    private readonly missionService: MissionService,
   ) {
     this.googleClient = new OAuth2Client(this.configService.get<string>('GOOGLE_CLIENT_ID'));
   }
@@ -71,6 +73,8 @@ export class AuthService {
           username: finalUsername,
         },
       });
+      // Assign initial missions for new user
+      await this.missionService.assignInitialMissions(player.id);
     }
 
     const payload = { sub: player.id, username: player.username };
@@ -116,6 +120,8 @@ export class AuthService {
             avatarUrl: details.picture,
           },
         });
+        // Assign initial missions for new user
+        await this.missionService.assignInitialMissions(player.id);
       }
     } else {
       // Update profile pic if changed

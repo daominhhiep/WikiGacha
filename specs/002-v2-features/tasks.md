@@ -46,12 +46,12 @@
 
 **Independent Test**: Complete a "Pull 5 Cards" mission and verify rewards are claimed and trophies appear in profile.
 
-- [ ] T014 [US1] Implement `MissionService` with event listeners for `card.pulled` and `battle.won` in `backend/src/modules/mission/mission.service.ts`
-- [ ] T015 [US1] Implement `TrophyService` for achievement logic in `backend/src/modules/trophy/trophy.service.ts`
-- [ ] T016 [US1] Create Mission and Trophy controllers in `backend/src/modules/mission/` and `backend/src/modules/trophy/`
-- [ ] T017 [US1] Frontend: Implement `MissionList` component in `frontend/src/features/mission/components/mission-list.tsx`
-- [ ] T018 [US1] Frontend: Implement `TrophyGrid` component in `frontend/src/features/trophy/components/trophy-grid.tsx`
-- [ ] T019 [US1] Integrate Mission/Trophy progress into the main Dashboard in `frontend/src/App.tsx`
+- [x] T014 [US1] Implement `MissionService` with event listeners for `card.pulled` and `battle.won` in `backend/src/modules/mission/mission.service.ts`
+- [x] T015 [US1] Implement `TrophyService` for achievement logic in `backend/src/modules/trophy/trophy.service.ts`
+- [x] T016 [US1] Create Mission and Trophy controllers in `backend/src/modules/mission/` and `backend/src/modules/trophy/`
+- [x] T017 [US1] Frontend: Implement `MissionList` component in `frontend/src/features/mission/components/mission-list.tsx`
+- [x] T018 [US1] Frontend: Implement `TrophyGrid` component in `frontend/src/features/trophy/components/trophy-grid.tsx`
+- [x] T019 [US1] Integrate Mission/Trophy progress into the main Dashboard in `frontend/src/App.tsx`
 
 ---
 

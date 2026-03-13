@@ -58,7 +58,7 @@ Wikigacha is a multiverse-themed gacha game where every Wikipedia article is a c
   - **VETERAN_COMMANDER:** Awarded after winning 10 battles (PvE or PvP).
 - **Backend:** `TrophyService` listening to `card.pulled` and `battle.won` events.
 - **Endpoints:**
-  - `GET /api/v1/trophy/:playerId` - Retrieve all trophies unlocked by a player.
+  - `GET /api/v1/trophies/:playerId` - Retrieve all trophies unlocked by a player.
 
 ### US14: Daily & Lifetime Missions
 - **Mission Engine:** Event-driven progress tracking for daily and lifetime goals.
@@ -69,6 +69,10 @@ Wikigacha is a multiverse-themed gacha game where every Wikipedia article is a c
 - **Backend:** `MissionService` listening for `card.pulled` and `battle.finished` events.
 - **Rewards:** Claim `rewardCredits` upon mission completion.
 - **Logic:** Atomic reward claiming using database transactions to ensure data integrity.
+- **Endpoints:**
+  - `GET /api/v1/missions` - List all static missions.
+  - `GET /api/v1/missions/:playerId` - Fetch user-specific mission progress.
+  - `POST /api/v1/missions/claim` - Claim credits for a completed mission.
 
 ## 📝 API Documentation
 - **Swagger UI:** Accessible at `/docs` when the server is running.
