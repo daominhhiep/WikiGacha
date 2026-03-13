@@ -2,7 +2,8 @@ import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Card from '@/components/card';
 import type { InventoryItem } from './use-collection';
-import { Star, Clock, Search } from 'lucide-react';
+import { Star, Search } from 'lucide-react';
+
 import { cn } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -75,43 +76,34 @@ const CollectionGrid: React.FC<CollectionGridProps> = ({
             transition={{ duration: 0.3, delay: (index % 20) * 0.05 }}
             className="relative group"
           >
-            {/* Collection Metadata Overlay */}
-            <div className="absolute top-2 left-2 z-30 flex gap-2">
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onToggleFavorite?.(item.id);
-                }}
-                className={cn(
-                  'size-8 flex items-center justify-center bg-black/80 border border-border-grid transition-all',
-                  item.isFavorite
-                    ? 'text-yellow-400 border-yellow-500/50 shadow-[0_0_10px_rgba(234,179,8,0.3)]'
-                    : 'text-white/40 hover:text-white',
-                )}
-              >
-                <Star className={cn('size-4', item.isFavorite && 'fill-current')} />
-              </button>
-            </div>
+            {/* Favorite button — top-left overlay on card image */}
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onToggleFavorite?.(item.id);
+              }}
+              title={item.isFavorite ? 'Remove from favorites' : 'Add to favorites'}
+              className={cn(
+                'absolute top-2 left-2 z-30 size-8 flex items-center justify-center bg-black/70 border border-border-grid transition-all hover:scale-110',
+                item.isFavorite
+                  ? 'text-yellow-400 border-yellow-500/50 shadow-[0_0_10px_rgba(234,179,8,0.4)]'
+                  : 'text-white/30 hover:text-white hover:border-white/40',
+              )}
+            >
+              <Star className={cn('size-4', item.isFavorite && 'fill-current')} />
+            </button>
 
-            <div className="absolute bottom-2 right-2 z-30 pointer-events-none">
-              <div className="px-2 py-1 bg-black/80 border border-border-grid text-[8px] font-mono text-primary/60 flex items-center gap-1.5 uppercase">
-                <Clock className="size-2.5" />
-                {new Date(item.acquiredAt).toLocaleDateString(undefined, {
-                  month: 'short',
-                  day: 'numeric',
-                })}
-              </div>
-            </div>
-
-            {/* Interaction Layer */}
+            {/* Card — acquiredAt passed so it shows in footer */}
             <div className="cursor-pointer" onClick={() => onCardClick?.(item)}>
               <Card
                 card={item.card}
                 isRevealed={true}
+                acquiredAt={item.acquiredAt}
                 className="transition-transform group-hover:shadow-[0_0_30px_rgba(0,240,255,0.15)]"
               />
             </div>
           </motion.div>
+
         ))}
 
         {/* Loading Skeletons */}

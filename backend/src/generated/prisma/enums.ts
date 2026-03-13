@@ -28,3 +28,41 @@ export const BattleStatus = {
 } as const
 
 export type BattleStatus = (typeof BattleStatus)[keyof typeof BattleStatus]
+
+
+export const MissionType = {
+  DAILY: 'DAILY',
+  LIFETIME: 'LIFETIME'
+} as const
+
+export type MissionType = (typeof MissionType)[keyof typeof MissionType]
+
+
+export const PvPStatus = {
+  MATCHMAKING: 'MATCHMAKING',
+  IN_PROGRESS: 'IN_PROGRESS',
+  COMPLETED: 'COMPLETED'
+} as const
+
+export type PvPStatus = (typeof PvPStatus)[keyof typeof PvPStatus]
+
+
+export const Tier = {
+  COMMON: 'COMMON',
+  RARE: 'RARE',
+  SUPER_RARE: 'SUPER_RARE',
+  SPEC_SUPER_RARE: 'SPEC_SUPER_RARE'
+} as const
+
+export type Tier = (typeof Tier)[keyof typeof Tier]
+
+
+export const Category = {
+  HISTORY: 'HISTORY',
+  SCIENCE: 'SCIENCE',
+  ART: 'ART',
+  GEOGRAPHY: 'GEOGRAPHY',
+  ENTERTAINMENT: 'ENTERTAINMENT'
+} as const
+
+export type Category = (typeof Category)[keyof typeof Category]
