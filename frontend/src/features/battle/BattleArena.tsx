@@ -27,13 +27,13 @@ const ArenaCard: React.FC<{
       layout
       animate={
         isAttacking
-          ? { y: side === 'p1' ? -40 : 40, scale: 1.1, zIndex: 50 }
+          ? { y: side === 'p1' ? -60 : 60, scale: 1.1, zIndex: 50 }
           : isDefending
             ? { x: [0, -10, 10, -10, 10, 0], scale: 0.95 }
             : { y: 0, scale: 1, zIndex: 10 }
       }
       className={cn(
-        'relative w-32 sm:w-40 aspect-[3/4] border-2 bg-black/60 overflow-hidden transition-colors duration-300',
+        'relative w-24 sm:w-32 aspect-[3/4] border-2 bg-black/60 overflow-hidden transition-colors duration-300',
         currentHp <= 0 ? 'border-red-900 grayscale opacity-40' : 'border-primary/20',
         isAttacking && 'border-primary shadow-[0_0_20px_rgba(0,240,255,0.5)]',
         isDefending && 'border-red-500 shadow-[0_0_20px_rgba(239,68,68,0.5)]',
@@ -169,9 +169,9 @@ const BattleArena: React.FC<BattleArenaProps> = ({ result, onComplete }) => {
       <div className="absolute inset-0 opacity-5 pointer-events-none bg-[radial-gradient(circle_at_center,rgba(0,240,255,0.2)_0%,transparent_70%)]" />
 
       {/* Main Arena */}
-      <div className="flex-1 relative flex flex-col items-center justify-between p-8 py-12">
+      <div className="flex-1 relative flex flex-col items-center justify-between p-4 py-12">
         {/* Opponent Side */}
-        <div className="flex flex-wrap justify-center gap-4">
+        <div className="flex flex-row justify-center gap-2 sm:gap-4 w-full overflow-visible">
           {result.participants.p2.cards.map((card) => (
             <ArenaCard
               key={card.instanceId}
@@ -215,7 +215,7 @@ const BattleArena: React.FC<BattleArenaProps> = ({ result, onComplete }) => {
         </div>
 
         {/* Player Side */}
-        <div className="flex flex-wrap justify-center gap-4">
+        <div className="flex flex-row justify-center gap-2 sm:gap-4 w-full overflow-visible">
           {result.participants.p1.cards.map((card) => (
             <ArenaCard
               key={card.instanceId}

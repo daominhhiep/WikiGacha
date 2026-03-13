@@ -86,7 +86,7 @@ export class BattleService {
     } else {
       // PvE: Generate an AI opponent using random cards from the global pool
       const randomCards = await this.prisma.card.findMany({
-        take: p1.cards.length,
+        take: Math.min(p1.cards.length, 5),
         orderBy: { createdAt: 'desc' }, // Simplified random choice
       });
 
