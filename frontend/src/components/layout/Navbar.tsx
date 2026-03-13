@@ -48,10 +48,10 @@ declare global {
 
 const navItems = [
   { label: 'Gacha', path: '/gacha' },
-  { label: 'Collection', path: '/collection' },
-  { label: 'Battle', path: '/battle' },
-  { label: 'Missions', path: '/missions' },
-  { label: 'Trophies', path: '/trophies' },
+  { label: 'Collection', path: '/collection', requiresAuth: true },
+  { label: 'Battle', path: '/battle', requiresAuth: true },
+  { label: 'Missions', path: '/missions', requiresAuth: true },
+  { label: 'Trophies', path: '/trophies', requiresAuth: true },
 ];
 
 export function Navbar() {
@@ -121,21 +121,38 @@ export function Navbar() {
           </Link>
         </div>
         <div className="flex flex-1 items-center space-x-8 text-[11px] font-mono font-black uppercase tracking-widest">
-          {navItems.map((item) => (
-            <Link
-              key={item.path}
-              to={item.path}
-              className={cn(
-                'transition-all hover:text-primary relative py-1',
-                location.pathname === item.path ? 'text-primary' : 'text-muted-foreground',
-              )}
-            >
-              {item.label}
-              {location.pathname === item.path && (
-                <span className="absolute bottom-0 left-0 w-full h-0.5 bg-primary animate-in fade-in slide-in-from-bottom-1" />
-              )}
-            </Link>
-          ))}
+          {navItems.map((item) => {
+            const isLocked = item.requiresAuth && !player;
+            
+            if (isLocked) {
+              return (
+                <div 
+                  key={item.path}
+                  className="text-muted-foreground/20 cursor-not-allowed relative py-1 flex items-center gap-1.5"
+                  title="AUTHENTICATION_REQUIRED"
+                >
+                  <span className="size-1 bg-muted-foreground/20 rounded-full" />
+                  {item.label}
+                </div>
+              );
+            }
+
+            return (
+              <Link
+                key={item.path}
+                to={item.path}
+                className={cn(
+                  'transition-all hover:text-primary relative py-1',
+                  location.pathname === item.path ? 'text-primary' : 'text-muted-foreground',
+                )}
+              >
+                {item.label}
+                {location.pathname === item.path && (
+                  <span className="absolute bottom-0 left-0 w-full h-0.5 bg-primary animate-in fade-in slide-in-from-bottom-1" />
+                )}
+              </Link>
+            );
+          })}
         </div>
         <div className="flex items-center space-x-6 font-mono">
           <div className="flex items-center gap-2 px-3 py-1 bg-primary/5 border border-primary/20 rounded-sm">

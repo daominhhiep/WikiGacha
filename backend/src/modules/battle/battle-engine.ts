@@ -50,7 +50,8 @@ export class BattleEngine {
         if (defenders.length === 0) break;
 
         const defender = defenders[Math.floor(Math.random() * defenders.length)];
-        const damage = Math.max(1, attacker.atk - defender.def);
+        const baseDamage = attacker.atk - defender.def * 0.5;
+        const damage = Math.max(Math.ceil(attacker.atk * 0.25), Math.floor(baseDamage));
         defender.hp -= damage;
 
         log.push({
@@ -76,7 +77,8 @@ export class BattleEngine {
         if (defenders.length === 0) break;
 
         const defender = defenders[Math.floor(Math.random() * defenders.length)];
-        const damage = Math.max(1, attacker.atk - defender.def);
+        const baseDamage = attacker.atk - defender.def * 0.5;
+        const damage = Math.max(Math.ceil(attacker.atk * 0.25), Math.floor(baseDamage));
         defender.hp -= damage;
 
         log.push({
