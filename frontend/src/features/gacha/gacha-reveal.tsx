@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils';
 import Card, { Rarity } from '@/components/card';
 import type { CardData } from '@/components/card';
 import { Button } from '@/components/ui/button';
-import { Cpu, ShieldAlert, Terminal, Loader2 } from 'lucide-react';
+import { Cpu, ShieldAlert, Loader2 } from 'lucide-react';
 import axios from 'axios';
 
 // External counter for unique IDs to satisfy strict purity rules (Math.random/Date.now in render)
