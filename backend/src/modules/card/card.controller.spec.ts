@@ -13,9 +13,7 @@ describe('GachaController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [GachaController],
-      providers: [
-        { provide: CardService, useValue: mockCardService },
-      ],
+      providers: [{ provide: CardService, useValue: mockCardService }],
     }).compile();
 
     controller = module.get<GachaController>(GachaController);
@@ -31,9 +29,9 @@ describe('GachaController', () => {
       const req = { user: { userId: 'p1' } };
       const dto: OpenPackDto = { packType: PackType.BASIC };
       mockCardService.openPack.mockResolvedValue({ newCards: [] });
-      
+
       const result = await controller.openPack(req as any, dto);
-      
+
       expect(cardService.openPack).toHaveBeenCalledWith('p1');
       expect(result).toHaveProperty('newCards');
     });

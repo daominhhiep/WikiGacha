@@ -19,10 +19,7 @@ describe('CollectionService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        CollectionService,
-        { provide: PrismaService, useValue: mockPrismaService },
-      ],
+      providers: [CollectionService, { provide: PrismaService, useValue: mockPrismaService }],
     }).compile();
 
     service = module.get<CollectionService>(CollectionService);
@@ -48,22 +45,22 @@ describe('CollectionService', () => {
       mockPrismaService.inventory.findMany.mockResolvedValue([]);
       mockPrismaService.inventory.count.mockResolvedValue(0);
 
-      await service.getPlayerCollection('p1', { 
-        page: 1, 
-        limit: 10, 
-        search: 'test', 
-        sortBy: SortOption.ALPHABETICAL 
+      await service.getPlayerCollection('p1', {
+        page: 1,
+        limit: 10,
+        search: 'test',
+        sortBy: SortOption.ALPHABETICAL,
       });
 
       expect(mockPrismaService.inventory.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expect.objectContaining({
             card: expect.objectContaining({
-              AND: expect.arrayContaining([{ title: { contains: 'test' } }])
-            })
+              AND: expect.arrayContaining([{ title: { contains: 'test' } }]),
+            }),
           }),
-          orderBy: { card: { title: 'asc' } }
-        })
+          orderBy: { card: { title: 'asc' } },
+        }),
       );
     });
   });
@@ -93,8 +90,8 @@ describe('CollectionService', () => {
       expect(result.isFavorite).toBe(true);
       expect(prisma.inventory.update).toHaveBeenCalledWith(
         expect.objectContaining({
-          data: { isFavorite: true }
-        })
+          data: { isFavorite: true },
+        }),
       );
     });
 

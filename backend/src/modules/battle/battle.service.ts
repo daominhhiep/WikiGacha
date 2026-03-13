@@ -38,13 +38,15 @@ export class BattleService {
     });
 
     if (playerInventory.length === 0) {
-      throw new NotFoundException('BATTLE_CARDS_NOT_FOUND: Selected cards not found in player inventory.');
+      throw new NotFoundException(
+        'BATTLE_CARDS_NOT_FOUND: Selected cards not found in player inventory.',
+      );
     }
 
     // Map to BattleParticipant for Player 1
     const p1: BattleParticipant = {
       id: playerId,
-      cards: playerInventory.map(item => ({
+      cards: playerInventory.map((item) => ({
         instanceId: item.id,
         title: item.card.title,
         imageUrl: item.card.imageUrl || undefined,
@@ -72,7 +74,7 @@ export class BattleService {
 
       p2 = {
         id: opponentId,
-        cards: opponentInventory.map(item => ({
+        cards: opponentInventory.map((item) => ({
           instanceId: item.id,
           title: item.card.title,
           imageUrl: item.card.imageUrl || undefined,
@@ -92,7 +94,7 @@ export class BattleService {
 
       p2 = {
         id: 'AI_BOT',
-        cards: randomCards.map(card => ({
+        cards: randomCards.map((card) => ({
           instanceId: `AI_${card.id}`,
           title: card.title,
           imageUrl: card.imageUrl || undefined,
@@ -120,7 +122,7 @@ export class BattleService {
       data: {
         player1Id: playerId,
         player2Id: opponentId || null,
-        winnerId: isWinner ? playerId : (opponentId || null),
+        winnerId: isWinner ? playerId : opponentId || null,
         log: result.log as any,
         status: BattleStatus.COMPLETED,
       },
@@ -165,10 +167,7 @@ export class BattleService {
   async getBattleHistory(playerId: string) {
     return this.prisma.battle.findMany({
       where: {
-        OR: [
-          { player1Id: playerId },
-          { player2Id: playerId },
-        ],
+        OR: [{ player1Id: playerId }, { player2Id: playerId }],
       },
       orderBy: { createdAt: 'desc' },
       include: {

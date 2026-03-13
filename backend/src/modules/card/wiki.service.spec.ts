@@ -189,7 +189,8 @@ describe('WikiService', () => {
         },
       };
 
-      jest.spyOn(httpService, 'get')
+      jest
+        .spyOn(httpService, 'get')
         .mockReturnValueOnce(of(mockActionResponse as AxiosResponse))
         .mockReturnValueOnce(of(mockAnalyticsResponse as AxiosResponse));
 
@@ -222,7 +223,8 @@ describe('WikiService', () => {
         },
       };
 
-      jest.spyOn(httpService, 'get')
+      jest
+        .spyOn(httpService, 'get')
         .mockReturnValueOnce(of(mockStatsRes as AxiosResponse))
         .mockReturnValueOnce(of(mockAnalyticsRes as AxiosResponse));
 

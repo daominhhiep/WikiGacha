@@ -31,10 +31,7 @@ describe('BattleService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        BattleService,
-        { provide: PrismaService, useValue: mockPrismaService },
-      ],
+      providers: [BattleService, { provide: PrismaService, useValue: mockPrismaService }],
     }).compile();
 
     service = module.get<BattleService>(BattleService);
@@ -65,9 +62,7 @@ describe('BattleService', () => {
       const mockInventory = [
         { id: 'inv-1', card: { title: 'Card 1', hp: 100, atk: 10, def: 10, rarity: 'C' } },
       ];
-      const mockAiCards = [
-        { id: 'card-2', title: 'AI Card', hp: 50, atk: 5, def: 5, rarity: 'C' },
-      ];
+      const mockAiCards = [{ id: 'card-2', title: 'AI Card', hp: 50, atk: 5, def: 5, rarity: 'C' }];
       const mockSimulationResult = {
         winnerId: playerId,
         log: [],
