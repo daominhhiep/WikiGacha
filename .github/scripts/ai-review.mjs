@@ -24,6 +24,11 @@ async function run() {
     process.exit(1);
   }
 
+  if (!diff || diff.trim().length === 0) {
+    console.log("No changes detected in diff, skipping review.");
+    return;
+  }
+
   const filteredDiff = diff
     .split('diff --git')
     .filter(fileDiff => {
@@ -31,7 +36,7 @@ async function run() {
       return !isNoise;
     })
     .join('diff --git')
-    .substring(0, 60000); // Truncate to stay within context limits
+    .substring(0, 80000); // Slightly larger context allowed for gpt-4o
 
   // 2. Initialize SDK Client
   const client = ModelClient(endpoint, new AzureKeyCredential(token));
@@ -43,7 +48,7 @@ async function run() {
       messages: [
         { 
           role: "system", 
-          content: "You are a senior engineer for 'wikigacha' (NestJS/React/Prisma). Review the following PR diff for bugs, security, and performance. Be concise. If perfect, say 'LGTM! 🚀'." 
+          content: "You are a senior engineer for 'wikigacha' (NestJS/React/Prisma). Review the following PR diff for bugs, security, and performance. Be concise and actionable. If perfect, say 'LGTM! 🚀'." 
         },
         { role: "user", content: `Review this diff:\n\n${filteredDiff}` }
       ],
@@ -58,8 +63,25 @@ async function run() {
 
   const reviewContent = response.body.choices[0].message.content;
 
-  // 4. Post Review Comment
-  const commentBody = `### 🤖 AI Code Review (${modelName})\n\n${reviewContent}\n\n---\n*Review generated via GitHub Models SDK.*`;
+  // 4. Manage Comments: Delete previous AI reviews to keep the thread clean
+  console.log("Searching for previous AI review comments...");
+  try {
+    const commentsJson = execSync(`gh pr view ${prNumber} --json comments`, { encoding: 'utf8', env: { ...process.env, GH_TOKEN: token } });
+    const comments = JSON.parse(commentsJson).comments;
+    const aiComments = comments.filter(c => c.body.includes("### 🤖 AI Code Review"));
+    
+    for (const comment of aiComments) {
+      console.log(`Deleting old AI review: ${comment.id}`);
+      // Using gh api to delete specifically by ID
+      execSync(`gh api -X DELETE repos/:owner/:repo/issues/comments/${comment.id}`, { env: { ...process.env, GH_TOKEN: token } });
+    }
+  } catch (err) {
+    console.warn("Could not clean up old comments:", err.message);
+  }
+
+  // 5. Post New Review Comment
+  console.log("Posting new review comment...");
+  const commentBody = `### 🤖 AI Code Review (${modelName})\n\n${reviewContent}\n\n---\n*Review generated via GitHub Models SDK. (Last updated: ${new Date().toISOString()})*`;
   fs.writeFileSync('review_comment.md', commentBody);
   
   execSync(`gh pr comment ${prNumber} --body-file review_comment.md`, {
