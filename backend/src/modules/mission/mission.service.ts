@@ -130,4 +130,39 @@ export class MissionService {
       orderBy: { id: 'asc' },
     });
   }
+
+  /**
+   * Fetches all available missions in the game.
+   */
+  async getMissions() {
+    return this.prisma.mission.findMany({
+      orderBy: { id: 'asc' },
+    });
+  }
+
+  /**
+   * Assigns all currently available missions to a new player.
+   */
+  async assignInitialMissions(playerId: string) {
+    const missions = await this.prisma.mission.findMany();
+
+    for (const mission of missions) {
+      // Check if already assigned (to avoid duplicates if called multiple times)
+      const existing = await this.prisma.userMission.findFirst({
+        where: { playerId, missionId: mission.id },
+      });
+
+      if (!existing) {
+        await this.prisma.userMission.create({
+          data: {
+            playerId,
+            missionId: mission.id,
+            progress: 0,
+            isCompleted: false,
+            isClaimed: false,
+          },
+        });
+      }
+    }
+  }
 }

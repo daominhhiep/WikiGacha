@@ -12,16 +12,31 @@ class ClaimRewardDto {
 }
 
 @ApiTags('mission')
-@Controller('api/v1/mission')
+@Controller('missions')
 export class MissionController {
   constructor(private readonly missionService: MissionService) {}
+
+  @Get()
+  @ApiOperation({ summary: 'Get all static missions' })
+  @ApiResponse({ status: 200, description: 'Return all missions defined in the game.' })
+  async getMissions() {
+    return this.missionService.getMissions();
+  }
 
   @Get(':playerId')
   @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Get all missions for a player' })
   @ApiResponse({ status: 200, description: 'Return all missions and their progress for the player.' })
   async getPlayerMissions(@Param('playerId') playerId: string) {
-    return this.missionService.findUserMissions(playerId);
+    const missions = await this.missionService.getPlayerMissions(playerId);
+
+    // If no missions assigned yet, assign them automatically
+    if (missions.length === 0) {
+      await this.missionService.assignInitialMissions(playerId);
+      return this.missionService.getPlayerMissions(playerId);
+    }
+
+    return missions;
   }
 
   @Post('claim')
