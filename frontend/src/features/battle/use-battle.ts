@@ -4,6 +4,28 @@ import api from '@/services/api';
 import { useAuthStore } from '../auth/auth-store';
 
 /**
+ * Interface for a card in battle.
+ */
+export interface BattleCard {
+  instanceId: string;
+  title: string;
+  imageUrl?: string;
+  rarity: string;
+  hp: number;
+  maxHp: number;
+  atk: number;
+  def: number;
+}
+
+/**
+ * Interface for a battle participant (Player or AI).
+ */
+export interface BattleParticipant {
+  id: string;
+  cards: BattleCard[];
+}
+
+/**
  * Interface for a battle log entry.
  */
 export interface BattleLogEntry {
@@ -23,6 +45,10 @@ export interface BattleLogEntry {
 export interface BattleResult {
   battleId: string;
   winnerId: string;
+  participants: {
+    p1: BattleParticipant;
+    p2: BattleParticipant;
+  };
   log: BattleLogEntry[];
   rewards: {
     credits: number;

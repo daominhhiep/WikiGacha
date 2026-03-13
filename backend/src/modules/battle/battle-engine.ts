@@ -1,6 +1,8 @@
 export interface BattleCard {
   instanceId: string;
   title: string;
+  imageUrl?: string;
+  rarity: string;
   hp: number;
   maxHp: number;
   atk: number;
@@ -25,6 +27,10 @@ export interface BattleLogEntry {
 
 export interface BattleResult {
   winnerId: string;
+  participants: {
+    p1: BattleParticipant;
+    p2: BattleParticipant;
+  };
   log: BattleLogEntry[];
 }
 
@@ -61,7 +67,7 @@ export class BattleEngine {
         turn++;
       }
       
-      if (p2Cards.every(c => c.hp <= 0)) return { winnerId: p1.id, log };
+      if (p2Cards.every(c => c.hp <= 0)) return { winnerId: p1.id, participants: { p1, p2 }, log };
 
       // Player 2 turn
       for (const attacker of p2Cards.filter(c => c.hp > 0)) {
@@ -86,7 +92,7 @@ export class BattleEngine {
         turn++;
       }
 
-      if (p1Cards.every(c => c.hp <= 0)) return { winnerId: p2.id, log };
+      if (p1Cards.every(c => c.hp <= 0)) return { winnerId: p2.id, participants: { p1, p2 }, log };
     }
 
     // If max turns reached, winner is the one with more total HP remaining
@@ -95,6 +101,7 @@ export class BattleEngine {
     
     return {
       winnerId: p1TotalHp >= p2TotalHp ? p1.id : p2.id,
+      participants: { p1, p2 },
       log
     };
   }

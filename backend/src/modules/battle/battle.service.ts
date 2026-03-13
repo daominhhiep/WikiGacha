@@ -47,6 +47,8 @@ export class BattleService {
       cards: playerInventory.map(item => ({
         instanceId: item.id,
         title: item.card.title,
+        imageUrl: item.card.imageUrl || undefined,
+        rarity: item.card.rarity,
         hp: item.card.hp,
         maxHp: item.card.hp,
         atk: item.card.atk,
@@ -73,6 +75,8 @@ export class BattleService {
         cards: opponentInventory.map(item => ({
           instanceId: item.id,
           title: item.card.title,
+          imageUrl: item.card.imageUrl || undefined,
+          rarity: item.card.rarity,
           hp: item.card.hp,
           maxHp: item.card.hp,
           atk: item.card.atk,
@@ -91,6 +95,8 @@ export class BattleService {
         cards: randomCards.map(card => ({
           instanceId: `AI_${card.id}`,
           title: card.title,
+          imageUrl: card.imageUrl || undefined,
+          rarity: card.rarity,
           hp: card.hp,
           maxHp: card.hp,
           atk: card.atk,
@@ -144,6 +150,7 @@ export class BattleService {
     return {
       battleId: battle.id,
       winnerId: result.winnerId,
+      participants: result.participants,
       log: result.log,
       rewards,
     };

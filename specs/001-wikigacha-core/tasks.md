@@ -101,8 +101,8 @@
 - [x] T031 [US3] Implement Battle Service (State management, rewards) in `backend/src/modules/battle/battle.service.ts`
 - [x] T032 [US3] Implement Battle Controller and `POST /battle/start` in `backend/src/modules/battle/battle.controller.ts`
 - [x] T033 [P] [US3] Create Battle Deck Selection UI in `frontend/src/features/battle/DeckSelector.tsx`
-- [ ] T034 [US3] Implement Battle Visualizer (Log playback) in `frontend/src/features/battle/BattleArena.tsx`
-- [ ] T035 [US3] Add Battle Result screen with reward animation in `frontend/src/features/battle/BattleResult.tsx`
+- [x] T034 [US3] Implement Battle Visualizer (Log playback) in `frontend/src/features/battle/BattleArena.tsx`
+- [x] T035 [US3] Add Battle Result screen with reward animation in `frontend/src/features/battle/BattleResult.tsx`
 
 **Checkpoint**: All user stories functional. Core loop complete.
 

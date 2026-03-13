@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import DeckSelector from './DeckSelector';
+import BattleArena from './BattleArena';
 import { useBattle, type BattleResult } from './use-battle';
 import { Button } from '@/components/ui/button';
-import { Swords, History, Loader2 } from 'lucide-react';
+import { Swords, History, Loader2, Trophy, ArrowLeft } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 type BattlePhase = 'DECK_SELECTION' | 'IN_BATTLE' | 'RESULTS' | 'HISTORY';
@@ -23,70 +24,101 @@ const BattlePage: React.FC = () => {
       setPhase('IN_BATTLE');
     } catch (error) {
       console.error('Failed to start battle:', error);
-      // Error handling would go here (e.g., toast notification)
     }
+  };
+
+  const handleBattleComplete = () => {
+    setPhase('RESULTS');
   };
 
   return (
     <div className="min-h-screen pb-20">
-      {/* Sub-Navigation */}
-      <div className="flex items-center justify-center gap-4 mb-8 border-b border-primary/10 pb-4">
-        <button
-          onClick={() => setPhase('DECK_SELECTION')}
-          className={cn(
-            'flex items-center gap-2 px-4 py-2 font-mono text-xs font-black uppercase tracking-widest transition-all',
-            phase === 'DECK_SELECTION' || phase === 'IN_BATTLE' || phase === 'RESULTS'
-              ? 'text-primary border-b-2 border-primary'
-              : 'text-muted-foreground hover:text-primary/60',
-          )}
-        >
-          <Swords className="size-4" /> COMBAT_ZONE
-        </button>
-        <button
-          onClick={() => setPhase('HISTORY')}
-          className={cn(
-            'flex items-center gap-2 px-4 py-2 font-mono text-xs font-black uppercase tracking-widest transition-all',
-            phase === 'HISTORY'
-              ? 'text-primary border-b-2 border-primary'
-              : 'text-muted-foreground hover:text-primary/60',
-          )}
-        >
-          <History className="size-4" /> BATTLE_LOGS
-        </button>
-      </div>
+      {/* Sub-Navigation (Hidden during active battle) */}
+      {phase !== 'IN_BATTLE' && phase !== 'RESULTS' && (
+        <div className="flex items-center justify-center gap-4 mb-8 border-b border-primary/10 pb-4">
+          <button
+            onClick={() => setPhase('DECK_SELECTION')}
+            className={cn(
+              'flex items-center gap-2 px-4 py-2 font-mono text-xs font-black uppercase tracking-widest transition-all',
+              phase === 'DECK_SELECTION'
+                ? 'text-primary border-b-2 border-primary'
+                : 'text-muted-foreground hover:text-primary/60',
+            )}
+          >
+            <Swords className="size-4" /> COMBAT_ZONE
+          </button>
+          <button
+            onClick={() => setPhase('HISTORY')}
+            className={cn(
+              'flex items-center gap-2 px-4 py-2 font-mono text-xs font-black uppercase tracking-widest transition-all',
+              phase === 'HISTORY'
+                ? 'text-primary border-b-2 border-primary'
+                : 'text-muted-foreground hover:text-primary/60',
+            )}
+          >
+            <History className="size-4" /> BATTLE_LOGS
+          </button>
+        </div>
+      )}
 
       <div className="container mx-auto">
         {phase === 'DECK_SELECTION' && (
           <DeckSelector onStartBattle={handleStartBattle} isStarting={isStartingBattle} />
         )}
 
-        {phase === 'IN_BATTLE' && (
-          <div className="flex flex-col items-center justify-center py-20 gap-8">
+        {phase === 'IN_BATTLE' && lastResult && (
+          <BattleArena result={lastResult} onComplete={handleBattleComplete} />
+        )}
+
+        {phase === 'RESULTS' && lastResult && (
+          <div className="flex flex-col items-center justify-center py-20 gap-8 animate-in zoom-in duration-500">
             <div className="relative">
-              <div className="absolute -inset-4 bg-primary/20 blur-xl animate-pulse rounded-full" />
-              <Swords className="size-24 text-primary relative animate-bounce" />
+              <div className="absolute -inset-10 bg-primary/20 blur-3xl animate-pulse rounded-full" />
+              <Trophy
+                className={cn(
+                  'size-32 relative',
+                  lastResult.winnerId === lastResult.participants.p1.id
+                    ? 'text-primary'
+                    : 'text-red-500',
+                )}
+              />
             </div>
-            <div className="text-center space-y-4">
-              <h2 className="text-4xl font-black uppercase italic tracking-tighter">
-                SIMULATION_ACTIVE
+
+            <div className="text-center space-y-2">
+              <h2 className="text-6xl font-black uppercase italic tracking-tighter">
+                {lastResult.winnerId === lastResult.participants.p1.id
+                  ? 'VICTORY_ACHIEVED'
+                  : 'CONNECTION_SEVERED'}
               </h2>
-              <p className="font-mono text-sm text-primary/60 animate-pulse tracking-[0.3em]">
-                [ DATA_CLASH_IN_PROGRESS... ]
+              <p className="font-mono text-sm text-primary/60 tracking-[0.4em]">
+                [ SIMULATION_TERMINATED_SUCCESSFULLY ]
               </p>
-              <div className="mt-8 p-4 border border-primary/20 bg-black/40 font-mono text-[10px] text-left max-w-md mx-auto">
-                <p className="text-primary/40 mb-2">// BATTLE_ID: {lastResult?.battleId}</p>
-                <p className="text-green-500">
-                  [ SUCCESS ] Simulation generated {lastResult?.log.length} interaction cycles.
-                </p>
-                <p className="text-primary/60 mt-4">
-                  Note: Battle Visualizer (T034) is currently under development. Showing raw data
-                  logs for now.
-                </p>
-              </div>
-              <Button onClick={() => setPhase('DECK_SELECTION')} className="rounded-none mt-8">
-                RETURN_TO_BASE
-              </Button>
             </div>
+
+            <div className="grid grid-cols-2 gap-8 w-full max-w-lg mt-8">
+              <div className="bg-primary/10 border border-primary/20 p-6 flex flex-col items-center gap-2">
+                <span className="text-[10px] font-mono text-primary/60 uppercase">
+                  CREDITS_RECOVERY
+                </span>
+                <span className="text-3xl font-black text-primary">
+                  +{lastResult.rewards.credits}
+                </span>
+              </div>
+              <div className="bg-primary/10 border border-primary/20 p-6 flex flex-col items-center gap-2">
+                <span className="text-[10px] font-mono text-primary/60 uppercase">
+                  XP_DATA_GATHERED
+                </span>
+                <span className="text-3xl font-black text-primary">+{lastResult.rewards.xp}</span>
+              </div>
+            </div>
+
+            <Button
+              size="lg"
+              onClick={() => setPhase('DECK_SELECTION')}
+              className="rounded-none mt-8 h-12 px-12 font-black uppercase tracking-widest"
+            >
+              <ArrowLeft className="size-4 mr-2" /> RETURN_TO_TACTICAL_MAP
+            </Button>
           </div>
         )}
 
