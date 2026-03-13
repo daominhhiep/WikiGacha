@@ -3,6 +3,7 @@ import { BattleService } from './battle.service';
 import { PrismaService } from '../../common/prisma/prisma.service';
 import { BattleEngine } from './battle-engine';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 // Mock BattleEngine
 jest.mock('./battle-engine');
@@ -11,6 +12,7 @@ describe('BattleService', () => {
   let service: BattleService;
   let prisma: PrismaService;
   let engine: jest.Mocked<BattleEngine>;
+  let eventEmitter: jest.Mocked<EventEmitter2>;
 
   const mockPrismaService = {
     inventory: {
@@ -29,13 +31,22 @@ describe('BattleService', () => {
     },
   };
 
+  const mockEventEmitter = {
+    emit: jest.fn(),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [BattleService, { provide: PrismaService, useValue: mockPrismaService }],
+      providers: [
+        BattleService,
+        { provide: PrismaService, useValue: mockPrismaService },
+        { provide: EventEmitter2, useValue: mockEventEmitter },
+      ],
     }).compile();
 
     service = module.get<BattleService>(BattleService);
     prisma = module.get<PrismaService>(PrismaService);
+    eventEmitter = module.get<EventEmitter2>(EventEmitter2) as jest.Mocked<EventEmitter2>;
     engine = (service as any).engine;
 
     jest.clearAllMocks();
@@ -80,6 +91,11 @@ describe('BattleService', () => {
       expect(result.battleId).toBe('battle-1');
       expect(prisma.battle.create).toHaveBeenCalled();
       expect(prisma.player.update).toHaveBeenCalled();
+      expect(eventEmitter.emit).toHaveBeenCalledWith('battle.won', {
+        playerId,
+        winnerId: playerId,
+        isWinner: true,
+      });
     });
   });
 

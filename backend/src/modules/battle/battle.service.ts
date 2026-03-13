@@ -2,12 +2,16 @@ import { Injectable, NotFoundException, BadRequestException } from '@nestjs/comm
 import { PrismaService } from '../../common/prisma/prisma.service';
 import { BattleEngine, BattleParticipant } from './battle-engine';
 import { BattleStatus } from '../../generated/prisma/client';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @Injectable()
 export class BattleService {
   private engine: BattleEngine;
 
-  constructor(private prisma: PrismaService) {
+  constructor(
+    private prisma: PrismaService,
+    private eventEmitter: EventEmitter2,
+  ) {
     this.engine = new BattleEngine();
   }
 
@@ -128,6 +132,12 @@ export class BattleService {
       },
     });
 
+    this.eventEmitter.emit('battle.won', {
+      playerId,
+      winnerId: result.winnerId,
+      isWinner: result.winnerId === playerId,
+    });
+
     // Update Player rewards
     await this.prisma.player.update({
       where: { id: playerId },
@@ -148,6 +158,13 @@ export class BattleService {
         });
       }
     }
+
+    // Emit event for mission tracking
+    this.eventEmitter.emit('battle.finished', {
+      playerId,
+      isWinner,
+      opponentId: opponentId || 'AI_BOT',
+    });
 
     return {
       battleId: battle.id,

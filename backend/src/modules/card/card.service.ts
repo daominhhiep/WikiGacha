@@ -1,4 +1,5 @@
 import { Injectable, Logger, BadRequestException } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { PrismaService } from './../../common/prisma/prisma.service';
 import { WikiService, ArticleSummary } from './wiki.service';
 import { Rarity, Card, Tier, Category } from '../../generated/prisma/client';
@@ -21,6 +22,7 @@ export class CardService {
     private readonly prisma: PrismaService,
     private readonly wikiService: WikiService,
     private readonly redisService: RedisService,
+    private readonly eventEmitter: EventEmitter2,
   ) {}
 
   /**
@@ -139,6 +141,8 @@ export class CardService {
         })),
       }),
     ]);
+
+    this.eventEmitter.emit('card.pulled', { playerId, count: cards.length });
 
     // 6. BACKGROUND REFILL: Keep pool fresh (Fire and forget)
     // Grow the pool until it reaches 50000 cards
