@@ -3,4 +3,5 @@ node_modules
 package-lock.json
 # Prisma generated files
 backend/src/generated/prisma/
-.gemini/settings.jsonfrontend/coverage/
+.gemini/settings.json
+frontend/coverage/
