@@ -74,9 +74,7 @@ const containerVariants: Variants = {
 const itemVariants: Variants = {
   hidden: { opacity: 0, scale: 0.8, rotateY: 90 } as Variant,
   visible: {
-    opacity: 1,
-    scale: 1,
-    rotateY: 0,
+    opacity: 1, scale: 1, rotateY: 0,
     transition: {
       type: 'spring',
       damping: 15,
@@ -167,12 +165,14 @@ const GachaReveal: React.FC<GachaRevealProps> = ({
         card.rarity !== Rarity.C &&
         card.rarity !== Rarity.UC
       ) {
-        const color =
-          (card.rarity === Rarity.SSR || card.rarity === Rarity.UR || card.rarity === Rarity.LR)
-            ? '#FFD700'
-            : card.rarity === Rarity.SR
-              ? '#B026FF'
-              : '#00F0FF'; // R
+        const colorMap = {
+          [Rarity.R]: '#22c55e',
+          [Rarity.SR]: '#3b82f6',
+          [Rarity.SSR]: '#ef4444',
+          [Rarity.UR]: '#eab308',
+          [Rarity.LR]: '#a855f7',
+        };
+        const color = colorMap[card.rarity] || '#00F0FF';
 
         const burstId = `burst-${particleBurstIdCounter++}`;
 
@@ -352,7 +352,11 @@ const GachaReveal: React.FC<GachaRevealProps> = ({
                     <div
                       className={cn(
                         'absolute -bottom-4 left-1/2 -translate-x-1/2 text-black text-[8px] font-black px-2 py-0.5 uppercase italic z-20 shadow-[0_0_10px_rgba(0,240,255,0.5)]',
-                        isManualRarity ? 'bg-rarity-ssr animate-bounce' : 'bg-primary animate-pulse',
+                        isManualRarity 
+                          ? (card.rarity === Rarity.LR ? 'bg-rarity-lr' : 
+                             card.rarity === Rarity.UR ? 'bg-rarity-ur' : 
+                             card.rarity === Rarity.SSR ? 'bg-rarity-ssr' : 'bg-rarity-sr') + ' animate-bounce'
+                          : 'bg-primary animate-pulse',
                       )}
                     >
                       {isManualRarity ? '[ MANUAL_DECRYPTION_REQUIRED ]' : 'DECRYPTING...'}

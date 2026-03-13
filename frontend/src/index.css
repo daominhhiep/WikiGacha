@@ -30,11 +30,13 @@
   --bg-space: #0b0c10;
   --bg-surface: #1a1a2e;
   --border-grid: #4a4e69;
-  --rarity-n: #cccccc;
-  --rarity-r: #00f0ff;
-  --rarity-s: #39ff14;
-  --rarity-sr: #b026ff;
-  --rarity-ssr: #ffd700;
+  --rarity-c: #808080;
+  --rarity-uc: #ffffff;
+  --rarity-r: #22c55e;
+  --rarity-sr: #3b82f6;
+  --rarity-ssr: #ef4444;
+  --rarity-ur: #eab308;
+  --rarity-lr: #a855f7;
 }
 
 .dark {
@@ -64,11 +66,13 @@
   --color-bg-space: var(--bg-space);
   --color-bg-surface: var(--bg-surface);
   --color-border-grid: var(--border-grid);
-  --color-rarity-n: var(--rarity-n);
+  --color-rarity-c: var(--rarity-c);
+  --color-rarity-uc: var(--rarity-uc);
   --color-rarity-r: var(--rarity-r);
-  --color-rarity-s: var(--rarity-s);
   --color-rarity-sr: var(--rarity-sr);
   --color-rarity-ssr: var(--rarity-ssr);
+  --color-rarity-ur: var(--rarity-ur);
+  --color-rarity-lr: var(--rarity-lr);
 
   --color-ring: var(--ring);
   --color-input: var(--input);
