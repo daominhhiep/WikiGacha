@@ -9,6 +9,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { CardModule } from './modules/card/card.module';
 import { CollectionModule } from './modules/collection/collection.module';
 import { BattleModule } from './modules/battle/battle.module';
+import { SocketModule } from './modules/socket/socket.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { BattleModule } from './modules/battle/battle.module';
     CardModule,
     CollectionModule,
     BattleModule,
+    SocketModule,
   ],
   controllers: [AppController],
   providers: [AppService],
