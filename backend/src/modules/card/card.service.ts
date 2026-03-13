@@ -14,131 +14,145 @@ export class CardService {
   private readonly CARDS_PER_PACK = 5;
   private readonly PITY_THRESHOLD = 10;
 
-  // Cache for global stats to avoid frequent API calls
-  private cachedAverageViews: number | null = null;
-  private lastCacheUpdate: number = 0;
-  private readonly CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
-
   constructor(
     private readonly prisma: PrismaService,
     private readonly wikiService: WikiService,
   ) {}
 
   /**
-   * Calculates the average pageviews per article across the entire wiki.
-   * This provides a baseline for dynamic rarity thresholds.
-   */
-  private async getAverageViews(): Promise<number> {
-    const now = Date.now();
-    if (this.cachedAverageViews && now - this.lastCacheUpdate < this.CACHE_TTL) {
-      return this.cachedAverageViews;
-    }
-
-    try {
-      const stats = await this.wikiService.getGlobalStats();
-      const average = stats.totalMonthlyViews / Math.max(1, stats.articleCount);
-      this.cachedAverageViews = average;
-      this.lastCacheUpdate = now;
-      this.logger.log(`[Calibration] Global Average Pageviews: ${average.toFixed(2)}`);
-      return average;
-    } catch (error) {
-      this.logger.warn(`Failed to fetch global stats, using fallback average: ${error.message}`);
-      return 1500; // Fallback based on ~10B monthly views / 7M articles
-    }
-  }
-
-  /**
    * Opens a card pack for a player.
-   * Deducts credits, fetches articles, generates cards, and adds to inventory.
-   * Includes a pity system: Guaranteed S or higher every 10 packs.
-   *
-   * @param playerId The unique identifier of the player opening the pack.
-   * @throws BadRequestException if the player is not found or has insufficient credits.
-   * @returns An object containing the generated cards and the player's remaining credits.
+   * Pulls from the pre-generated Card Pool for sub-second performance.
+   * Triggers a background refill to keep the pool infinite.
    */
   async openPack(playerId: string) {
+    const startTime = Date.now();
+    
     // 1. Check player state
     const player = await this.prisma.player.findUnique({
       where: { id: playerId },
     });
 
-    if (!player) {
-      throw new BadRequestException('Player not found');
+    if (!player) throw new BadRequestException('Player not found');
+    if (player.credits < this.PACK_COST) throw new BadRequestException('Insufficient credits');
+
+    // 2. Pull 5 random cards from the local Card Pool
+    // Optimized random selection: Get all IDs first (small pool) or use a random skip
+    const totalCards = await this.prisma.card.count();
+    let cards: Card[] = [];
+
+    if (totalCards >= this.CARDS_PER_PACK) {
+      // Pick random cards using skip (more efficient than ORDER BY RAND for Prisma)
+      const randomIndices = new Set<number>();
+      while (randomIndices.size < this.CARDS_PER_PACK) {
+        randomIndices.add(Math.floor(Math.random() * totalCards));
+      }
+
+      const cardPromises = Array.from(randomIndices).map(index => 
+        this.prisma.card.findMany({
+          take: 1,
+          skip: index,
+        })
+      );
+      const results = await Promise.all(cardPromises);
+      cards = results.map(r => r[0]);
     }
 
-    if (player.credits < this.PACK_COST) {
-      throw new BadRequestException('Insufficient credits');
+    // Fallback if DB is empty or selection failed
+    if (cards.length < this.CARDS_PER_PACK) {
+      this.logger.warn(`Card pool is low (${totalCards}), performing emergency live fetch`);
+      const titles = await this.wikiService.getRandomArticles(this.CARDS_PER_PACK);
+      const batchData = await this.wikiService.getBatchArticlesData(titles);
+      
+      const liveCards = await Promise.all(titles.map(async (title) => {
+        const data = batchData[title];
+        if (!data) return null;
+        const wikiRank = await this.wikiService.getWikiRankScore(title);
+        return this.generateCardFromWiki(data, data.pageViews * 12, data.languageCount, data.pageAssessments, data.length, wikiRank.quality, wikiRank.popularity);
+      }));
+      cards = liveCards.filter((c): c is Card => c !== null);
     }
 
-    // 2. Fetch random article titles
-    const titles = await this.wikiService.getRandomArticles(this.CARDS_PER_PACK);
-
-    // 3. Fetch summaries and generate cards
-    const newCards: Card[] = [];
-    let highRarityPulled = false;
+    // 3. Pity Logic: If pity is triggered and no high rarity in the 5 cards, replace one
     const currentPity = player.pityCounter + 1;
-    const isPityTriggered = currentPity >= this.PITY_THRESHOLD;
+    let highRarityPulled = cards.some(c => c.rarity === Rarity.SSR || c.rarity === Rarity.UR || c.rarity === Rarity.LR);
 
-    for (let i = 0; i < titles.length; i++) {
-      const title = titles[i];
-      const wikiData = await this.wikiService.getArticleSummary(title);
+    if (currentPity >= this.PITY_THRESHOLD && !highRarityPulled) {
+      const highRarityCards = await this.prisma.card.findMany({
+        where: { rarity: { in: [Rarity.SSR, Rarity.UR, Rarity.LR] } },
+        take: 1,
+      });
 
-      if (wikiData) {
-        // Fetch real stats from Wikipedia
-        const wikiStats = await this.wikiService.getArticleStats(title);
-        let pageViews = wikiStats.pageViews;
-        const languageCount = wikiStats.languageCount;
-
-        // Pity Logic: If this is the last card and no S+ pulled yet, force high rarity
-        const isLastCard = i === titles.length - 1;
-        if (isLastCard && isPityTriggered && !highRarityPulled) {
-          this.logger.log(`[Pity Triggered] Forcing S+ for player ${playerId}`);
-          const averageViews = await this.getAverageViews();
-          // Force page views to at least S threshold (avg * 50)
-          const minPityViews = Math.ceil(averageViews * 50);
-          pageViews = Math.max(pageViews, minPityViews + Math.floor(Math.random() * averageViews * 500));
-        }
-
-        const card = await this.generateCardFromWiki(wikiData, pageViews, languageCount);
-        newCards.push(card);
-
-        // Track if we pulled an S or higher (S, SR, or SSR)
-        if (card.rarity === Rarity.S || card.rarity === Rarity.SR || card.rarity === Rarity.SSR) {
-          highRarityPulled = true;
-        }
-
-        // Add to player inventory
-        await this.prisma.inventory.create({
-          data: {
-            playerId,
-            cardId: card.id,
-          },
-        });
+      if (highRarityCards.length > 0) {
+        cards[this.CARDS_PER_PACK - 1] = highRarityCards[0];
+        highRarityPulled = true;
+      } else {
+        this.logger.warn('Pity triggered but no high rarity cards in pool! User will get a normal card but pity will NOT reset.');
       }
     }
 
-    this.logger.log(`[Pity Debug] Player ${playerId} before update: credits=${player.credits}, pityCounter=${player.pityCounter}`);
-    this.logger.log(`[Pity Debug] Result of pull: highRarityPulled=${highRarityPulled}, newPity=${highRarityPulled ? 0 : currentPity}`);
-
-    // 4. Update player state: Deduct credits and update pity counter
-    const updatedPlayer = await this.prisma.player.update({
-      where: { id: playerId },
-      data: {
-        credits: {
-          decrement: this.PACK_COST,
+    // 4. Update Inventory and Player State in parallel
+    const [updatedPlayer] = await Promise.all([
+      this.prisma.player.update({
+        where: { id: playerId },
+        data: {
+          credits: { decrement: this.PACK_COST },
+          pityCounter: highRarityPulled ? 0 : currentPity,
         },
-        // Reset pity if S or higher was pulled, otherwise increment
-        pityCounter: highRarityPulled ? 0 : currentPity,
-      },
-    });
+      }),
+      this.prisma.inventory.createMany({
+        data: cards.map(card => ({
+          playerId,
+          cardId: card.id,
+        })),
+      }),
+    ]);
 
-    this.logger.log(`[Pity Debug] Player ${playerId} after update: credits=${updatedPlayer.credits}, pityCounter=${updatedPlayer.pityCounter}`);
+    // 5. BACKGROUND REFILL: Keep pool fresh (Fire and forget)
+    // Grow the pool until it reaches 500 cards
+    if (totalCards < 5000) {
+      this.logger.log(`[Background] Triggering pool refill (Current size: ${totalCards})`);
+      this.refillPool(15).catch(err => this.logger.error(`Pool refill failed: ${err.message}`));
+    }
+
+    const duration = Date.now() - startTime;
+    this.logger.log(`Pack opened for ${playerId} in ${duration}ms. Pool size: ${totalCards}`);
 
     return {
-      newCards,
+      newCards: cards,
       remainingCredits: updatedPlayer.credits,
       pityCounter: updatedPlayer.pityCounter,
     };
+  }
+
+  /**
+   * Refills the card pool in the background.
+   */
+  async refillPool(count: number = 10) {
+    this.logger.log(`[Background] Refilling card pool with ${count} new articles...`);
+    const titles = await this.wikiService.getRandomArticles(count);
+    const batchData = await this.wikiService.getBatchArticlesData(titles);
+
+    const promises = titles.map(async (title) => {
+      try {
+        const data = batchData[title];
+        if (!data) return;
+        const wikiRank = await this.wikiService.getWikiRankScore(title);
+        await this.generateCardFromWiki(
+          data,
+          data.pageViews * 12,
+          data.languageCount,
+          data.pageAssessments,
+          data.length,
+          wikiRank.quality,
+          wikiRank.popularity
+        );
+      } catch (e) {
+        this.logger.error(`Failed to generate pool card for ${title}: ${e.message}`);
+      }
+    });
+
+    await Promise.all(promises);
+    this.logger.log(`[Background] Refill complete.`);
   }
 
   /**
@@ -147,16 +161,29 @@ export class CardService {
    * @param wikiData Summary data from Wikipedia API.
    * @param pageViews (Optional) Page views for rarity/stat derivation.
    * @param languageCount (Optional) Number of languages for HP derivation.
+   * @param pageAssessments (Optional) Quality assessments from Wikipedia.
+   * @param length (Optional) Article content length.
+   * @param quality (Optional) Quality score from WikiRank.
+   * @param popularity (Optional) Popularity score from WikiRank.
    * @returns The newly created or updated card from the database.
    */
   async generateCardFromWiki(
     wikiData: ArticleSummary,
     pageViews: number = 0,
     languageCount: number = 0,
+    pageAssessments?: Record<string, string>,
+    length: number = 0,
+    quality: number = 0,
+    popularity: number = 0,
   ): Promise<Card> {
-    const averageViews = await this.getAverageViews();
-    const rarity = this.deriveRarity(pageViews, averageViews);
-    const stats = this.deriveStats(wikiData, pageViews, languageCount);
+    // 1. Determine final Q-Score (WikiRank preferred, fallback to internal calculation)
+    let finalQScore = quality;
+    if (finalQScore <= 0) {
+      finalQScore = this.calculateQScore(pageAssessments, length, languageCount);
+    }
+
+    const rarity = this.deriveRarity(finalQScore);
+    const stats = this.deriveStats(pageViews, length, languageCount, rarity);
 
     const cardData = {
       id: wikiData.pageid.toString(),
@@ -171,6 +198,8 @@ export class CardService {
       def: stats.def,
       pageViews,
       languageCount,
+      quality,
+      popularity,
     };
 
     // Upsert the card in the database to ensure we have the latest version but don't duplicate
@@ -182,54 +211,95 @@ export class CardService {
   }
 
   /**
-   * Derives rarity based on page views relative to the global average.
-   *
-   * @param pageViews The number of views for the Wikipedia article.
-   * @param avg The global average pageviews per article.
-   * @returns The derived Rarity level (N, R, S, SR, SSR).
+   * Calculates a Quality Score (0-100) based on Wikipedia assessments and metadata.
    */
-  private deriveRarity(pageViews: number, avg: number): Rarity {
-    // Thresholds scaled by average views (calibration)
-    // S and SR thresholds increased to reduce their frequency
-    if (pageViews >= avg * 500) return Rarity.SSR; // ~750,000+
-    if (pageViews >= avg * 150) return Rarity.SR;  // ~225,000+
-    if (pageViews >= avg * 50) return Rarity.S;    // ~75,000+
-    if (pageViews >= avg * 10) return Rarity.R;    // ~15,000+
-    return Rarity.N;
+  private calculateQScore(
+    pageAssessments?: Record<string, string>,
+    length: number = 0,
+    languageCount: number = 0,
+  ): number {
+    this.logger.debug(`Calculating Q-Score fallback: length=${length}, languageCount=${languageCount}, assessments=${JSON.stringify(pageAssessments)}`);
+    // 1. Map assessments to base scores
+    const assessmentScores: Record<string, number> = {
+      FA: 100, // LR
+      GA: 90,  // UR
+      B: 80,   // SSR
+      C: 60,   // SR
+      Start: 35, // R
+      Stub: 20,  // UC
+    };
+
+    if (pageAssessments) {
+      const values = Object.values(pageAssessments);
+      const scores = values
+        .map((v) => assessmentScores[v] || 0)
+        .filter((s) => s > 0);
+      if (scores.length > 0) {
+        const bestScore = Math.max(...scores);
+        this.logger.debug(`Found highest assessment score: ${bestScore}`);
+        return bestScore;
+      }
+    }
+
+    // 2. Synthetic fallback if no assessment found
+    // Scale length (logarithmic): ~100k length -> 70 points
+    const lengthScore = Math.min(Math.log10(Math.max(1, length)) * 15, 70);
+    // Scale language count: ~50 languages -> 30 points
+    const langScore = Math.min(languageCount * 0.6, 30);
+
+    const finalScore = Math.floor(lengthScore + langScore);
+    this.logger.debug(`Synthetic Q-Score result: ${finalScore}`);
+    return finalScore;
   }
 
   /**
-   * Derives game stats from Wikipedia metrics.
-   * Formula logic:
-   * - HP: Based on Language Count (Breadth of knowledge)
-   * - ATK: Based on Page Views (Impact/Popularity)
-   * - DEF: Based on Article Length/Summary complexity (Depth)
+   * Derives rarity based on Q-Score.
    *
-   * @param wikiData The summary data from Wikipedia.
-   * @param pageViews The popularity of the article.
-   * @param languageCount The number of languages the article is available in.
-   * @returns An object containing the derived HP, ATK, and DEF stats.
+   * @param qScore The calculated quality score (0-100).
+   * @returns The derived Rarity level (C to LR).
    */
-  private deriveStats(wikiData: ArticleSummary, pageViews: number, languageCount: number) {
-    // Base stats
-    const baseHp = 50;
-    const baseAtk = 10;
-    const baseDef = 10;
+  private deriveRarity(qScore: number): Rarity {
+    if (qScore >= 100) return Rarity.LR;
+    if (qScore >= 90) return Rarity.UR;
+    if (qScore >= 80) return Rarity.SSR;
+    if (qScore >= 60) return Rarity.SR;
+    if (qScore >= 35) return Rarity.R;
+    if (qScore >= 20) return Rarity.UC;
+    return Rarity.C;
+  }
 
-    // HP scales with language count (logarithmic to prevent outliers)
-    const hpBonus = Math.floor(Math.log2(Math.max(1, languageCount)) * 15);
-
-    // ATK scales with popularity (logarithmic)
-    const atkBonus = Math.floor(Math.log10(Math.max(1, pageViews)) * 10);
-
-    // DEF scales with summary length (proxy for depth)
-    const summaryLength = wikiData.extract?.length || 0;
-    const defBonus = Math.floor(Math.min(summaryLength / 20, 50));
-
-    return {
-      hp: baseHp + hpBonus,
-      atk: baseAtk + atkBonus,
-      def: baseDef + defBonus,
+  /**
+   * Derives game stats from Wikipedia metrics and Rarity.
+   */
+  private deriveStats(
+    pageViews: number,
+    length: number,
+    languageCount: number,
+    rarity: Rarity,
+  ) {
+    const multipliers: Record<Rarity, number> = {
+      [Rarity.LR]: 1.5,
+      [Rarity.UR]: 1.3,
+      [Rarity.SSR]: 1.1,
+      [Rarity.SR]: 0.9,
+      [Rarity.R]: 0.7,
+      [Rarity.UC]: 0.5,
+      [Rarity.C]: 0.3,
     };
+
+    const mult = multipliers[rarity];
+
+    // HP based on language count (max 15,000)
+    const hp = Math.min(Math.floor(languageCount * 50 * mult) + 100, 15000);
+
+    // ATK based on popularity (max 15,000)
+    // Scale: 1M views -> ~5000 base * mult
+    const atk = Math.min(Math.floor((pageViews / 200) * mult) + 10, 15000);
+
+    // DEF based on depth (max 15,000)
+    // Scale: 100k length -> ~2000 base * mult
+    const def = Math.min(Math.floor((length / 50) * mult) + 10, 15000);
+
+    return { hp, atk, def };
   }
 }

@@ -102,6 +102,8 @@ export const CardScalarFieldEnum = {
   def: 'def',
   pageViews: 'pageViews',
   languageCount: 'languageCount',
+  quality: 'quality',
+  popularity: 'popularity',
   createdAt: 'createdAt'
 } as const
 

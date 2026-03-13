@@ -28,7 +28,7 @@ const GachaPage: React.FC = () => {
   };
 
   const handleOpenPack = () => {
-    if (!accessToken) return;
+    if (!accessToken || isOpening || !!lastOpenedCards) return;
 
     openPack('BASIC', {
       onSuccess: (data) => {
@@ -73,6 +73,8 @@ const GachaPage: React.FC = () => {
       </motion.div>
     );
   }
+
+  const isProcessing = isOpening || !!lastOpenedCards;
 
   return (
     <div className="flex flex-col items-center justify-center space-y-12 py-12 animate-in fade-in duration-700">
@@ -172,21 +174,21 @@ const GachaPage: React.FC = () => {
 
       <div className="flex flex-col items-center gap-6">
         <motion.button
-          whileHover={accessToken ? { scale: 1.05 } : {}}
-          whileTap={accessToken ? { scale: 0.95 } : {}}
+          whileHover={accessToken && !isProcessing ? { scale: 1.05 } : {}}
+          whileTap={accessToken && !isProcessing ? { scale: 0.95 } : {}}
           onClick={handleOpenPack}
-          disabled={isOpening || !accessToken}
+          disabled={isProcessing || !accessToken}
           className={cn(
             'h-16 px-12 text-xl font-black rounded-none border-2 transition-all duration-300 flex items-center gap-3 uppercase italic',
-            !accessToken
+            !accessToken || isProcessing
               ? 'border-muted-foreground/40 bg-muted/10 text-muted-foreground cursor-not-allowed opacity-50'
               : 'border-primary bg-primary text-black hover:bg-black hover:text-primary shadow-[0_0_20px_rgba(0,240,255,0.2)]',
           )}
         >
-          {isOpening ? (
+          {isProcessing ? (
             <>
               <Terminal className="size-6 animate-pulse" />
-              BREACHING_FIREWALL...
+              {isOpening ? 'BREACHING_FIREWALL...' : 'DATA_EXTRACTED...'}
             </>
           ) : !accessToken ? (
             <>

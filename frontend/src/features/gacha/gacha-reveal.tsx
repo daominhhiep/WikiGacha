@@ -94,11 +94,13 @@ const GachaReveal: React.FC<GachaRevealProps> = ({ cards: initialCards, onComple
     const sorted = [...initialCards];
     let bestIndex = 0;
     const rarityPower = {
-      [Rarity.N]: 0,
-      [Rarity.R]: 1,
-      [Rarity.S]: 2,
+      [Rarity.C]: 0,
+      [Rarity.UC]: 1,
+      [Rarity.R]: 2,
       [Rarity.SR]: 3,
       [Rarity.SSR]: 4,
+      [Rarity.UR]: 5,
+      [Rarity.LR]: 6,
     };
 
     for (let i = 1; i < sorted.length; i++) {
@@ -140,21 +142,17 @@ const GachaReveal: React.FC<GachaRevealProps> = ({ cards: initialCards, onComple
         }
       }
 
-      // Add particle burst for rare cards (R, S, SR, SSR)
+      // Add particle burst for rare cards (R+)
       if (
-        card.rarity === Rarity.SSR ||
-        card.rarity === Rarity.SR ||
-        card.rarity === Rarity.S ||
-        card.rarity === Rarity.R
+        card.rarity !== Rarity.C &&
+        card.rarity !== Rarity.UC
       ) {
         const color =
-          card.rarity === Rarity.SSR
+          (card.rarity === Rarity.SSR || card.rarity === Rarity.UR || card.rarity === Rarity.LR)
             ? '#FFD700'
             : card.rarity === Rarity.SR
               ? '#B026FF'
-              : card.rarity === Rarity.S
-                ? '#39FF14'
-                : '#00F0FF';
+              : '#00F0FF'; // R
 
         const burstId = `burst-${particleBurstIdCounter++}`;
 
@@ -185,16 +183,19 @@ const GachaReveal: React.FC<GachaRevealProps> = ({ cards: initialCards, onComple
     const timeoutIds: ReturnType<typeof setTimeout>[] = [];
 
     cards.forEach((card, index) => {
-      // ONLY auto-reveal N and R cards. S, SR and SSR require manual click.
+      // ONLY auto-reveal C, UC, R cards. SR, SSR, UR and LR require manual click.
       const isManualRarity =
-        card.rarity === Rarity.S || card.rarity === Rarity.SR || card.rarity === Rarity.SSR;
+        card.rarity === Rarity.SR ||
+        card.rarity === Rarity.SSR ||
+        card.rarity === Rarity.UR ||
+        card.rarity === Rarity.LR;
       if (isManualRarity) return;
 
       const tid = setTimeout(
         () => {
           handleReveal(card, index);
         },
-        (index + 1) * 400,
+        (index + 1) * 200,
       );
       timeoutIds.push(tid);
     });
@@ -222,7 +223,10 @@ const GachaReveal: React.FC<GachaRevealProps> = ({ cards: initialCards, onComple
             const cardBurst = activeBursts.find((b) => b.cardId === card.id);
             const isRevealed = revealedIds.has(card.id);
             const isManualRarity =
-              card.rarity === Rarity.S || card.rarity === Rarity.SR || card.rarity === Rarity.SSR;
+              card.rarity === Rarity.SR ||
+              card.rarity === Rarity.SSR ||
+              card.rarity === Rarity.UR ||
+              card.rarity === Rarity.LR;
 
             return (
               <motion.div
