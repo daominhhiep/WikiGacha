@@ -1,8 +1,9 @@
 import { Injectable, Logger, BadRequestException } from '@nestjs/common';
 import { PrismaService } from './../../common/prisma/prisma.service';
 import { WikiService, ArticleSummary } from './wiki.service';
-import { Rarity, Card } from '../../generated/prisma/client';
+import { Rarity, Card, Tier, Category } from '../../generated/prisma/client';
 import { RedisService } from '../../common/redis/redis.service';
+import { StatBalancer } from './utils/stat-balancer';
 
 /**
  * Service for managing game cards and gacha mechanics.
@@ -216,7 +217,9 @@ export class CardService {
     }
 
     const rarity = this.deriveRarity(finalQScore);
-    const stats = this.deriveStats(pageViews, length, languageCount, rarity);
+    const stats = StatBalancer.deriveStats(pageViews, length, languageCount, rarity);
+    const tier = StatBalancer.getTier(rarity);
+    const category = StatBalancer.deriveCategory(wikiData.title, wikiData.extract);
 
     const cardData = {
       id: wikiData.pageid.toString(),
@@ -226,6 +229,8 @@ export class CardService {
       wikiUrl:
         wikiData.content_urls?.desktop?.page || `https://en.wikipedia.org/wiki/${wikiData.title}`,
       rarity,
+      tier,
+      category,
       hp: stats.hp,
       atk: stats.atk,
       def: stats.def,
@@ -300,33 +305,5 @@ export class CardService {
     if (qScore >= 35) return Rarity.R;
     if (qScore >= 20) return Rarity.UC;
     return Rarity.C;
-  }
-
-  /**
-   * Derives game stats from Wikipedia metrics and Rarity.
-   */
-  private deriveStats(pageViews: number, length: number, languageCount: number, rarity: Rarity) {
-    const multipliers: Record<Rarity, number> = {
-      [Rarity.LR]: 1.5,
-      [Rarity.UR]: 1.3,
-      [Rarity.SSR]: 1.1,
-      [Rarity.SR]: 0.9,
-      [Rarity.R]: 0.7,
-      [Rarity.UC]: 0.5,
-      [Rarity.C]: 0.3,
-    };
-
-    const mult = multipliers[rarity];
-
-    // HP based on language count (max 15,000)
-    const hp = Math.min(Math.floor(languageCount * 50 * mult) + 100, 15000);
-
-    // ATK based on popularity (max 15,000)
-    const atk = Math.min(Math.floor((pageViews / 200) * mult) + 10, 15000);
-
-    // DEF based on depth (max 15,000)
-    const def = Math.min(Math.floor((length / 50) * mult) + 10, 15000);
-
-    return { hp, atk, def };
   }
 }
