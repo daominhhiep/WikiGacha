@@ -35,7 +35,8 @@
 - [x] T010 [US4] Implement `StatBalancer` utility in `backend/src/modules/card/utils/stat-balancer.ts` using formulas from research.md
 - [x] T011 [US4] Update `CardService.generateCardFromWiki` to use `StatBalancer` in `backend/src/modules/card/card.service.ts`
 - [x] T012 [US4] Update `refresh-cards.ts` script to populate tiers/categories for existing cards in `backend/scripts/refresh-cards.ts`
-- [ ] T013 [US4] Frontend: Update Card component to display Tier (Color/Badge) and Category in `frontend/src/components/card.tsx`
+- [x] T013: Frontend: Update Card component to display Tier (Color/Badge) and Category in frontend/src/components/card.tsx
+
 
 ---
 

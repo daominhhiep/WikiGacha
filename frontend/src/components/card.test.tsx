@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import Card, { Rarity } from './card';
+import Card, { Rarity, Tier, Category } from './card';
 import { describe, it, expect } from 'vitest';
 
 const mockCard = {
@@ -9,6 +9,8 @@ const mockCard = {
   imageUrl: 'https://example.com/image.jpg',
   wikiUrl: 'https://en.wikipedia.org/wiki/Test_Article',
   rarity: Rarity.SSR,
+  tier: Tier.SUPER_RARE,
+  category: Category.SCIENCE,
   hp: 120,
   atk: 45,
   def: 30,
@@ -27,6 +29,16 @@ describe('Card Component', () => {
   it('displays the correct rarity badge', () => {
     render(<Card card={mockCard} />);
     expect(screen.getByText('SSR')).toBeInTheDocument();
+  });
+
+  it('displays the correct tier label', () => {
+    render(<Card card={mockCard} />);
+    expect(screen.getByText('SUPER RARE')).toBeInTheDocument();
+  });
+
+  it('displays the correct category label', () => {
+    render(<Card card={mockCard} />);
+    expect(screen.getByText('SCIENCE')).toBeInTheDocument();
   });
 
   it('renders Wikipedia attribution link', () => {

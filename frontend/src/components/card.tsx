@@ -20,6 +20,31 @@ export const Rarity = {
 export type Rarity = (typeof Rarity)[keyof typeof Rarity];
 
 /**
+ * Tier levels based on the project design system.
+ */
+export const Tier = {
+  COMMON: 'COMMON',
+  RARE: 'RARE',
+  SUPER_RARE: 'SUPER_RARE',
+  SPEC_SUPER_RARE: 'SPEC_SUPER_RARE',
+} as const;
+
+export type Tier = (typeof Tier)[keyof typeof Tier];
+
+/**
+ * Category enum based on the project design system.
+ */
+export const Category = {
+  HISTORY: 'HISTORY',
+  SCIENCE: 'SCIENCE',
+  ART: 'ART',
+  GEOGRAPHY: 'GEOGRAPHY',
+  ENTERTAINMENT: 'ENTERTAINMENT',
+} as const;
+
+export type Category = (typeof Category)[keyof typeof Category];
+
+/**
  * Interface representing the data structure of a Game Card.
  */
 export interface CardData {
@@ -32,6 +57,8 @@ export interface CardData {
   hp: number;
   atk: number;
   def: number;
+  tier?: Tier;
+  category?: Category;
 }
 
 /**
@@ -90,6 +117,42 @@ const getRarityTextColor = (rarity: Rarity) => {
       return 'text-rarity-uc';
     default:
       return 'text-rarity-c';
+  }
+};
+
+/**
+ * Returns the border color class based on category.
+ */
+const getCategoryColor = (category?: Category) => {
+  switch (category) {
+    case Category.HISTORY:
+      return 'text-amber-400 border-amber-400/50 bg-amber-400/10';
+    case Category.SCIENCE:
+      return 'text-cyan-400 border-cyan-400/50 bg-cyan-400/10';
+    case Category.ART:
+      return 'text-purple-400 border-purple-400/50 bg-purple-400/10';
+    case Category.GEOGRAPHY:
+      return 'text-green-400 border-green-400/50 bg-green-400/10';
+    case Category.ENTERTAINMENT:
+      return 'text-orange-400 border-orange-400/50 bg-orange-400/10';
+    default:
+      return 'text-white/60 border-white/20 bg-black/40';
+  }
+};
+
+/**
+ * Returns the tier label color class.
+ */
+const getTierColor = (tier?: Tier) => {
+  switch (tier) {
+    case Tier.SPEC_SUPER_RARE:
+      return 'text-rarity-ssr border-rarity-ssr/50';
+    case Tier.SUPER_RARE:
+      return 'text-rarity-sr border-rarity-sr/50';
+    case Tier.RARE:
+      return 'text-rarity-r border-rarity-r/50';
+    default:
+      return 'text-rarity-c border-rarity-c/50';
   }
 };
 
@@ -241,15 +304,39 @@ const Card: React.FC<CardProps> = ({
                 </div>
               )}
 
+              {/* Tier Label (HUD Style) */}
+              {card.tier && (
+                <div
+                  className={cn(
+                    'absolute top-0 left-0 px-2 py-0.5 text-[8px] font-black font-mono bg-black/80 border-r border-b border-border-grid uppercase tracking-tighter z-10',
+                    getTierColor(card.tier),
+                  )}
+                >
+                  {card.tier.replace(/_/g, ' ')}
+                </div>
+              )}
+
               {/* Rarity Label (HUD Style) */}
               <div
                 className={cn(
-                  'absolute top-0 right-0 px-3 py-1 text-xs font-black font-mono bg-black/80 border-l border-b border-border-grid',
+                  'absolute top-0 right-0 px-3 py-1 text-xs font-black font-mono bg-black/80 border-l border-b border-border-grid z-10',
                   getRarityTextColor(card.rarity),
                 )}
               >
                 {card.rarity}
               </div>
+
+              {/* Category Label (HUD Style) */}
+              {card.category && (
+                <div
+                  className={cn(
+                    'absolute bottom-0 right-0 px-2 py-0.5 text-[9px] font-bold font-mono border-l border-t border-border-grid uppercase tracking-tight z-10 backdrop-blur-sm',
+                    getCategoryColor(card.category),
+                  )}
+                >
+                  {card.category}
+                </div>
+              )}
 
               {/* Scanning Line Animation */}
               <div className="absolute inset-0 bg-gradient-to-b from-transparent via-primary/5 to-transparent h-1/2 w-full animate-scan pointer-events-none" />
