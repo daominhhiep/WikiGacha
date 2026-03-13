@@ -116,7 +116,7 @@
 - [x] T037 Add Loading States and Skeletons across all features in `frontend/src/components/ui/`
 - [x] T038 Performance audit of Wikipedia card generation (target SC-001)
 - [x] T039 [P] Final Documentation update in `README.md` and `quickstart.md`
-- [ ] T040 Run full E2E validation of the "Pull -> View -> Battle" loop
+- [x] T040 Run full E2E validation of the "Pull -> View -> Battle" loop
 
 ---
 
