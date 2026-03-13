@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { create } from 'zustand';
 import api from '@/services/api';
 import { useAuthStore } from '../auth/auth-store';
+import type { InventoryItem } from '../collection/use-collection';
 
 /**
  * Interface for a card in battle.
@@ -76,13 +77,16 @@ export interface BattleHistory {
  */
 interface BattleStore {
   selectedCardIds: string[];
+  cardRegistry: Record<string, InventoryItem>;
   toggleCard: (cardId: string) => void;
+  registerCards: (items: InventoryItem[]) => void;
   clearDeck: () => void;
   maxDeckSize: number;
 }
 
 export const useBattleStore = create<BattleStore>((set) => ({
   selectedCardIds: [],
+  cardRegistry: {},
   maxDeckSize: 5,
   toggleCard: (cardId) =>
     set((state) => {
@@ -94,6 +98,18 @@ export const useBattleStore = create<BattleStore>((set) => ({
         return { selectedCardIds: [...state.selectedCardIds, cardId] };
       }
       return state;
+    }),
+  registerCards: (items) =>
+    set((state) => {
+      const next = { ...state.cardRegistry };
+      let hasNew = false;
+      items.forEach((item) => {
+        if (!next[item.cardId]) {
+          next[item.cardId] = item;
+          hasNew = true;
+        }
+      });
+      return hasNew ? { cardRegistry: next } : state;
     }),
   clearDeck: () => set({ selectedCardIds: [] }),
 }));
