@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useCollection, useToggleFavorite, type InventoryItem } from './use-collection';
 import CollectionGrid from './collection-grid';
 import CardDetail from './card-detail';
-import CollectionFilters, { SortOption } from './collection-filters';
+import CollectionFilters, { type SortOption } from './collection-filters';
 import { Database, Loader2 } from 'lucide-react';
 import { Rarity } from '@/components/card';
 
