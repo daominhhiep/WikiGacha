@@ -1,13 +1,17 @@
 import { Controller, Get, Post, Body, Param, UseGuards } from '@nestjs/common';
+import { IsString, IsNumber, IsNotEmpty } from 'class-validator';
 import { MissionService } from './mission.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ApiTags, ApiOperation, ApiResponse, ApiProperty } from '@nestjs/swagger';
 
 class ClaimRewardDto {
   @ApiProperty({ example: 'player-uuid' })
+  @IsString()
+  @IsNotEmpty()
   userId: string;
 
   @ApiProperty({ example: 1 })
+  @IsNumber()
   userMissionId: number;
 }
 
@@ -46,6 +50,7 @@ export class MissionController {
   @ApiResponse({ status: 400, description: 'Mission not completed or already claimed.' })
   @ApiResponse({ status: 404, description: 'Mission not found for this player.' })
   async claimReward(@Body() claimRewardDto: ClaimRewardDto) {
+    console.log('[MissionController] Claiming reward:', claimRewardDto);
     return this.missionService.claimReward(
       claimRewardDto.userId,
       claimRewardDto.userMissionId,

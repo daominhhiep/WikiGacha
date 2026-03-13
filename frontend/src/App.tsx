@@ -7,6 +7,8 @@ import BattlePage from '@/features/battle/battle-page';
 import MissionPage from '@/features/mission/mission-page';
 import TrophyPage from '@/features/trophy/trophy-page';
 import { AuthCallback } from './features/auth/auth-callback';
+import { ProtectedRoute } from './components/auth/ProtectedRoute';
+import NotFoundPage from './features/error/NotFoundPage';
 import { useMissions } from './features/mission/use-missions';
 import { useTrophies } from './features/trophy/use-trophies';
 import { useAuthStore } from './features/auth/auth-store';
@@ -129,11 +131,41 @@ function App() {
         <Route path="/" element={<MainLayout />}>
           <Route index element={<HomePage />} />
           <Route path="gacha" element={<GachaPage />} />
-          <Route path="collection" element={<CollectionPage />} />
-          <Route path="battle" element={<BattlePage />} />
-          <Route path="missions" element={<MissionPage />} />
-          <Route path="trophies" element={<TrophyPage />} />
+          <Route
+            path="collection"
+            element={
+              <ProtectedRoute>
+                <CollectionPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="battle"
+            element={
+              <ProtectedRoute>
+                <BattlePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="missions"
+            element={
+              <ProtectedRoute>
+                <MissionPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="trophies"
+            element={
+              <ProtectedRoute>
+                <TrophyPage />
+              </ProtectedRoute>
+            }
+          />
           <Route path="auth-callback" element={<AuthCallback />} />
+          {/* Catch-all 404 route */}
+          <Route path="*" element={<NotFoundPage />} />
         </Route>
       </Routes>
     </Router>
