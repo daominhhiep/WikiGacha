@@ -207,7 +207,7 @@ const BattleArena: React.FC<BattleArenaProps> = ({ result, onComplete }) => {
                 transition={{ duration: Math.min(0.3, speed / 1000) }}
                 className="flex flex-col items-center"
               >
-                <div className="bg-red-600 text-white font-black px-12 py-3 skew-x-[-12deg] text-5xl shadow-[0_0_50px_rgba(220,38,38,0.8)] border-y-4 border-white/20">
+                <div className="bg-red-500 text-white font-black px-12 py-3 skew-x-[-12deg] text-5xl shadow-[0_0_50px_rgba(220,38,38,0.8)] border-y-4 border-white/20">
                   -{currentEntry.damage} DMG
                 </div>
                 <div className="text-[16px] font-mono text-primary mt-6 uppercase tracking-[0.5em] font-black whitespace-nowrap bg-black/80 px-4 py-1 border border-primary/30 backdrop-blur-sm">
