@@ -11,6 +11,7 @@ import { CollectionModule } from './modules/collection/collection.module';
 import { BattleModule } from './modules/battle/battle.module';
 import { SocketModule } from './modules/socket/socket.module';
 import { MissionModule } from './modules/mission/mission.module';
+import { TrophyModule } from './modules/trophy/trophy.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { MissionModule } from './modules/mission/mission.module';
     BattleModule,
     SocketModule,
     MissionModule,
+    TrophyModule,
   ],
   controllers: [AppController],
   providers: [AppService],

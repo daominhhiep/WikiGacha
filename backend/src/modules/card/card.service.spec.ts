@@ -5,11 +5,13 @@ import { PrismaService } from './../../common/prisma/prisma.service';
 import { RedisService } from '../../common/redis/redis.service';
 import { Rarity } from '../../generated/prisma/client';
 import { BadRequestException } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 describe('CardService', () => {
   let service: CardService;
   let prisma: PrismaService;
   let redis: RedisService;
+  let eventEmitter: EventEmitter2;
 
   const mockPrismaService = {
     player: {
@@ -37,6 +39,10 @@ describe('CardService', () => {
     set: jest.fn(),
   };
 
+  const mockEventEmitter = {
+    emit: jest.fn(),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -44,12 +50,14 @@ describe('CardService', () => {
         { provide: PrismaService, useValue: mockPrismaService },
         { provide: WikiService, useValue: mockWikiService },
         { provide: RedisService, useValue: mockRedisService },
+        { provide: EventEmitter2, useValue: mockEventEmitter },
       ],
     }).compile();
 
     service = module.get<CardService>(CardService);
     prisma = module.get<PrismaService>(PrismaService);
     redis = module.get<RedisService>(RedisService);
+    eventEmitter = module.get<EventEmitter2>(EventEmitter2);
 
     jest.clearAllMocks();
   });

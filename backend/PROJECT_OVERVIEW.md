@@ -51,6 +51,15 @@ Wikigacha is a multiverse-themed gacha game where every Wikipedia article is a c
   - `POST /api/v1/battle/start` - Start an auto-battle with a selected deck.
   - `GET /api/v1/battle/history` - Retrieve player's battle history.
 
+### US5: Trophy System & Milestones
+- **Trophy Engine:** Event-driven achievement tracking.
+- **Milestones:**
+  - **LEGENDARY_FINDER:** Awarded when pulling a UR or LR card from a pack.
+  - **VETERAN_COMMANDER:** Awarded after winning 10 battles (PvE or PvP).
+- **Backend:** `TrophyService` listening to `card.pulled` and `battle.won` events.
+- **Endpoints:**
+  - `GET /api/v1/trophy/:playerId` - Retrieve all trophies unlocked by a player.
+
 ## 📝 API Documentation
 - **Swagger UI:** Accessible at `/docs` when the server is running.
 - **Auth Endpoints:**

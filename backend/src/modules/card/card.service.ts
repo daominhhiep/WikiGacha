@@ -142,7 +142,7 @@ export class CardService {
       }),
     ]);
 
-    this.eventEmitter.emit('card.pulled', { playerId, count: cards.length });
+    this.eventEmitter.emit('card.pulled', { playerId, count: cards.length, cards });
 
     // 6. BACKGROUND REFILL: Keep pool fresh (Fire and forget)
     // Grow the pool until it reaches 50000 cards
