@@ -53,7 +53,7 @@ describe('GachaPage', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    
+
     (useAuthStore as any).mockReturnValue({
       accessToken: 'mock-token',
       player: { pityCounter: 0 },
@@ -106,10 +106,10 @@ describe('GachaPage', () => {
     });
 
     render(<GachaPage />, { wrapper });
-    
+
     // Trigger transition
     fireEvent.click(screen.getByText('INITIATE_BREACH'));
-    
+
     expect(screen.getByTestId('gacha-reveal')).toBeInTheDocument();
     expect(screen.getByText('ERROR_STATE')).toBeInTheDocument();
   });

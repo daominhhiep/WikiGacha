@@ -39,11 +39,11 @@ describe('GachaReveal', () => {
 
     // Card 1 is revealed automatically (Common)
     await waitFor(() => expect(screen.getByText('Card 1')).toBeInTheDocument(), { timeout: 2000 });
-    
+
     // Card 2 requires manual click (SSR)
     const card2Overlay = screen.getByText('[ MANUAL_DECRYPTION_REQUIRED ]');
     fireEvent.click(card2Overlay);
-    
+
     await waitFor(() => expect(screen.getByText('Card 2')).toBeInTheDocument(), { timeout: 2000 });
   });
 
@@ -68,7 +68,7 @@ describe('GachaReveal', () => {
 
   it('shows placeholder slots when isLoading is true', () => {
     render(<GachaReveal cards={null} isLoading={true} />);
-    
+
     expect(screen.getByText('EXTRACTING_DATA...')).toBeInTheDocument();
     // 5 placeholders are rendered
     const placeholders = screen.getAllByText('[ SEARCHING_ARTICLE ]');
@@ -79,11 +79,11 @@ describe('GachaReveal', () => {
     const onComplete = vi.fn();
     const error = new Error('BREACH_FAILED_BY_FIREWALL');
     render(<GachaReveal cards={null} error={error} onComplete={onComplete} />);
-    
+
     expect(screen.getByText('BREACH_ABORTED')).toBeInTheDocument();
     expect(screen.getByText('CRITICAL_BREACH_ERROR')).toBeInTheDocument();
     expect(screen.getByText('BREACH_FAILED_BY_FIREWALL')).toBeInTheDocument();
-    
+
     const terminateButton = screen.getByText('TERMINATE_SESSION');
     fireEvent.click(terminateButton);
     expect(onComplete).toHaveBeenCalled();

@@ -48,9 +48,9 @@ const GachaPage: React.FC = () => {
         exit={{ opacity: 0 }}
         className="flex min-h-[70vh] flex-col items-center justify-center p-4"
       >
-        <GachaReveal 
-          cards={lastOpenedCards} 
-          onComplete={handleRevealComplete} 
+        <GachaReveal
+          cards={lastOpenedCards}
+          onComplete={handleRevealComplete}
           isLoading={isOpening}
           error={apiError}
         />

@@ -152,25 +152,33 @@ const Card: React.FC<CardProps> = ({
             className="flex flex-col h-full"
           >
             {/* Rare Card Effects */}
-            {(card.rarity === Rarity.SSR || card.rarity === Rarity.UR || card.rarity === Rarity.LR) && (
+            {(card.rarity === Rarity.SSR ||
+              card.rarity === Rarity.UR ||
+              card.rarity === Rarity.LR) && (
               <>
                 <motion.div
                   animate={{ opacity: [0.1, 0.4, 0.1], rotate: 360 }}
                   transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
                   className={cn(
-                    "absolute -inset-20 blur-[100px] z-[-1]",
-                    card.rarity === Rarity.LR ? "bg-gradient-to-tr from-rarity-lr/30 via-transparent to-rarity-lr/30" :
-                    card.rarity === Rarity.UR ? "bg-gradient-to-tr from-rarity-ur/30 via-transparent to-rarity-ur/30" :
-                    "bg-gradient-to-tr from-rarity-ssr/30 via-transparent to-rarity-ssr/30"
+                    'absolute -inset-20 blur-[100px] z-[-1]',
+                    card.rarity === Rarity.LR
+                      ? 'bg-gradient-to-tr from-rarity-lr/30 via-transparent to-rarity-lr/30'
+                      : card.rarity === Rarity.UR
+                        ? 'bg-gradient-to-tr from-rarity-ur/30 via-transparent to-rarity-ur/30'
+                        : 'bg-gradient-to-tr from-rarity-ssr/30 via-transparent to-rarity-ssr/30',
                   )}
                 />
                 <div className="absolute top-2 left-2 z-20">
-                  <Sparkles className={cn(
-                    "size-5 animate-bounce",
-                    card.rarity === Rarity.LR ? "text-rarity-lr" :
-                    card.rarity === Rarity.UR ? "text-rarity-ur" :
-                    "text-rarity-ssr"
-                  )} />
+                  <Sparkles
+                    className={cn(
+                      'size-5 animate-bounce',
+                      card.rarity === Rarity.LR
+                        ? 'text-rarity-lr'
+                        : card.rarity === Rarity.UR
+                          ? 'text-rarity-ur'
+                          : 'text-rarity-ssr',
+                    )}
+                  />
                 </div>
               </>
             )}
@@ -180,8 +188,8 @@ const Card: React.FC<CardProps> = ({
                 animate={{ opacity: [0.1, 0.3, 0.1] }}
                 transition={{ duration: 2, repeat: Infinity }}
                 className={cn(
-                  "absolute -inset-10 blur-[60px] z-[-1]",
-                  card.rarity === Rarity.SR ? "bg-rarity-sr/10" : "bg-rarity-r/10"
+                  'absolute -inset-10 blur-[60px] z-[-1]',
+                  card.rarity === Rarity.SR ? 'bg-rarity-sr/10' : 'bg-rarity-r/10',
                 )}
               />
             )}

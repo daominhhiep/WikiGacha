@@ -74,7 +74,9 @@ const containerVariants: Variants = {
 const itemVariants: Variants = {
   hidden: { opacity: 0, scale: 0.8, rotateY: 90 } as Variant,
   visible: {
-    opacity: 1, scale: 1, rotateY: 0,
+    opacity: 1,
+    scale: 1,
+    rotateY: 0,
     transition: {
       type: 'spring',
       damping: 15,
@@ -87,11 +89,11 @@ const itemVariants: Variants = {
  * GachaReveal displays a Cyberpunk-themed manual reveal interface for newly opened cards.
  * Users must click individual cards to "decrypt" them.
  */
-const GachaReveal: React.FC<GachaRevealProps> = ({ 
-  cards: initialCards, 
+const GachaReveal: React.FC<GachaRevealProps> = ({
+  cards: initialCards,
   onComplete,
   isLoading,
-  error
+  error,
 }) => {
   const [revealedIds, setRevealedIds] = useState<Set<string>>(new Set());
   const [activeBursts, setActiveBursts] = useState<BurstData[]>([]);
@@ -134,7 +136,8 @@ const GachaReveal: React.FC<GachaRevealProps> = ({
     return sorted;
   }, [initialCards]);
 
-  const isAllRevealed = revealedIds.size > 0 && cards.length > 0 && revealedIds.size === cards.length;
+  const isAllRevealed =
+    revealedIds.size > 0 && cards.length > 0 && revealedIds.size === cards.length;
 
   const handleReveal = useCallback(
     (card: CardData, index: number) => {
@@ -161,10 +164,7 @@ const GachaReveal: React.FC<GachaRevealProps> = ({
       }
 
       // Add particle burst for rare cards (R+)
-      if (
-        card.rarity !== Rarity.C &&
-        card.rarity !== Rarity.UC
-      ) {
+      if (card.rarity !== Rarity.C && card.rarity !== Rarity.UC) {
         const colorMap = {
           [Rarity.R]: '#22c55e',
           [Rarity.SR]: '#3b82f6',
@@ -207,9 +207,7 @@ const GachaReveal: React.FC<GachaRevealProps> = ({
     cards.forEach((card, index) => {
       // ONLY auto-reveal C, UC, R, SR cards. SSR, UR and LR require manual click.
       const isManualRarity =
-        card.rarity === Rarity.SSR ||
-        card.rarity === Rarity.UR ||
-        card.rarity === Rarity.LR;
+        card.rarity === Rarity.SSR || card.rarity === Rarity.UR || card.rarity === Rarity.LR;
       if (isManualRarity) return;
 
       const tid = setTimeout(
@@ -245,9 +243,9 @@ const GachaReveal: React.FC<GachaRevealProps> = ({
         </div>
         <div className="h-0.5 w-full bg-gradient-to-r from-transparent via-primary/50 to-transparent mt-2" />
         <p className="text-[10px] font-mono text-muted-foreground uppercase tracking-widest mt-4">
-          {error 
-            ? 'Critical failure in the extraction protocol.' 
-            : isLoading 
+          {error
+            ? 'Critical failure in the extraction protocol.'
+            : isLoading
               ? 'Bypassing Wikipedia firewalls. Converting article metadata...'
               : 'Inventory synchronized with global data terminal.'}
         </p>
@@ -263,8 +261,12 @@ const GachaReveal: React.FC<GachaRevealProps> = ({
             <div className="flex flex-col items-center gap-6 py-10 w-full max-w-lg mx-auto bg-red-950/20 border border-red-500/50 p-8">
               <ShieldAlert className="size-16 text-red-500 animate-pulse" />
               <div className="text-center font-mono space-y-4">
-                <div className="text-xl font-black text-red-500 uppercase tracking-tighter">CRITICAL_BREACH_ERROR</div>
-                <div className="text-xs text-red-400/80 leading-relaxed max-w-xs">{getErrorMessage(error)}</div>
+                <div className="text-xl font-black text-red-500 uppercase tracking-tighter">
+                  CRITICAL_BREACH_ERROR
+                </div>
+                <div className="text-xs text-red-400/80 leading-relaxed max-w-xs">
+                  {getErrorMessage(error)}
+                </div>
                 <div className="pt-4">
                   <Button
                     onClick={onComplete}
@@ -285,15 +287,17 @@ const GachaReveal: React.FC<GachaRevealProps> = ({
                 className="relative flex-shrink-0"
               >
                 <div className="group relative h-[30rem] w-72 flex flex-col rounded-none border-2 border-primary/20 bg-black/40 backdrop-blur-sm p-4 overflow-hidden">
-                   {/* Scanning Line */}
+                  {/* Scanning Line */}
                   <div className="absolute inset-0 bg-gradient-to-b from-transparent via-primary/10 to-transparent h-1/3 w-full animate-scan" />
-                  
+
                   <div className="flex-1 flex flex-col items-center justify-center gap-6 opacity-40">
                     <Loader2 className="size-16 animate-spin text-primary/40" />
                     <div className="text-center space-y-2">
-                      <div className="text-[10px] font-mono text-primary animate-pulse uppercase tracking-[0.2em]">[ SEARCHING_ARTICLE ]</div>
+                      <div className="text-[10px] font-mono text-primary animate-pulse uppercase tracking-[0.2em]">
+                        [ SEARCHING_ARTICLE ]
+                      </div>
                       <div className="h-1 w-24 bg-primary/20 overflow-hidden">
-                        <motion.div 
+                        <motion.div
                           animate={{ x: ['-100%', '100%'] }}
                           transition={{ repeat: Infinity, duration: 1.5, ease: 'linear' }}
                           className="h-full w-full bg-primary/40"
@@ -351,10 +355,14 @@ const GachaReveal: React.FC<GachaRevealProps> = ({
                     <div
                       className={cn(
                         'absolute -bottom-4 left-1/2 -translate-x-1/2 text-black text-[8px] font-black px-2 py-0.5 uppercase italic z-20 shadow-[0_0_10px_rgba(0,240,255,0.5)]',
-                        isManualRarity 
-                          ? (card.rarity === Rarity.LR ? 'bg-rarity-lr' : 
-                             card.rarity === Rarity.UR ? 'bg-rarity-ur' : 
-                             card.rarity === Rarity.SSR ? 'bg-rarity-ssr' : 'bg-rarity-sr') + ' animate-bounce'
+                        isManualRarity
+                          ? (card.rarity === Rarity.LR
+                              ? 'bg-rarity-lr'
+                              : card.rarity === Rarity.UR
+                                ? 'bg-rarity-ur'
+                                : card.rarity === Rarity.SSR
+                                  ? 'bg-rarity-ssr'
+                                  : 'bg-rarity-sr') + ' animate-bounce'
                           : 'bg-primary animate-pulse',
                       )}
                     >

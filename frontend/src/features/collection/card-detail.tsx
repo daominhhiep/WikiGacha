@@ -56,7 +56,7 @@ const CardDetail: React.FC<CardDetailProps> = ({ item, onClose }) => {
               <div className="relative group">
                 {/* Visual anchor for the card */}
                 <Card card={card} isRevealed={true} className="scale-105 md:scale-110" />
-                
+
                 {/* Favorite badge if applicable */}
                 {item.isFavorite && (
                   <div className="absolute -top-4 -left-4 z-20 bg-yellow-500 text-black p-2 shadow-[0_0_15px_rgba(234,179,8,0.5)] border border-yellow-400 font-black italic text-[10px] uppercase">
@@ -69,8 +69,12 @@ const CardDetail: React.FC<CardDetailProps> = ({ item, onClose }) => {
             {/* Content Side (The Metadata) */}
             <div className="flex-1 p-8 md:p-12 overflow-y-auto max-h-[60vh] md:max-h-none font-mono">
               <div className="mb-8">
-                <div className="text-[10px] text-primary/60 uppercase tracking-[0.3em] mb-2">[ DATA_ENTRY_DECRYPTED ]</div>
-                <h2 className="text-4xl font-black uppercase tracking-tighter italic mb-4 leading-none">{card.title}</h2>
+                <div className="text-[10px] text-primary/60 uppercase tracking-[0.3em] mb-2">
+                  [ DATA_ENTRY_DECRYPTED ]
+                </div>
+                <h2 className="text-4xl font-black uppercase tracking-tighter italic mb-4 leading-none">
+                  {card.title}
+                </h2>
                 <div className="flex flex-wrap items-center gap-4 text-[10px]">
                   <div className="px-3 py-1 bg-primary/10 border border-primary/20 text-primary font-black uppercase">
                     RARITY: {card.rarity}
@@ -129,9 +133,9 @@ const CardDetail: React.FC<CardDetailProps> = ({ item, onClose }) => {
                     <ExternalLink className="size-4" /> ACCESS_FULL_ARCHIVE
                   </Button>
                 </a>
-                <Button 
+                <Button
                   onClick={onClose}
-                  variant="outline" 
+                  variant="outline"
                   className="h-12 px-8 rounded-none border-2 border-border-grid hover:border-primary font-black uppercase italic transition-all"
                 >
                   CLOSE

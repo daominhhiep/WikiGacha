@@ -41,11 +41,11 @@ const CardSkeleton = () => (
  * CollectionGrid component renders a responsive grid of collected Wikipedia cards.
  * Implements the Cyberpunk HUD style for the collection view.
  */
-const CollectionGrid: React.FC<CollectionGridProps> = ({ 
-  items, 
+const CollectionGrid: React.FC<CollectionGridProps> = ({
+  items,
   isLoadingMore,
-  onCardClick, 
-  onToggleFavorite 
+  onCardClick,
+  onToggleFavorite,
 }) => {
   if (items.length === 0 && !isLoadingMore) {
     return (
@@ -53,8 +53,12 @@ const CollectionGrid: React.FC<CollectionGridProps> = ({
         <div className="size-20 border border-primary/20 flex items-center justify-center mb-6">
           <Search className="size-10 text-primary/40 animate-pulse" />
         </div>
-        <h3 className="text-xl font-black uppercase tracking-widest text-primary mb-2">NO_DATA_DETECTED</h3>
-        <p className="text-xs font-mono text-muted-foreground uppercase opacity-60">Your inventory is currently empty. Breach Wikipedia to acquire assets.</p>
+        <h3 className="text-xl font-black uppercase tracking-widest text-primary mb-2">
+          NO_DATA_DETECTED
+        </h3>
+        <p className="text-xs font-mono text-muted-foreground uppercase opacity-60">
+          Your inventory is currently empty. Breach Wikipedia to acquire assets.
+        </p>
       </div>
     );
   }
@@ -69,7 +73,7 @@ const CollectionGrid: React.FC<CollectionGridProps> = ({
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9 }}
-            transition={{ duration: 0.3, delay: index % 20 * 0.05 }}
+            transition={{ duration: 0.3, delay: (index % 20) * 0.05 }}
             className="relative group"
           >
             {/* Collection Metadata Overlay */}
@@ -80,28 +84,30 @@ const CollectionGrid: React.FC<CollectionGridProps> = ({
                   onToggleFavorite?.(item.id);
                 }}
                 className={cn(
-                  "size-8 flex items-center justify-center bg-black/80 border border-border-grid transition-all",
-                  item.isFavorite ? "text-yellow-400 border-yellow-500/50 shadow-[0_0_10px_rgba(234,179,8,0.3)]" : "text-white/40 hover:text-white"
+                  'size-8 flex items-center justify-center bg-black/80 border border-border-grid transition-all',
+                  item.isFavorite
+                    ? 'text-yellow-400 border-yellow-500/50 shadow-[0_0_10px_rgba(234,179,8,0.3)]'
+                    : 'text-white/40 hover:text-white',
                 )}
               >
-                <Star className={cn("size-4", item.isFavorite && "fill-current")} />
+                <Star className={cn('size-4', item.isFavorite && 'fill-current')} />
               </button>
             </div>
 
             <div className="absolute bottom-2 right-2 z-30 pointer-events-none">
               <div className="px-2 py-1 bg-black/80 border border-border-grid text-[8px] font-mono text-primary/60 flex items-center gap-1.5 uppercase">
                 <Clock className="size-2.5" />
-                {new Date(item.acquiredAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+                {new Date(item.acquiredAt).toLocaleDateString(undefined, {
+                  month: 'short',
+                  day: 'numeric',
+                })}
               </div>
             </div>
 
             {/* Interaction Layer */}
-            <div 
-              className="cursor-pointer"
-              onClick={() => onCardClick?.(item)}
-            >
-              <Card 
-                card={item.card} 
+            <div className="cursor-pointer" onClick={() => onCardClick?.(item)}>
+              <Card
+                card={item.card}
                 isRevealed={true}
                 className="transition-transform group-hover:shadow-[0_0_30px_rgba(0,240,255,0.15)]"
               />
@@ -110,7 +116,7 @@ const CollectionGrid: React.FC<CollectionGridProps> = ({
         ))}
 
         {/* Loading Skeletons */}
-        {isLoadingMore && (
+        {isLoadingMore &&
           Array.from({ length: 5 }).map((_, i) => (
             <motion.div
               key={`skeleton-${i}`}
@@ -121,8 +127,7 @@ const CollectionGrid: React.FC<CollectionGridProps> = ({
             >
               <CardSkeleton />
             </motion.div>
-          ))
-        )}
+          ))}
       </AnimatePresence>
     </div>
   );

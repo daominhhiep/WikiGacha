@@ -57,22 +57,22 @@ describe('CollectionGrid', () => {
   it('calls onToggleFavorite when star button is clicked', () => {
     const onToggleFavorite = vi.fn();
     render(<CollectionGrid items={mockItems} onToggleFavorite={onToggleFavorite} />);
-    
+
     const starButtons = screen.getAllByRole('button');
     fireEvent.click(starButtons[0]);
-    
+
     expect(onToggleFavorite).toHaveBeenCalledWith('inv-1');
   });
 
   it('calls onCardClick when a card is clicked', () => {
     const onCardClick = vi.fn();
     render(<CollectionGrid items={mockItems} onCardClick={onCardClick} />);
-    
+
     // Find one of the card titles and click the container
     const cardTitles = screen.getAllByText('Test Card 1');
     const card = cardTitles[0].closest('.cursor-pointer');
     if (card) fireEvent.click(card);
-    
+
     expect(onCardClick).toHaveBeenCalledWith(mockItems[0]);
   });
 });
