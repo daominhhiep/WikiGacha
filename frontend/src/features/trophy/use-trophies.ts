@@ -16,7 +16,7 @@ export interface Trophy {
 
 /**
  * Custom hook for fetching the player's trophies.
- * 
+ *
  * @param playerId The ID of the player whose trophies to fetch.
  * @returns Query object for trophies.
  */

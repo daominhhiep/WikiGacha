@@ -103,7 +103,6 @@ const CollectionGrid: React.FC<CollectionGridProps> = ({
               />
             </div>
           </motion.div>
-
         ))}
 
         {/* Loading Skeletons */}

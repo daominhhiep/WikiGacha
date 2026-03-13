@@ -385,7 +385,12 @@ const Card: React.FC<CardProps> = ({
               <span className="text-[8px] font-mono opacity-50">SOURCE: WIKIPEDIA_API_v1</span>
               {acquiredAt ? (
                 <span className="text-[9px] font-mono text-primary/60 uppercase tracking-tighter">
-                  ACQUIRED: {new Date(acquiredAt).toLocaleDateString(undefined, { year: '2-digit', month: 'short', day: 'numeric' })}
+                  ACQUIRED:{' '}
+                  {new Date(acquiredAt).toLocaleDateString(undefined, {
+                    year: '2-digit',
+                    month: 'short',
+                    day: 'numeric',
+                  })}
                 </span>
               ) : null}
             </div>

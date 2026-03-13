@@ -184,7 +184,8 @@ const BattlePage: React.FC = () => {
                             {new Date(battle.createdAt).toLocaleString()}
                           </p>
                           <p className="text-sm font-black uppercase tracking-widest">
-                            {battle.player1.username} <span className="text-primary/40 mx-2">VS</span>{' '}
+                            {battle.player1.username}{' '}
+                            <span className="text-primary/40 mx-2">VS</span>{' '}
                             {battle.player2?.username || 'AI_BOT'}
                           </p>
                         </div>

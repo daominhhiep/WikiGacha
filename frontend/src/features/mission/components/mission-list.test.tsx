@@ -87,14 +87,14 @@ describe('MissionList', () => {
       data: mockMissions,
       isLoading: false,
     });
-    
+
     (useClaimMissionReward as any).mockReturnValue({
       mutate: vi.fn(),
       isPending: false,
     });
 
     render(<MissionList />, { wrapper });
-    
+
     expect(screen.getByText('Pull 5 Cards')).toBeInTheDocument();
     expect(screen.getByText('Win 10 Battles')).toBeInTheDocument();
     expect(screen.getByText('2 / 5 (40%)')).toBeInTheDocument();
@@ -106,7 +106,7 @@ describe('MissionList', () => {
       data: mockMissions,
       isLoading: false,
     });
-    
+
     const mockMutate = vi.fn();
     (useClaimMissionReward as any).mockReturnValue({
       mutate: mockMutate,
@@ -114,10 +114,10 @@ describe('MissionList', () => {
     });
 
     render(<MissionList />, { wrapper });
-    
+
     const claimButton = screen.getByText(/\[ CLAIM_REWARD \]/i);
     expect(claimButton).toBeInTheDocument();
-    
+
     fireEvent.click(claimButton);
     expect(mockMutate).toHaveBeenCalledWith(2); // userMission.id is 2
   });

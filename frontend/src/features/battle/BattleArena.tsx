@@ -243,7 +243,10 @@ const BattleArena: React.FC<BattleArenaProps> = ({ result, onComplete }) => {
             <Button
               variant="outline"
               size="icon"
-              className={cn('rounded-none border-primary/20 h-10 w-10', speed < 500 && 'bg-primary/20')}
+              className={cn(
+                'rounded-none border-primary/20 h-10 w-10',
+                speed < 500 && 'bg-primary/20',
+              )}
               onClick={() => setSpeed((prev) => (prev === 1000 ? 300 : 1000))}
             >
               <FastForward className="size-4" />
