@@ -194,6 +194,7 @@ export class CardService {
     quality: number = 0,
     popularity: number = 0,
   ): Promise<Card> {
+    const start = Date.now();
     // 1. Determine final Q-Score (WikiRank preferred, fallback to internal calculation)
     let finalQScore = quality;
     if (finalQScore <= 0) {
@@ -221,11 +222,15 @@ export class CardService {
     };
 
     // Upsert the card in the database to ensure we have the latest version but don't duplicate
-    return this.prisma.card.upsert({
+    const card = await this.prisma.card.upsert({
       where: { id: cardData.id },
       update: cardData,
       create: cardData,
     });
+
+    const duration = Date.now() - start;
+    this.logger.debug(`generateCardFromWiki("${wikiData.title}") took ${duration}ms`);
+    return card;
   }
 
   /**

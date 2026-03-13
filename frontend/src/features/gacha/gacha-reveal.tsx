@@ -8,22 +8,10 @@ import { Button } from '@/components/ui/button';
 import { Cpu, ShieldAlert, Loader2 } from 'lucide-react';
 import axios from 'axios';
 
-// External counter for unique IDs to satisfy strict purity rules (Math.random/Date.now in render)
+// External counter for unique IDs
 let particleBurstIdCounter = 0;
 
-/**
- * Lightweight particle component for reveal effects.
- * Receives pre-calculated coordinates to remain "pure" during render.
- */
-const Particle = ({
-  color,
-  angle,
-  distance,
-}: {
-  color: string;
-  angle: number;
-  distance: number;
-}) => {
+const Particle = ({ color, angle, distance }: { color: string; angle: number; distance: number }) => {
   return (
     <motion.div
       initial={{ x: 0, y: 0, opacity: 1, scale: 1 }}
@@ -40,17 +28,10 @@ const Particle = ({
   );
 };
 
-/**
- * Props for the GachaReveal component.
- */
 interface GachaRevealProps {
-  /** The list of cards to reveal. */
   cards: CardData[] | null;
-  /** Callback function triggered when the user finishes viewing the revealed cards. */
   onComplete?: () => void;
-  /** Whether the gacha pack is still being opened/extracted. */
   isLoading?: boolean;
-  /** Any API error that occurred during the breach. */
   error?: Error | null;
 }
 
@@ -66,7 +47,7 @@ const containerVariants: Variants = {
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.2,
+      staggerChildren: 0.1,
     },
   } as Variant,
 };
@@ -85,10 +66,6 @@ const itemVariants: Variants = {
   } as Variant,
 };
 
-/**
- * GachaReveal displays a Cyberpunk-themed manual reveal interface for newly opened cards.
- * Users must click individual cards to "decrypt" them.
- */
 const GachaReveal: React.FC<GachaRevealProps> = ({
   cards: initialCards,
   onComplete,
@@ -97,7 +74,6 @@ const GachaReveal: React.FC<GachaRevealProps> = ({
 }) => {
   const [revealedIds, setRevealedIds] = useState<Set<string>>(new Set());
   const [activeBursts, setActiveBursts] = useState<BurstData[]>([]);
-  const scrollRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   const getErrorMessage = (error: Error | null) => {
@@ -108,7 +84,6 @@ const GachaReveal: React.FC<GachaRevealProps> = ({
     return error.message;
   };
 
-  // Sort cards: Move best card to the end
   const cards = useMemo(() => {
     if (!initialCards) return [];
     const sorted = [...initialCards];
@@ -140,30 +115,11 @@ const GachaReveal: React.FC<GachaRevealProps> = ({
     revealedIds.size > 0 && cards.length > 0 && revealedIds.size === cards.length;
 
   const handleReveal = useCallback(
-    (card: CardData, index: number) => {
+    (card: CardData, _index: number) => {
       if (revealedIds.has(card.id)) return;
 
       setRevealedIds((prev) => new Set(prev).add(card.id));
 
-      // Auto-scroll to the specific card being revealed
-      if (scrollRef.current && cardRefs.current[index]) {
-        const container = scrollRef.current;
-        const cardElement = cardRefs.current[index];
-
-        if (cardElement) {
-          const containerWidth = container.offsetWidth;
-          const cardOffset = cardElement.offsetLeft;
-          const cardWidth = cardElement.offsetWidth;
-          const scrollTarget = cardOffset - containerWidth / 2 + cardWidth / 2;
-
-          container.scrollTo({
-            left: scrollTarget,
-            behavior: 'smooth',
-          });
-        }
-      }
-
-      // Add particle burst for rare cards (R+)
       if (card.rarity !== Rarity.C && card.rarity !== Rarity.UC) {
         const colorMap = {
           [Rarity.R]: '#22c55e',
@@ -173,23 +129,19 @@ const GachaReveal: React.FC<GachaRevealProps> = ({
           [Rarity.LR]: '#a855f7',
         };
         const color = colorMap[card.rarity] || '#00F0FF';
-
         const burstId = `burst-${particleBurstIdCounter++}`;
 
-        // Pre-calculate random values in the event handler (safe from purity rules)
         const newBurst: BurstData = {
           id: burstId,
           cardId: card.id,
           color,
           particles: Array.from({ length: 12 }).map((_, i) => ({
             angle: (i / 12) * Math.PI * 2,
-            distance: 100 + Math.random() * 100,
+            distance: 80 + Math.random() * 80,
           })),
         };
 
         setActiveBursts((prev) => [...prev, newBurst]);
-
-        // Cleanup particles after animation
         setTimeout(() => {
           setActiveBursts((prev) => prev.filter((p) => p.id !== burstId));
         }, 1000);
@@ -198,14 +150,12 @@ const GachaReveal: React.FC<GachaRevealProps> = ({
     [revealedIds],
   );
 
-  // Auto-reveal sequence: Only for N and R cards
   useEffect(() => {
     if (isLoading || cards.length === 0) return;
 
     const timeoutIds: ReturnType<typeof setTimeout>[] = [];
 
     cards.forEach((card, index) => {
-      // ONLY auto-reveal C, UC, R, SR cards. SSR, UR and LR require manual click.
       const isManualRarity =
         card.rarity === Rarity.SSR || card.rarity === Rarity.UR || card.rarity === Rarity.LR;
       if (isManualRarity) return;
@@ -227,83 +177,53 @@ const GachaReveal: React.FC<GachaRevealProps> = ({
       variants={containerVariants}
       initial="hidden"
       animate="visible"
-      className="flex flex-col items-center bg-black/60 p-8 backdrop-blur-xl border border-border-grid w-full min-h-[60vh] relative"
+      className="h-full w-full flex flex-col items-center justify-between bg-black/40 p-4 backdrop-blur-md border border-border-grid relative overflow-hidden"
     >
-      {/* Background Ambience */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--color-primary)_0%,_transparent_100%)] opacity-5 pointer-events-none" />
 
-      {/* Header Info (Visible during loading or error) */}
-      <div className="mb-8 text-center space-y-2 z-20">
-        <div className="flex items-center justify-center gap-4 text-primary animate-pulse">
-          <Cpu className="size-8" />
-          <h2 className="text-4xl font-black tracking-widest uppercase font-mono italic">
-            {error ? 'BREACH_ABORTED' : isLoading ? 'EXTRACTING_DATA...' : 'DATA_EXTRACTED'}
+      {/* Header */}
+      <div className="text-center space-y-1 z-20 flex-shrink-0">
+        <div className="flex items-center justify-center gap-3 text-primary animate-pulse">
+          <Cpu className="size-6" />
+          <h2 className="text-2xl font-black tracking-widest uppercase font-mono italic leading-none">
+            {error ? 'BREACH_ABORTED' : isLoading ? 'EXTRACTING...' : 'DATA_EXTRACTED'}
           </h2>
-          <Cpu className="size-8" />
+          <Cpu className="size-6" />
         </div>
-        <div className="h-0.5 w-full bg-gradient-to-r from-transparent via-primary/50 to-transparent mt-2" />
-        <p className="text-[10px] font-mono text-muted-foreground uppercase tracking-widest mt-4">
-          {error
-            ? 'Critical failure in the extraction protocol.'
-            : isLoading
-              ? 'Bypassing Wikipedia firewalls. Converting article metadata...'
-              : 'Inventory synchronized with global data terminal.'}
+        <p className="text-[8px] font-mono text-muted-foreground uppercase tracking-[0.2em] opacity-60">
+          [ {revealedIds.size} / {cards.length} UNITS_DECRYPTED ]
         </p>
       </div>
 
-      {/* 5 Cards in 1 Line Roll Container */}
-      <div ref={scrollRef} className="w-full overflow-x-auto no-scrollbar py-20 z-10 scroll-smooth">
+      {/* Main Grid area - Fit to one line */}
+      <div className="flex-1 w-full flex items-center justify-center overflow-hidden">
         <div
-          className="flex flex-nowrap justify-start lg:justify-center gap-12 px-[25vw] min-w-max"
-          style={{ perspective: '2000px', transformStyle: 'preserve-3d' }}
+          className="flex flex-row justify-center gap-2 sm:gap-4 md:gap-6 w-full"
+          style={{ perspective: '1500px' }}
         >
           {error ? (
-            <div className="flex flex-col items-center gap-6 py-10 w-full max-w-lg mx-auto bg-red-950/20 border border-red-500/50 p-8">
-              <ShieldAlert className="size-16 text-red-500 animate-pulse" />
-              <div className="text-center font-mono space-y-4">
-                <div className="text-xl font-black text-red-500 uppercase tracking-tighter">
-                  CRITICAL_BREACH_ERROR
-                </div>
-                <div className="text-xs text-red-400/80 leading-relaxed max-w-xs">
-                  {getErrorMessage(error)}
-                </div>
-                <div className="pt-4">
-                  <Button
-                    onClick={onComplete}
-                    variant="destructive"
-                    className="h-12 px-8 rounded-none border border-red-500 bg-black text-red-500 hover:bg-red-500 hover:text-black transition-all uppercase italic font-black"
-                  >
-                    TERMINATE_SESSION
-                  </Button>
-                </div>
+            <div className="flex flex-col items-center gap-4 bg-red-950/20 border border-red-500/50 p-6 max-w-md">
+              <ShieldAlert className="size-12 text-red-500 animate-pulse" />
+              <div className="text-center font-mono">
+                <div className="text-sm font-black text-red-500 uppercase">CRITICAL_ERROR</div>
+                <div className="text-[9px] text-red-400/80 mt-2">{getErrorMessage(error)}</div>
+                <Button
+                  onClick={onComplete}
+                  variant="destructive"
+                  className="mt-4 h-10 px-6 rounded-none border border-red-500 bg-black text-red-500 text-xs font-black"
+                >
+                  TERMINATE
+                </Button>
               </div>
             </div>
           ) : isLoading ? (
-            // Placeholder Slots during loading
             Array.from({ length: 5 }).map((_, i) => (
-              <motion.div
-                key={`placeholder-${i}`}
-                variants={itemVariants}
-                className="relative flex-shrink-0"
-              >
-                <div className="group relative h-[30rem] w-72 flex flex-col rounded-none border-2 border-primary/20 bg-black/40 backdrop-blur-sm p-4 overflow-hidden">
-                  {/* Scanning Line */}
-                  <div className="absolute inset-0 bg-gradient-to-b from-transparent via-primary/10 to-transparent h-1/3 w-full animate-scan" />
-
-                  <div className="flex-1 flex flex-col items-center justify-center gap-6 opacity-40">
-                    <Loader2 className="size-16 animate-spin text-primary/40" />
-                    <div className="text-center space-y-2">
-                      <div className="text-[10px] font-mono text-primary animate-pulse uppercase tracking-[0.2em]">
-                        [ SEARCHING_ARTICLE ]
-                      </div>
-                      <div className="h-1 w-24 bg-primary/20 overflow-hidden">
-                        <motion.div
-                          animate={{ x: ['-100%', '100%'] }}
-                          transition={{ repeat: Infinity, duration: 1.5, ease: 'linear' }}
-                          className="h-full w-full bg-primary/40"
-                        />
-                      </div>
-                    </div>
+              <motion.div key={`placeholder-${i}`} variants={itemVariants} className="flex-shrink-0">
+                <div className="h-[22rem] w-48 border-2 border-primary/10 bg-black/40 p-3 flex flex-col items-center justify-center gap-4 opacity-30 overflow-hidden relative">
+                  <div className="absolute inset-0 bg-gradient-to-b from-transparent via-primary/5 to-transparent h-1/3 w-full animate-scan" />
+                  <Loader2 className="size-10 animate-spin text-primary/40" />
+                  <div className="text-[8px] font-mono text-primary uppercase tracking-widest animate-pulse">
+                    [ FETCHING ]
                   </div>
                 </div>
               </motion.div>
@@ -328,7 +248,6 @@ const GachaReveal: React.FC<GachaRevealProps> = ({
                   className="relative flex-shrink-0 cursor-pointer"
                   onClick={() => handleReveal(card, index)}
                 >
-                  {/* Particle Burst Anchor */}
                   <AnimatePresence>
                     {cardBurst && (
                       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
@@ -347,14 +266,14 @@ const GachaReveal: React.FC<GachaRevealProps> = ({
                   <Card
                     card={card}
                     isRevealed={isRevealed}
-                    data-testid={`card-${index}`}
-                    className="shadow-[0_0_20px_rgba(0,0,0,0.5)]"
+                    size="sm"
+                    className="shadow-[0_0_20px_rgba(0,0,0,0.5)] overflow-hidden"
                   />
 
                   {!isRevealed && (
                     <div
                       className={cn(
-                        'absolute -bottom-4 left-1/2 -translate-x-1/2 text-black text-[8px] font-black px-2 py-0.5 uppercase italic z-20 shadow-[0_0_10px_rgba(0,240,255,0.5)]',
+                        'absolute -bottom-2 left-1/2 -translate-x-1/2 text-black text-[7px] font-black px-1.5 py-0.5 uppercase italic z-20 whitespace-nowrap',
                         isManualRarity
                           ? (card.rarity === Rarity.LR
                               ? 'bg-rarity-lr'
@@ -366,7 +285,7 @@ const GachaReveal: React.FC<GachaRevealProps> = ({
                           : 'bg-primary animate-pulse',
                       )}
                     >
-                      {isManualRarity ? '[ MANUAL_DECRYPTION_REQUIRED ]' : 'DECRYPTING...'}
+                      {isManualRarity ? 'MANUAL_DECRYPT' : 'DECRYPTING'}
                     </div>
                   )}
                 </motion.div>
@@ -376,14 +295,15 @@ const GachaReveal: React.FC<GachaRevealProps> = ({
         </div>
       </div>
 
-      <div className="mt-8 h-20 flex items-center justify-center z-10">
+      {/* Footer / Complete Button */}
+      <div className="h-16 flex items-center justify-center z-10 flex-shrink-0">
         <AnimatePresence>
           {isAllRevealed && (
             <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}>
               <Button
                 onClick={onComplete}
                 variant="secondary"
-                className="h-14 px-16 text-xl font-black rounded-none border-2 border-primary bg-black text-primary hover:bg-primary hover:text-black transition-all duration-300 shadow-[0_0_20px_rgba(0,240,255,0.3)] uppercase italic"
+                className="h-10 px-12 text-sm font-black rounded-none border-2 border-primary bg-black text-primary hover:bg-primary hover:text-black transition-all shadow-[0_0_20px_rgba(0,240,255,0.2)] uppercase italic"
               >
                 CONFIRM_ACQUISITION
               </Button>
@@ -391,13 +311,6 @@ const GachaReveal: React.FC<GachaRevealProps> = ({
           )}
         </AnimatePresence>
       </div>
-
-      {/* Progress HUD */}
-      {!isLoading && !error && (
-        <div className="mt-4 font-mono text-[10px] text-muted-foreground/60 uppercase tracking-widest">
-          [ {revealedIds.size} / {cards.length} DATA_UNITS_DECRYPTED ]
-        </div>
-      )}
     </motion.div>
   );
 };
