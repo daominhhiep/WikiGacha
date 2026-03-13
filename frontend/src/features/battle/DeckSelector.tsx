@@ -119,7 +119,7 @@ const DeckSelector: React.FC<DeckSelectorProps> = ({ onStartBattle, isStarting =
                 {cardItem ? (
                   <div
                     className="relative group cursor-pointer w-full h-full"
-                    onClick={() => toggleCard(cardItem.cardId)}
+                    onClick={() => toggleCard(cardItem.id)}
                   >
                     {cardItem.card.imageUrl ? (
                       <img
@@ -251,7 +251,7 @@ const DeckSelector: React.FC<DeckSelectorProps> = ({ onStartBattle, isStarting =
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-6 justify-items-center relative min-h-[400px]">
               <AnimatePresence>
                 {allCards.map((item) => {
-                  const isSelected = selectedCardIds.includes(item.cardId);
+                  const isSelected = selectedCardIds.includes(item.id);
                   const isMaxReached = selectedCardIds.length >= maxDeckSize;
 
                   return (
@@ -262,7 +262,7 @@ const DeckSelector: React.FC<DeckSelectorProps> = ({ onStartBattle, isStarting =
                       exit={{ opacity: 0, scale: 0.9 }}
                       transition={{ duration: 0.2 }}
                       className="relative w-full max-w-[224px]"
-                      onClick={() => toggleCard(item.cardId)}
+                      onClick={() => toggleCard(item.id)}
                     >
                       <Card
                         card={item.card}

@@ -88,14 +88,14 @@ export const useBattleStore = create<BattleStore>((set) => ({
   selectedCardIds: [],
   cardRegistry: {},
   maxDeckSize: 5,
-  toggleCard: (cardId) =>
+  toggleCard: (inventoryId) =>
     set((state) => {
-      const isSelected = state.selectedCardIds.includes(cardId);
+      const isSelected = state.selectedCardIds.includes(inventoryId);
       if (isSelected) {
-        return { selectedCardIds: state.selectedCardIds.filter((id) => id !== cardId) };
+        return { selectedCardIds: state.selectedCardIds.filter((id) => id !== inventoryId) };
       }
       if (state.selectedCardIds.length < state.maxDeckSize) {
-        return { selectedCardIds: [...state.selectedCardIds, cardId] };
+        return { selectedCardIds: [...state.selectedCardIds, inventoryId] };
       }
       return state;
     }),
@@ -104,8 +104,8 @@ export const useBattleStore = create<BattleStore>((set) => ({
       const next = { ...state.cardRegistry };
       let hasNew = false;
       items.forEach((item) => {
-        if (!next[item.cardId]) {
-          next[item.cardId] = item;
+        if (!next[item.id]) {
+          next[item.id] = item;
           hasNew = true;
         }
       });

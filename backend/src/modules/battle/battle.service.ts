@@ -28,11 +28,11 @@ export class BattleService {
       throw new BadRequestException('BATTLE_DECK_TOO_LARGE: Maximum of 5 cards allowed.');
     }
 
-    // Fetch player's cards from inventory
+    // Fetch player's cards from inventory using unique IDs
     const playerInventory = await this.prisma.inventory.findMany({
       where: {
         playerId,
-        cardId: { in: deckIds },
+        id: { in: deckIds },
       },
       include: { card: true },
     });
