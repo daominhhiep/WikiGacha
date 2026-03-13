@@ -20,6 +20,10 @@ const DeckSelector: React.FC<DeckSelectorProps> = ({ onStartBattle, isStarting =
   const { selectedCardIds, toggleCard, clearDeck, maxDeckSize } = useBattleStore();
   const [rarityFilter, setRarityFilter] = useState<string>('ALL');
 
+  // Local registry to keep track of all card data seen so far
+  // This ensures selected cards don't disappear from the top bar when filters change
+  const [cardRegistry, setCardRegistry] = useState<Record<string, InventoryItem>>({});
+
   // Fetch collection
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } = useInfiniteCollection(
     {
@@ -27,12 +31,31 @@ const DeckSelector: React.FC<DeckSelectorProps> = ({ onStartBattle, isStarting =
     },
   );
 
-  const allCards = data?.pages.flatMap((page) => page.items) || [];
+  const allCards = React.useMemo(() => data?.pages.flatMap((page) => page.items) || [], [data]);
 
-  // Find full card data for selected IDs to display in the top bar
-  const selectedCards = selectedCardIds
-    .map((id) => allCards.find((item) => item.cardId === id))
-    .filter((item): item is InventoryItem => !!item);
+  // Update registry whenever new cards are loaded
+  React.useEffect(() => {
+    if (allCards.length > 0) {
+      setCardRegistry((prev) => {
+        const next = { ...prev };
+        let hasNew = false;
+        allCards.forEach((item) => {
+          if (!next[item.cardId]) {
+            next[item.cardId] = item;
+            hasNew = true;
+          }
+        });
+        return hasNew ? next : prev;
+      });
+    }
+  }, [allCards]);
+
+  // Find full card data for selected IDs to display in the top bar using the registry
+  const selectedCards = React.useMemo(() => {
+    return selectedCardIds
+      .map((id) => cardRegistry[id])
+      .filter((item): item is InventoryItem => !!item);
+  }, [selectedCardIds, cardRegistry]);
 
   const handleStart = () => {
     if (selectedCardIds.length > 0) {
