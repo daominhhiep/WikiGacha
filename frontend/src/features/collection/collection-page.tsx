@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { useCollection, useToggleFavorite, InventoryItem } from './use-collection';
 import CollectionGrid from './collection-grid';
 import CardDetail from './card-detail';
-import { Database, Filter, Search, Loader2 } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import CollectionFilters, { SortOption } from './collection-filters';
+import { Database, Loader2 } from 'lucide-react';
 import { Rarity } from '@/components/card';
 
 /**
@@ -16,7 +16,7 @@ const CollectionPage: React.FC = () => {
   
   const [searchQuery, setSearchQuery] = useState('');
   const [rarityFilter, setRarityFilter] = useState<string | 'ALL'>('ALL');
-  const [sortBy, setSortBy] = useState<'NEWEST' | 'RARITY' | 'ALPHABETICAL'>('NEWEST');
+  const [sortBy, setSortBy] = useState<SortOption>('NEWEST');
   const [selectedItem, setSelectedItem] = useState<InventoryItem | null>(null);
 
   if (isLoading) {
@@ -79,51 +79,14 @@ const CollectionPage: React.FC = () => {
         </div>
 
         {/* Toolbar */}
-        <div className="flex flex-wrap items-center gap-4">
-          {/* Search */}
-          <div className="relative group">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground transition-colors group-focus-within:text-primary" />
-            <input 
-              type="text"
-              placeholder="SEARCH_INDEX..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="bg-black/40 border border-border-grid h-10 pl-10 pr-4 text-xs font-mono focus:border-primary focus:ring-1 focus:ring-primary/20 outline-none w-64 transition-all"
-            />
-          </div>
-
-          {/* Rarity Filter */}
-          <div className="flex items-center bg-black/40 border border-border-grid p-1">
-            <div className="px-2 text-[10px] font-mono text-muted-foreground uppercase mr-1 flex items-center gap-1">
-              <Filter className="size-3" />
-            </div>
-            {['ALL', ...Object.keys(Rarity)].map((r) => (
-              <button
-                key={r}
-                onClick={() => setRarityFilter(r)}
-                className={cn(
-                  "px-3 py-1 text-[10px] font-black transition-all",
-                  rarityFilter === r 
-                    ? "bg-primary text-black" 
-                    : "text-muted-foreground hover:text-primary hover:bg-primary/10"
-                )}
-              >
-                {r}
-              </button>
-            ))}
-          </div>
-
-          {/* Sort */}
-          <select 
-            value={sortBy}
-            onChange={(e) => setSortBy(e.target.value as any)}
-            className="bg-black/40 border border-border-grid h-10 px-4 text-xs font-mono focus:border-primary outline-none cursor-pointer uppercase"
-          >
-            <option value="NEWEST">SORT: NEWEST</option>
-            <option value="RARITY">SORT: RARITY</option>
-            <option value="ALPHABETICAL">SORT: A-Z</option>
-          </select>
-        </div>
+        <CollectionFilters 
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+          rarityFilter={rarityFilter}
+          onRarityFilterChange={setRarityFilter}
+          sortBy={sortBy}
+          onSortByChange={setSortBy}
+        />
       </div>
 
       {/* Main Grid */}

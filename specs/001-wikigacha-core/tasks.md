@@ -80,7 +80,7 @@
 - [x] T024 [US2] Implement Collection Controller and `GET /collection` in `backend/src/modules/collection/collection.controller.ts`
 - [x] T025 [P] [US2] Create Collection Grid component in `frontend/src/features/collection/CollectionGrid.tsx`
 - [x] T026 [US2] Implement Card Detail Modal with Wikipedia summary in `frontend/src/features/collection/CardDetail.tsx`
-- [ ] T027 [US2] Add filtering/sorting by rarity in `frontend/src/features/collection/CollectionFilters.tsx`
+- [x] T027 [US2] Add filtering/sorting by rarity in `frontend/src/features/collection/CollectionFilters.tsx`
 
 **Checkpoint**: User Story 2 is functional. Collection can be browsed and managed.
 
