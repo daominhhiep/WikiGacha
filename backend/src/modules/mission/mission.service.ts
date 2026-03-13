@@ -2,11 +2,6 @@ import { Injectable, Logger, BadRequestException, NotFoundException } from '@nes
 import { OnEvent } from '@nestjs/event-emitter';
 import { PrismaService } from '../../common/prisma/prisma.service';
 
-interface MissionCriteria {
-  type: string;
-  count: number;
-}
-
 @Injectable()
 export class MissionService {
   private readonly logger = new Logger(MissionService.name);
@@ -14,28 +9,51 @@ export class MissionService {
   constructor(private prisma: PrismaService) {}
 
   /**
-   * Listen for 'card.pulled' event.
-   * Event data: { playerId: string, count: number }
+   * Listens for 'card.pulled' event and updates mission progress.
    */
   @OnEvent('card.pulled')
   async handleCardPulled(payload: { playerId: string; count: number }) {
+    this.logger.debug(`Handling card.pulled for player ${payload.playerId}, count: ${payload.count}`);
+    await this.updateProgress(payload.playerId, 'PULL_CARDS', payload.count);
+  }
+
+  /**
+   * Listens for 'battle.finished' event and updates mission progress.
+   */
+  @OnEvent('battle.finished')
+  async handleBattleFinished(payload: { playerId: string; isWinner: boolean }) {
     this.logger.debug(
-      `Handling card.pulled for player ${payload.playerId}, count: ${payload.count}`,
+      `Handling battle.finished for player ${payload.playerId}, isWinner: ${payload.isWinner}`,
     );
+    // Increment 'PLAY_BATTLES'
+    await this.updateProgress(payload.playerId, 'PLAY_BATTLES', 1);
 
-    const activeMissions = await this.prisma.userMission.findMany({
+    // Increment 'WIN_BATTLES' if winner
+    if (payload.isWinner) {
+      await this.updateProgress(payload.playerId, 'WIN_BATTLES', 1);
+    }
+  }
+
+  /**
+   * Core logic to update progress for all active missions of a specific type.
+   */
+  private async updateProgress(playerId: string, type: string, amount: number) {
+    // 1. Find all active (not completed) UserMissions for this player
+    const userMissions = await this.prisma.userMission.findMany({
       where: {
-        playerId: payload.playerId,
+        playerId,
         isCompleted: false,
       },
       include: { mission: true },
     });
 
-    for (const userMission of activeMissions) {
-      const criteria = userMission.mission.criteria as unknown as MissionCriteria;
-      if (criteria && criteria.type === 'PULL_CARDS') {
+    // 2. Filter by criteria type and update progress
+    for (const userMission of userMissions) {
+      const criteria = userMission.mission.criteria as any;
+
+      if (criteria && criteria.type === type) {
         const targetCount = criteria.count || 0;
-        const newProgress = userMission.progress + payload.count;
+        const newProgress = Math.min(userMission.progress + amount, targetCount);
         const isCompleted = newProgress >= targetCount;
 
         await this.prisma.userMission.update({
@@ -48,64 +66,11 @@ export class MissionService {
 
         if (isCompleted) {
           this.logger.log(
-            `Mission [${userMission.mission.title}] COMPLETED by player ${payload.playerId}`,
+            `Mission [${userMission.mission.title}] COMPLETED by player ${playerId}`,
           );
         }
       }
     }
-  }
-
-  /**
-   * Listen for 'battle.won' event.
-   * Event data: { playerId: string, isWinner: boolean }
-   */
-  @OnEvent('battle.won')
-  async handleBattleWon(payload: { playerId: string; isWinner: boolean }) {
-    if (!payload.isWinner) return;
-
-    this.logger.debug(`Handling battle.won for player ${payload.playerId}`);
-
-    const activeMissions = await this.prisma.userMission.findMany({
-      where: {
-        playerId: payload.playerId,
-        isCompleted: false,
-      },
-      include: { mission: true },
-    });
-
-    for (const userMission of activeMissions) {
-      const criteria = userMission.mission.criteria as unknown as MissionCriteria;
-      if (criteria && criteria.type === 'WIN_BATTLES') {
-        const targetCount = criteria.count || 0;
-        const newProgress = userMission.progress + 1;
-        const isCompleted = newProgress >= targetCount;
-
-        await this.prisma.userMission.update({
-          where: { id: userMission.id },
-          data: {
-            progress: newProgress,
-            isCompleted,
-          },
-        });
-
-        if (isCompleted) {
-          this.logger.log(
-            `Mission [${userMission.mission.title}] COMPLETED by player ${payload.playerId}`,
-          );
-        }
-      }
-    }
-  }
-
-  /**
-   * Find active UserMissions for player.
-   */
-  async findUserMissions(playerId: string) {
-    return this.prisma.userMission.findMany({
-      where: { playerId },
-      include: { mission: true },
-      orderBy: { id: 'asc' },
-    });
   }
 
   /**
@@ -152,6 +117,17 @@ export class MissionService {
         rewardCredits: userMission.mission.rewardCredits,
         totalCredits: updatedPlayer.credits,
       };
+    });
+  }
+
+  /**
+   * Helper to fetch all missions for a player.
+   */
+  async getPlayerMissions(playerId: string) {
+    return this.prisma.userMission.findMany({
+      where: { playerId },
+      include: { mission: true },
+      orderBy: { id: 'asc' },
     });
   }
 }
