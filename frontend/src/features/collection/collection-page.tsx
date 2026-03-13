@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useCollection, useToggleFavorite, InventoryItem } from './use-collection';
 import CollectionGrid from './collection-grid';
-import { Database, Filter, ArrowUpDown, Search, Loader2 } from 'lucide-react';
+import CardDetail from './card-detail';
+import { Database, Filter, Search, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Rarity } from '@/components/card';
 
@@ -16,6 +17,7 @@ const CollectionPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [rarityFilter, setRarityFilter] = useState<string | 'ALL'>('ALL');
   const [sortBy, setSortBy] = useState<'NEWEST' | 'RARITY' | 'ALPHABETICAL'>('NEWEST');
+  const [selectedItem, setSelectedItem] = useState<InventoryItem | null>(null);
 
   if (isLoading) {
     return (
@@ -128,6 +130,13 @@ const CollectionPage: React.FC = () => {
       <CollectionGrid 
         items={filteredItems} 
         onToggleFavorite={(id) => toggleFavorite(id)}
+        onCardClick={(item) => setSelectedItem(item)}
+      />
+
+      {/* Detail Modal */}
+      <CardDetail 
+        item={selectedItem} 
+        onClose={() => setSelectedItem(null)} 
       />
     </div>
   );
