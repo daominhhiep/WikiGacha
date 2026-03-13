@@ -82,7 +82,7 @@ describe('CollectionController (e2e)', () => {
       await request(app.getHttpServer()).get('/api/v1/collection').expect(401);
     });
 
-    it('should return player collection if authenticated', async () => {
+    it('should return paginated player collection if authenticated', async () => {
       const mockInventory = [
         {
           id: 'inv-1',
@@ -94,6 +94,7 @@ describe('CollectionController (e2e)', () => {
       ];
 
       mockPrismaService.inventory.findMany.mockResolvedValue(mockInventory);
+      mockPrismaService.inventory.count = jest.fn().mockResolvedValue(1);
 
       const response = await request(app.getHttpServer())
         .get('/api/v1/collection')
@@ -101,8 +102,14 @@ describe('CollectionController (e2e)', () => {
         .expect(200);
 
       expect(response.body.success).toBe(true);
-      expect(response.body.data).toHaveLength(1);
-      expect(response.body.data[0].card.title).toBe('Test Card');
+      expect(response.body.data.items).toHaveLength(1);
+      expect(response.body.data.items[0].card.title).toBe('Test Card');
+      expect(response.body.data.meta).toEqual({
+        total: 1,
+        page: 1,
+        limit: 20,
+        totalPages: 1,
+      });
     });
   });
 

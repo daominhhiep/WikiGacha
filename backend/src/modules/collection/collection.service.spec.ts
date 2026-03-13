@@ -36,9 +36,9 @@ describe('CollectionService', () => {
   });
 
   describe('getPlayerCollection', () => {
-    it('should return player collection', async () => {
+    it('should return paginated player collection', async () => {
       const playerId = 'player-1';
-      const mockCollection = [
+      const mockItems = [
         {
           id: 'inv-1',
           playerId,
@@ -48,16 +48,23 @@ describe('CollectionService', () => {
         },
       ];
 
-      mockPrismaService.inventory.findMany.mockResolvedValue(mockCollection);
+      mockPrismaService.inventory.findMany.mockResolvedValue(mockItems);
+      mockPrismaService.inventory.count = jest.fn().mockResolvedValue(1);
 
-      const result = await service.getPlayerCollection(playerId);
+      const result = await service.getPlayerCollection(playerId, { page: 1, limit: 20 });
 
-      expect(result).toEqual(mockCollection);
-      expect(prisma.inventory.findMany).toHaveBeenCalledWith({
-        where: { playerId },
-        include: { card: true },
-        orderBy: { acquiredAt: 'desc' },
+      expect(result.items).toEqual(mockItems);
+      expect(result.meta).toEqual({
+        total: 1,
+        page: 1,
+        limit: 20,
+        totalPages: 1,
       });
+      expect(prisma.inventory.findMany).toHaveBeenCalledWith(expect.objectContaining({
+        where: expect.any(Object),
+        skip: 0,
+        take: 20,
+      }));
     });
   });
 

@@ -1,26 +1,66 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../common/prisma/prisma.service';
+import { CollectionQueryDto, SortOption } from './dto/collection-query.dto';
+import { Prisma } from '../../generated/prisma/client';
 
 @Injectable()
 export class CollectionService {
   constructor(private prisma: PrismaService) {}
 
   /**
-   * Fetches all cards in a player's inventory.
+   * Fetches cards in a player's inventory with pagination and filtering.
    *
    * @param playerId The unique player identifier.
-   * @returns List of inventory records including card metadata.
+   * @param query The pagination and filter parameters.
+   * @returns Paginated list of inventory records including card metadata.
    */
-  async getPlayerCollection(playerId: string) {
-    return this.prisma.inventory.findMany({
-      where: { playerId },
-      include: {
-        card: true,
+  async getPlayerCollection(playerId: string, query: CollectionQueryDto) {
+    const { page = 1, limit = 20, search, rarity, sortBy = SortOption.NEWEST } = query;
+    const skip = (page - 1) * limit;
+
+    const where: Prisma.InventoryWhereInput = {
+      playerId,
+      card: {
+        AND: [
+          search ? { title: { contains: search } } : {},
+          rarity ? { rarity } : {},
+        ],
       },
-      orderBy: {
-        acquiredAt: 'desc',
+    };
+
+    let orderBy: Prisma.InventoryOrderByWithRelationInput = { acquiredAt: 'desc' };
+
+    if (sortBy === SortOption.ALPHABETICAL) {
+      orderBy = { card: { title: 'asc' } };
+    } else if (sortBy === SortOption.RARITY) {
+      // Note: Prisma enum sorting is alphabetical by default. 
+      // For true game rarity order, we might need a numeric field or manual sort if collection is small.
+      // But for SC-001/DB performance, we use what's available.
+      orderBy = { card: { rarity: 'desc' } };
+    }
+
+    const [items, total] = await Promise.all([
+      this.prisma.inventory.findMany({
+        where,
+        include: {
+          card: true,
+        },
+        orderBy,
+        skip,
+        take: limit,
+      }),
+      this.prisma.inventory.count({ where }),
+    ]);
+
+    return {
+      items,
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
       },
-    });
+    };
   }
 
   /**

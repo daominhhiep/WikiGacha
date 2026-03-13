@@ -1,7 +1,8 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient, useInfiniteQuery } from '@tanstack/react-query';
 import api from '@/services/api';
 import type { CardData } from '@/components/card';
 import { useAuthStore } from '../auth/auth-store';
+import type { SortOption } from './collection-filters';
 
 /**
  * Interface for a record in the player's inventory.
@@ -16,21 +17,53 @@ export interface InventoryItem {
 }
 
 /**
- * Custom hook for fetching the player's card collection.
- *
- * @returns Query object for the player collection.
+ * Interface for the paginated collection response.
  */
-export const useCollection = () => {
+export interface PaginatedCollection {
+  items: InventoryItem[];
+  meta: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  };
+}
+
+/**
+ * Custom hook for fetching the player's card collection with pagination and filters.
+ * Uses TanStack Query's useInfiniteQuery for lazy loading.
+ */
+export const useInfiniteCollection = (filters: {
+  search?: string;
+  rarity?: string | 'ALL';
+  sortBy?: SortOption;
+}) => {
   const { accessToken } = useAuthStore();
 
-  return useQuery({
-    queryKey: ['collection'],
-    queryFn: async () => {
+  return useInfiniteQuery({
+    queryKey: ['collection', filters],
+    queryFn: async ({ pageParam = 1 }) => {
       if (!accessToken) {
         throw new Error('AUTHENTICATION_REQUIRED: Please login to view your collection.');
       }
-      const response = await api.get<InventoryItem[]>('/collection');
-      return response as unknown as InventoryItem[];
+
+      const params = {
+        page: pageParam,
+        limit: 20,
+        search: filters.search || undefined,
+        rarity: filters.rarity === 'ALL' ? undefined : filters.rarity,
+        sortBy: filters.sortBy,
+      };
+
+      const response = await api.get<PaginatedCollection>('/collection', { params });
+      return response as unknown as PaginatedCollection;
+    },
+    initialPageParam: 1,
+    getNextPageParam: (lastPage) => {
+      if (lastPage.meta.page < lastPage.meta.totalPages) {
+        return lastPage.meta.page + 1;
+      }
+      return undefined;
     },
     enabled: !!accessToken,
   });

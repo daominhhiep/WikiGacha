@@ -1,8 +1,9 @@
-import { Controller, Get, Param, Patch, UseGuards, Request, Logger } from '@nestjs/common';
+import { Controller, Get, Param, Patch, UseGuards, Request, Logger, Query } from '@nestjs/common';
 import { Request as ExpressRequest } from 'express';
 import { CollectionService } from './collection.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import { CollectionQueryDto } from './dto/collection-query.dto';
 
 interface RequestWithUser extends ExpressRequest {
   user: {
@@ -25,17 +26,19 @@ export class CollectionController {
 
   /**
    * Fetches the entire collection of cards owned by the authenticated player.
+   * Supports pagination and filtering.
    *
    * @param req The request object containing user information.
-   * @returns List of collection items with card details.
+   * @param query The query parameters for pagination and filtering.
+   * @returns Paginated list of collection items with card details.
    */
   @ApiOperation({ summary: 'Get player collection' })
   @ApiResponse({ status: 200, description: 'Collection retrieved successfully' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @Get()
-  async getCollection(@Request() req: RequestWithUser) {
-    this.logger.log(`Fetching collection for user ${req.user.userId}`);
-    return this.collectionService.getPlayerCollection(req.user.userId);
+  async getCollection(@Request() req: RequestWithUser, @Query() query: CollectionQueryDto) {
+    this.logger.log(`Fetching collection for user ${req.user.userId} (Page: ${query.page})`);
+    return this.collectionService.getPlayerCollection(req.user.userId, query);
   }
 
   /**
