@@ -228,8 +228,8 @@ const DeckSelector: React.FC<DeckSelectorProps> = ({ onStartBattle, isStarting =
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-8 justify-items-center">
-              <AnimatePresence mode="popLayout">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-8 justify-items-center relative min-h-[400px]">
+              <AnimatePresence>
                 {allCards.map((item) => {
                   const isSelected = selectedCardIds.includes(item.cardId);
                   const isMaxReached = selectedCardIds.length >= maxDeckSize;
@@ -237,29 +237,31 @@ const DeckSelector: React.FC<DeckSelectorProps> = ({ onStartBattle, isStarting =
                   return (
                     <motion.div
                       key={item.id}
-                      layout
                       initial={{ opacity: 0, scale: 0.9 }}
                       animate={{ opacity: 1, scale: 1 }}
                       exit={{ opacity: 0, scale: 0.9 }}
                       transition={{ duration: 0.2 }}
-                      className="relative"
+                      className="relative w-72"
                       onClick={() => toggleCard(item.cardId)}
                     >
                       <Card
                         card={item.card}
                         className={cn(
-                          'cursor-pointer transition-transform duration-300',
+                          'cursor-pointer transition-all duration-300',
                           isSelected &&
-                            'ring-4 ring-primary ring-offset-4 ring-offset-black scale-95 opacity-50',
-                          !isSelected && isMaxReached && 'grayscale opacity-50',
+                            'ring-2 ring-primary ring-offset-2 ring-offset-black scale-[0.98] brightness-110',
+                          !isSelected && isMaxReached && 'grayscale opacity-30',
                         )}
                       />
 
                       {isSelected && (
-                        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                          <div className="bg-primary text-black font-black px-4 py-2 border-2 border-black uppercase tracking-widest shadow-[0_0_20px_rgba(0,240,255,0.5)]">
-                            SELECTED
+                        <div className="absolute top-0 left-0 w-full h-full border-2 border-primary pointer-events-none animate-in fade-in zoom-in duration-300">
+                          <div className="absolute top-0 right-0 bg-primary text-black px-2 py-0.5 text-[8px] font-black uppercase tracking-tighter">
+                            ACTIVE_UNIT
                           </div>
+                          {/* Corner accents for selection */}
+                          <div className="absolute -top-1 -left-1 size-4 border-t-4 border-l-4 border-primary" />
+                          <div className="absolute -bottom-1 -right-1 size-4 border-b-4 border-r-4 border-primary" />
                         </div>
                       )}
                     </motion.div>
