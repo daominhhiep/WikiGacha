@@ -7,7 +7,7 @@ async function run() {
   const token = process.env["GITHUB_TOKEN"];
   const prNumber = process.env["PR_NUMBER"];
   const endpoint = "https://models.github.ai/inference";
-  const modelName = "openai/gpt-4o";
+  const modelName = "openai/gpt-5";
 
   if (!token || !prNumber) {
     console.error("Missing GITHUB_TOKEN or PR_NUMBER.");
