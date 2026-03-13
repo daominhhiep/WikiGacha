@@ -8,21 +8,30 @@ datasource db {
 }
 
 model Player {
-  id          String      @id @default(uuid())
-  username    String      @unique
-  email       String?
-  googleId    String?     @unique
-  avatarUrl   String?     @db.Text
-  credits     Int         @default(100)
-  level       Int         @default(1)
-  xp          Int         @default(0)
-  pityCounter Int         @default(0)
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
-  battles1    Battle[]    @relation("Player1Battles")
-  battles2    Battle[]    @relation("Player2Battles")
-  wonBattles  Battle[]    @relation("WonBattles")
-  inventory   Inventory[]
+  id            String        @id @default(uuid())
+  username      String        @unique
+  email         String?
+  googleId      String?       @unique
+  avatarUrl     String?       @db.Text
+  credits       Int           @default(100)
+  level         Int           @default(1)
+  xp            Int           @default(0)
+  pityCounter   Int           @default(0)
+  eloRating     Int           @default(1200)
+  matchesPlayed Int           @default(0)
+  lastLogin     DateTime      @default(now())
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  battles1      Battle[]      @relation("Player1Battles")
+  battles2      Battle[]      @relation("Player2Battles")
+  wonBattles    Battle[]      @relation("WonBattles")
+  inventory     Inventory[]
+  missions      UserMission[]
+  trophies      Trophy[]
+  chatMessages  ChatMessage[]
+  pvpMatches1   PvPMatch[]    @relation("PvPPlayer1")
+  pvpMatches2   PvPMatch[]    @relation("PvPPlayer2")
+  wonPvPMatches PvPMatch[]    @relation("WonPvPMatches")
 }
 
 model Card {
@@ -73,6 +82,70 @@ model Battle {
   @@index([winnerId])
 }
 
+model Mission {
+  id            Int           @id @default(autoincrement())
+  title         String
+  description   String
+  rewardCredits Int
+  type          MissionType
+  criteria      Json
+  userMissions  UserMission[]
+}
+
+model UserMission {
+  id          Int     @id @default(autoincrement())
+  playerId    String
+  missionId   Int
+  progress    Int     @default(0)
+  isCompleted Boolean @default(false)
+  isClaimed   Boolean @default(false)
+  player      Player  @relation(fields: [playerId], references: [id])
+  mission     Mission @relation(fields: [missionId], references: [id])
+
+  @@index([playerId])
+  @@index([missionId])
+}
+
+model Trophy {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String
+  icon        String
+  playerId    String
+  unlockedAt  DateTime @default(now())
+  player      Player   @relation(fields: [playerId], references: [id])
+
+  @@index([playerId])
+}
+
+model ChatMessage {
+  id        Int      @id @default(autoincrement())
+  senderId  String
+  content   String   @db.Text
+  timestamp DateTime @default(now())
+  channel   String   @default("GLOBAL")
+  sender    Player   @relation(fields: [senderId], references: [id])
+
+  @@index([senderId])
+}
+
+model PvPMatch {
+  id        String    @id @default(uuid())
+  player1Id String
+  player2Id String
+  status    PvPStatus @default(MATCHMAKING)
+  winnerId  String?
+  logs      Json
+  createdAt DateTime  @default(now())
+  player1   Player    @relation("PvPPlayer1", fields: [player1Id], references: [id])
+  player2   Player    @relation("PvPPlayer2", fields: [player2Id], references: [id])
+  winner    Player?   @relation("WonPvPMatches", fields: [winnerId], references: [id])
+
+  @@index([player1Id])
+  @@index([player2Id])
+  @@index([winnerId])
+}
+
 enum Rarity {
   C
   UC
@@ -87,4 +160,15 @@ enum BattleStatus {
   PENDING
   COMPLETED
   CANCELLED
+}
+
+enum MissionType {
+  DAILY
+  LIFETIME
+}
+
+enum PvPStatus {
+  MATCHMAKING
+  IN_PROGRESS
+  COMPLETED
 }
