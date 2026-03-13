@@ -41,6 +41,8 @@ model Card {
   imageUrl      String?     @db.Text
   wikiUrl       String      @db.Text
   rarity        Rarity
+  tier          Tier?
+  category      Category?
   hp            Int
   atk           Int
   def           Int
@@ -171,4 +173,19 @@ enum PvPStatus {
   MATCHMAKING
   IN_PROGRESS
   COMPLETED
+}
+
+enum Tier {
+  COMMON
+  RARE
+  SUPER_RARE
+  SPEC_SUPER_RARE
+}
+
+enum Category {
+  HISTORY
+  SCIENCE
+  ART
+  GEOGRAPHY
+  ENTERTAINMENT
 }
