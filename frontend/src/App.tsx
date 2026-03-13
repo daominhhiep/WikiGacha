@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { MainLayout } from './components/layout/MainLayout';
 import { Button } from '@/components/ui/button';
 import GachaPage from '@/features/gacha/gacha-page';
+import CollectionPage from '@/features/collection/collection-page';
 import { AuthCallback } from './features/auth/auth-callback';
 
 const HomePage = () => (
@@ -36,17 +37,6 @@ const HomePage = () => (
         </Button>
       </Link>
     </div>
-  </div>
-);
-
-const CollectionPage = () => (
-  <div className="py-8">
-    <h1 className="mb-4 text-3xl font-black uppercase font-mono tracking-widest border-l-4 border-primary pl-4">
-      DATA_ARCHIVE
-    </h1>
-    <p className="text-muted-foreground font-mono text-xs uppercase">
-      Decrypted Wikipedia entries will be stored here.
-    </p>
   </div>
 );
 
