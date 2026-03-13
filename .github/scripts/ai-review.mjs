@@ -40,7 +40,7 @@ async function run() {
   // 2. Token Estimation & Skip Logic
   // Heuristic: ~3.5 characters per token for source code diffs
   const tokenEstimate = Math.ceil(filteredDiff.length / 3.5);
-  const TOKEN_LIMIT = 4000;
+  const TOKEN_LIMIT = 2500;
 
   if (tokenEstimate > TOKEN_LIMIT) {
     console.log(`Diff is too large (Estimated tokens: ${tokenEstimate}, Limit: ${TOKEN_LIMIT}).`);
