@@ -21,10 +21,7 @@ export class CollectionService {
     const where: Prisma.InventoryWhereInput = {
       playerId,
       card: {
-        AND: [
-          search ? { title: { contains: search } } : {},
-          rarity ? { rarity } : {},
-        ],
+        AND: [search ? { title: { contains: search } } : {}, rarity ? { rarity } : {}],
       },
     };
 
@@ -33,7 +30,7 @@ export class CollectionService {
     if (sortBy === SortOption.ALPHABETICAL) {
       orderBy = { card: { title: 'asc' } };
     } else if (sortBy === SortOption.RARITY) {
-      // Note: Prisma enum sorting is alphabetical by default. 
+      // Note: Prisma enum sorting is alphabetical by default.
       // For true game rarity order, we might need a numeric field or manual sort if collection is small.
       // But for SC-001/DB performance, we use what's available.
       orderBy = { card: { rarity: 'desc' } };

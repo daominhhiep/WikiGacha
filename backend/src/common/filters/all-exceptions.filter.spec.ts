@@ -35,7 +35,7 @@ describe('AllExceptionsFilter', () => {
 
   it('should catch HttpException and return correct response', () => {
     const exception = new HttpException('Forbidden', HttpStatus.FORBIDDEN);
-    
+
     filter.catch(exception, mockArgumentsHost as any);
 
     expect(mockResponse.status).toHaveBeenCalledWith(HttpStatus.FORBIDDEN);
@@ -50,7 +50,7 @@ describe('AllExceptionsFilter', () => {
 
   it('should catch unknown errors and return 500', () => {
     const exception = new Error('Unknown');
-    
+
     filter.catch(exception, mockArgumentsHost as any);
 
     expect(mockResponse.status).toHaveBeenCalledWith(HttpStatus.INTERNAL_SERVER_ERROR);

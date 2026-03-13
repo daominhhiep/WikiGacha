@@ -7,10 +7,10 @@
 
 **Purpose**: Project initialization and basic structure
 
-- [ ] T001 [P] Install backend dependencies: `npm install @nestjs/platform-socket.io socket.io @socket.io/redis-adapter redis @nestjs/event-emitter` in `backend/`
-- [ ] T002 [P] Install frontend dependencies: `npm install socket.io-client` in `frontend/`
-- [ ] T003 Configure `EventEmitterModule` in `backend/src/app.module.ts`
-- [ ] T004 Setup `RedisIoAdapter` in `backend/src/common/redis/redis-io.adapter.ts` per research.md
+- [x] T001 [P] Install backend dependencies: `npm install @nestjs/platform-socket.io socket.io @socket.io/redis-adapter redis @nestjs/event-emitter` in `backend/`
+- [x] T002 [P] Install frontend dependencies: `npm install socket.io-client` in `frontend/`
+- [x] T003 Configure `EventEmitterModule` in `backend/src/app.module.ts`
+- [x] T004 Setup `RedisIoAdapter` in `backend/src/common/redis/redis-io.adapter.ts` per research.md
 
 ---
 

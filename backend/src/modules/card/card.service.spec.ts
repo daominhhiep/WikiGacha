@@ -50,7 +50,7 @@ describe('CardService', () => {
     service = module.get<CardService>(CardService);
     prisma = module.get<PrismaService>(PrismaService);
     redis = module.get<RedisService>(RedisService);
-    
+
     jest.clearAllMocks();
   });
 
@@ -126,9 +126,9 @@ describe('CardService', () => {
       const result = await service.generateCardFromWiki(
         mockWikiData as any,
         10000, // pageViews
-        10,    // languageCount
+        10, // languageCount
         { enwiki: 'FA' },
-        5000,  // length
+        5000, // length
       );
 
       expect(result.rarity).toBe(Rarity.LR);
@@ -161,8 +161,8 @@ describe('CardService', () => {
     it('should fetch and generate multiple cards', async () => {
       mockWikiService.getRandomArticles.mockResolvedValue(['A', 'B']);
       mockWikiService.getBatchArticlesData.mockResolvedValue({
-        'A': { pageid: 1, title: 'A', pageViews: 10, languageCount: 1, length: 100 },
-        'B': { pageid: 2, title: 'B', pageViews: 20, languageCount: 2, length: 200 },
+        A: { pageid: 1, title: 'A', pageViews: 10, languageCount: 1, length: 100 },
+        B: { pageid: 2, title: 'B', pageViews: 20, languageCount: 2, length: 200 },
       });
       mockWikiService.getWikiRankScore.mockResolvedValue({ quality: 50, popularity: 50 });
       mockPrismaService.card.count.mockResolvedValue(100);

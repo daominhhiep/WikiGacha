@@ -38,7 +38,11 @@ export class CollectionQueryDto {
   @IsEnum(Rarity)
   rarity?: Rarity;
 
-  @ApiPropertyOptional({ enum: SortOption, description: 'Sort criteria', default: SortOption.NEWEST })
+  @ApiPropertyOptional({
+    enum: SortOption,
+    description: 'Sort criteria',
+    default: SortOption.NEWEST,
+  })
   @IsOptional()
   @IsEnum(SortOption)
   sortBy?: SortOption = SortOption.NEWEST;

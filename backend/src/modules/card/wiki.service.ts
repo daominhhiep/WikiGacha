@@ -219,7 +219,10 @@ export class WikiService {
    * @param lang The language code (default 'en').
    * @returns An object containing quality and popularity scores.
    */
-  async getWikiRankScore(title: string, lang: string = 'en'): Promise<{ quality: number; popularity: number }> {
+  async getWikiRankScore(
+    title: string,
+    lang: string = 'en',
+  ): Promise<{ quality: number; popularity: number }> {
     const start = Date.now();
     const encodedTitle = encodeURIComponent(title.replace(/ /g, '_'));
     const url = `https://api.wikirank.net/api.php?name=${encodedTitle}&lang=${lang}`;
@@ -250,9 +253,7 @@ export class WikiService {
    * @param title The article title.
    * @returns Page views (last 12 months), language count, quality assessments and length.
    */
-  async getArticleStats(
-    title: string,
-  ): Promise<{
+  async getArticleStats(title: string): Promise<{
     pageViews: number;
     languageCount: number;
     pageAssessments?: Record<string, string>;

@@ -92,7 +92,7 @@ describe('AuthService', () => {
       // Mock OAuth2Client
       const mockPayload = { sub: 'google-123', email: 'test@gmail.com', name: 'Google User' };
       const mockTicket = { getPayload: () => mockPayload };
-      
+
       // We need to mock the constructor or the prototype
       const { OAuth2Client } = require('google-auth-library');
       jest.spyOn(OAuth2Client.prototype, 'verifyIdToken').mockResolvedValue(mockTicket);

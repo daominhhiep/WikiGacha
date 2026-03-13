@@ -125,7 +125,12 @@ describe('BattleController (e2e)', () => {
       mockPrismaService.card.findMany.mockResolvedValue(mockAiCards);
       mockPrismaService.battle.create.mockResolvedValue(mockBattle);
       mockPrismaService.player.findUnique.mockResolvedValue({ id: playerId, xp: 100 });
-      mockPrismaService.player.update.mockResolvedValue({ id: playerId, credits: 150, xp: 200, level: 1 });
+      mockPrismaService.player.update.mockResolvedValue({
+        id: playerId,
+        credits: 150,
+        xp: 200,
+        level: 1,
+      });
 
       const response = await request(app.getHttpServer())
         .post('/api/v1/battle/start')

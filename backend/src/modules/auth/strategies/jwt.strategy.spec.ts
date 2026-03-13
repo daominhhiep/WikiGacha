@@ -11,10 +11,7 @@ describe('JwtStrategy', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        JwtStrategy,
-        { provide: ConfigService, useValue: mockConfigService },
-      ],
+      providers: [JwtStrategy, { provide: ConfigService, useValue: mockConfigService }],
     }).compile();
 
     strategy = module.get<JwtStrategy>(JwtStrategy);
@@ -28,7 +25,7 @@ describe('JwtStrategy', () => {
     it('should return user data from payload', async () => {
       const payload = { sub: 'user-123', username: 'testuser' };
       const result = await strategy.validate(payload);
-      
+
       expect(result).toEqual({ userId: 'user-123', username: 'testuser' });
     });
   });

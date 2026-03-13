@@ -48,14 +48,29 @@ describe('Full Game Loop (e2e)', () => {
     $connect: jest.fn(),
     $disconnect: jest.fn(),
     player: {
-      create: jest.fn().mockImplementation(({ data }) => Promise.resolve({ id: playerId, ...data, credits: 100, pityCounter: 0, level: 1, xp: 0 })),
+      create: jest
+        .fn()
+        .mockImplementation(({ data }) =>
+          Promise.resolve({ id: playerId, ...data, credits: 100, pityCounter: 0, level: 1, xp: 0 }),
+        ),
       findUnique: jest.fn().mockImplementation(({ where }) => {
         if (where.id === playerId || where.username === username) {
-          return Promise.resolve({ id: playerId, username, credits: 100, pityCounter: 0, level: 1, xp: 0 });
+          return Promise.resolve({
+            id: playerId,
+            username,
+            credits: 100,
+            pityCounter: 0,
+            level: 1,
+            xp: 0,
+          });
         }
         return Promise.resolve(null);
       }),
-      update: jest.fn().mockImplementation(({ data }) => Promise.resolve({ id: playerId, username, credits: 90, pityCounter: 1, level: 1, xp: 0 })),
+      update: jest
+        .fn()
+        .mockImplementation(({ data }) =>
+          Promise.resolve({ id: playerId, username, credits: 90, pityCounter: 1, level: 1, xp: 0 }),
+        ),
     },
     inventory: {
       createMany: jest.fn().mockResolvedValue({ count: 5 }),
@@ -73,7 +88,9 @@ describe('Full Game Loop (e2e)', () => {
       upsert: jest.fn().mockImplementation(({ create }) => Promise.resolve(create)),
     },
     battle: {
-      create: jest.fn().mockImplementation(({ data }) => Promise.resolve({ id: 'battle-123', ...data })),
+      create: jest
+        .fn()
+        .mockImplementation(({ data }) => Promise.resolve({ id: 'battle-123', ...data })),
       findMany: jest.fn().mockResolvedValue([]),
     },
   };
@@ -130,7 +147,7 @@ describe('Full Game Loop (e2e)', () => {
 
     expect(collectionRes.body.success).toBe(true);
     expect(collectionRes.body.data.items).toHaveLength(5);
-    const selectedInventoryIds = collectionRes.body.data.items.map(i => i.id);
+    const selectedInventoryIds = collectionRes.body.data.items.map((i) => i.id);
 
     // 4. Battle: Start a combat simulation
     const battleRes = await request(app.getHttpServer())
@@ -144,7 +161,7 @@ describe('Full Game Loop (e2e)', () => {
     expect(battleRes.body.data).toHaveProperty('winnerId');
     expect(battleRes.body.data).toHaveProperty('log');
     expect(battleRes.body.data).toHaveProperty('rewards');
-    
+
     // Verify rewards are distributed
     expect(battleRes.body.data.rewards.credits).toBeGreaterThan(0);
     expect(battleRes.body.data.rewards.xp).toBeGreaterThan(0);

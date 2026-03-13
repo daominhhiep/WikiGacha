@@ -29,7 +29,7 @@ export class CardService {
    */
   async openPack(playerId: string) {
     const startTime = Date.now();
-    
+
     // 1. Check player state
     const player = await this.prisma.player.findUnique({
       where: { id: playerId },
@@ -65,14 +65,14 @@ export class CardService {
         randomIndices.add(Math.floor(Math.random() * totalCards));
       }
 
-      const cardPromises = Array.from(randomIndices).map(index => 
+      const cardPromises = Array.from(randomIndices).map((index) =>
         this.prisma.card.findMany({
           take: 1,
           skip: index,
-        })
+        }),
       );
       const results = await Promise.all(cardPromises);
-      cards = results.map(r => r[0]);
+      cards = results.map((r) => r[0]);
     }
 
     // Fallback if DB is empty or selection failed
@@ -80,19 +80,31 @@ export class CardService {
       this.logger.warn(`Card pool is low (${totalCards}), performing emergency live fetch`);
       const titles = await this.wikiService.getRandomArticles(this.CARDS_PER_PACK);
       const batchData = await this.wikiService.getBatchArticlesData(titles);
-      
-      const liveCards = await Promise.all(titles.map(async (title) => {
-        const data = batchData[title];
-        if (!data) return null;
-        const wikiRank = await this.wikiService.getWikiRankScore(title);
-        return this.generateCardFromWiki(data, data.pageViews * 12, data.languageCount, data.pageAssessments, data.length, wikiRank.quality, wikiRank.popularity);
-      }));
+
+      const liveCards = await Promise.all(
+        titles.map(async (title) => {
+          const data = batchData[title];
+          if (!data) return null;
+          const wikiRank = await this.wikiService.getWikiRankScore(title);
+          return this.generateCardFromWiki(
+            data,
+            data.pageViews * 12,
+            data.languageCount,
+            data.pageAssessments,
+            data.length,
+            wikiRank.quality,
+            wikiRank.popularity,
+          );
+        }),
+      );
       cards = liveCards.filter((c): c is Card => c !== null);
     }
 
     // 4. Pity Logic: If pity is triggered and no high rarity in the 5 cards, replace one
     const currentPity = player.pityCounter + 1;
-    let highRarityPulled = cards.some(c => c.rarity === Rarity.SSR || c.rarity === Rarity.UR || c.rarity === Rarity.LR);
+    let highRarityPulled = cards.some(
+      (c) => c.rarity === Rarity.SSR || c.rarity === Rarity.UR || c.rarity === Rarity.LR,
+    );
 
     if (currentPity >= this.PITY_THRESHOLD && !highRarityPulled) {
       const highRarityCards = await this.prisma.card.findMany({
@@ -104,7 +116,9 @@ export class CardService {
         cards[this.CARDS_PER_PACK - 1] = highRarityCards[0];
         highRarityPulled = true;
       } else {
-        this.logger.warn('Pity triggered but no high rarity cards in pool! User will get a normal card but pity will NOT reset.');
+        this.logger.warn(
+          'Pity triggered but no high rarity cards in pool! User will get a normal card but pity will NOT reset.',
+        );
       }
     }
 
@@ -118,7 +132,7 @@ export class CardService {
         },
       }),
       this.prisma.inventory.createMany({
-        data: cards.map(card => ({
+        data: cards.map((card) => ({
           playerId,
           cardId: card.id,
         })),
@@ -129,7 +143,7 @@ export class CardService {
     // Grow the pool until it reaches 50000 cards
     if (totalCards < 50000) {
       this.logger.log(`[Background] Triggering pool refill (Current size: ${totalCards})`);
-      this.refillPool(15).catch(err => this.logger.error(`Pool refill failed: ${err.message}`));
+      this.refillPool(15).catch((err) => this.logger.error(`Pool refill failed: ${err.message}`));
     }
 
     const duration = Date.now() - startTime;
@@ -162,7 +176,7 @@ export class CardService {
           data.pageAssessments,
           data.length,
           wikiRank.quality,
-          wikiRank.popularity
+          wikiRank.popularity,
         );
       } catch (e) {
         this.logger.error(`Failed to generate pool card for ${title}: ${e.message}`);
@@ -171,7 +185,7 @@ export class CardService {
 
     await Promise.all(promises);
     this.logger.log(`[Background] Refill complete.`);
-    
+
     // Update cached count after refill
     try {
       const totalCards = await this.prisma.card.count();
@@ -241,22 +255,22 @@ export class CardService {
     length: number = 0,
     languageCount: number = 0,
   ): number {
-    this.logger.debug(`Calculating Q-Score fallback: length=${length}, languageCount=${languageCount}, assessments=${JSON.stringify(pageAssessments)}`);
+    this.logger.debug(
+      `Calculating Q-Score fallback: length=${length}, languageCount=${languageCount}, assessments=${JSON.stringify(pageAssessments)}`,
+    );
     // 1. Map assessments to base scores
     const assessmentScores: Record<string, number> = {
       FA: 100, // LR
-      GA: 90,  // UR
-      B: 80,   // SSR
-      C: 60,   // SR
+      GA: 90, // UR
+      B: 80, // SSR
+      C: 60, // SR
       Start: 35, // R
-      Stub: 20,  // UC
+      Stub: 20, // UC
     };
 
     if (pageAssessments) {
       const values = Object.values(pageAssessments);
-      const scores = values
-        .map((v) => assessmentScores[v] || 0)
-        .filter((s) => s > 0);
+      const scores = values.map((v) => assessmentScores[v] || 0).filter((s) => s > 0);
       if (scores.length > 0) {
         const bestScore = Math.max(...scores);
         this.logger.debug(`Found highest assessment score: ${bestScore}`);
@@ -291,12 +305,7 @@ export class CardService {
   /**
    * Derives game stats from Wikipedia metrics and Rarity.
    */
-  private deriveStats(
-    pageViews: number,
-    length: number,
-    languageCount: number,
-    rarity: Rarity,
-  ) {
+  private deriveStats(pageViews: number, length: number, languageCount: number, rarity: Rarity) {
     const multipliers: Record<Rarity, number> = {
       [Rarity.LR]: 1.5,
       [Rarity.UR]: 1.3,
