@@ -7,6 +7,7 @@ import { RedisModule } from './common/redis/redis.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { CardModule } from './modules/card/card.module';
 import { CollectionModule } from './modules/collection/collection.module';
+import { BattleModule } from './modules/battle/battle.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { CollectionModule } from './modules/collection/collection.module';
     AuthModule,
     CardModule,
     CollectionModule,
+    BattleModule,
   ],
   controllers: [AppController],
   providers: [AppService],
