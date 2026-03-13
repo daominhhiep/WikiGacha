@@ -33,7 +33,12 @@ describe('CardService', () => {
         PrismaService, // Use the mocked version
         {
           provide: WikiService,
-          useValue: {},
+          useValue: {
+            getGlobalStats: jest.fn().mockResolvedValue({
+              articleCount: 7000000,
+              totalMonthlyViews: 10500000000, // Average = 1500
+            }),
+          },
         },
       ],
     }).compile();
@@ -48,13 +53,23 @@ describe('CardService', () => {
 
   describe('deriveRarity', () => {
     it('should return N for low views', () => {
-      expect((service as any).deriveRarity(100)).toBe(Rarity.N);
+      expect((service as any).deriveRarity(100, 1500)).toBe(Rarity.N);
     });
     it('should return R for moderate views', () => {
-      expect((service as any).deriveRarity(30000)).toBe(Rarity.R);
+      // 30000 >= 10 * 1500
+      expect((service as any).deriveRarity(30000, 1500)).toBe(Rarity.R);
+    });
+    it('should return S for moderately high views', () => {
+      // 80000 >= 50 * 1500 (75k)
+      expect((service as any).deriveRarity(80000, 1500)).toBe(Rarity.S);
+    });
+    it('should return SR for high views', () => {
+      // 250000 >= 150 * 1500 (225k)
+      expect((service as any).deriveRarity(250000, 1500)).toBe(Rarity.SR);
     });
     it('should return SSR for very high views', () => {
-      expect((service as any).deriveRarity(1000000)).toBe(Rarity.SSR);
+      // 1000000 >= 500 * 1500 (750k)
+      expect((service as any).deriveRarity(1000000, 1500)).toBe(Rarity.SSR);
     });
   });
 
@@ -72,7 +87,7 @@ describe('CardService', () => {
 
       expect(result.id).toBe('123');
       expect(result.title).toBe('Test Article');
-      expect(result.rarity).toBe(Rarity.SR); // 150k views -> SR
+      expect(result.rarity).toBe(Rarity.S); // 150k views >= 50 * 1500 (75k) but < 150 * 1500 (225k) -> S
       expect(result.hp).toBeGreaterThan(50); // Base 50 + bonus
       expect(result.atk).toBeGreaterThan(10); // Base 10 + bonus
       expect(result.def).toBeGreaterThan(10); // Base 10 + bonus

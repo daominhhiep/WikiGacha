@@ -180,4 +180,66 @@ describe('WikiService', () => {
       expect(result).toEqual({ pageViews: 0, languageCount: 0 });
     });
   });
+
+  describe('getGlobalStats', () => {
+    it('should return global wiki statistics', async () => {
+      const mockStatsResponse = {
+        data: {
+          query: {
+            statistics: {
+              articles: 7000000,
+            },
+          },
+        },
+        status: 200,
+        statusText: 'OK',
+        headers: {},
+        config: { headers: {} as any },
+      };
+
+      const mockAnalyticsResponse = {
+        data: {
+          items: [
+            {
+              views: 10000000000,
+            },
+          ],
+        },
+        status: 200,
+        statusText: 'OK',
+        headers: {},
+        config: { headers: {} as any },
+      };
+
+      jest
+        .spyOn(httpService, 'get')
+        .mockReturnValueOnce(of(mockStatsResponse as AxiosResponse)) // SiteInfo
+        .mockReturnValueOnce(of(mockAnalyticsResponse as AxiosResponse)); // Analytics
+
+      const result = await service.getGlobalStats();
+      expect(result).toEqual({
+        articleCount: 7000000,
+        totalMonthlyViews: 10000000000,
+      });
+      expect(httpService.get).toHaveBeenCalledWith(
+        'https://en.wikipedia.org/w/api.php',
+        expect.objectContaining({
+          params: expect.objectContaining({ meta: 'siteinfo' }),
+        }),
+      );
+      expect(httpService.get).toHaveBeenCalledWith(
+        expect.stringContaining('wikimedia.org/api/rest_v1/metrics/pageviews/aggregate'),
+        expect.any(Object),
+      );
+    });
+
+    it('should return fallback values if the API calls fail', async () => {
+      jest.spyOn(httpService, 'get').mockReturnValue(throwError(() => new Error('API Error')));
+      const result = await service.getGlobalStats();
+      expect(result).toEqual({
+        articleCount: 7000000,
+        totalMonthlyViews: 10000000000,
+      });
+    });
+  });
 });

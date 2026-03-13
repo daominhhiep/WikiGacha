@@ -14,10 +14,38 @@ export class CardService {
   private readonly CARDS_PER_PACK = 5;
   private readonly PITY_THRESHOLD = 10;
 
+  // Cache for global stats to avoid frequent API calls
+  private cachedAverageViews: number | null = null;
+  private lastCacheUpdate: number = 0;
+  private readonly CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
+
   constructor(
     private readonly prisma: PrismaService,
     private readonly wikiService: WikiService,
   ) {}
+
+  /**
+   * Calculates the average pageviews per article across the entire wiki.
+   * This provides a baseline for dynamic rarity thresholds.
+   */
+  private async getAverageViews(): Promise<number> {
+    const now = Date.now();
+    if (this.cachedAverageViews && now - this.lastCacheUpdate < this.CACHE_TTL) {
+      return this.cachedAverageViews;
+    }
+
+    try {
+      const stats = await this.wikiService.getGlobalStats();
+      const average = stats.totalMonthlyViews / Math.max(1, stats.articleCount);
+      this.cachedAverageViews = average;
+      this.lastCacheUpdate = now;
+      this.logger.log(`[Calibration] Global Average Pageviews: ${average.toFixed(2)}`);
+      return average;
+    } catch (error) {
+      this.logger.warn(`Failed to fetch global stats, using fallback average: ${error.message}`);
+      return 1500; // Fallback based on ~10B monthly views / 7M articles
+    }
+  }
 
   /**
    * Opens a card pack for a player.
@@ -124,7 +152,8 @@ export class CardService {
     pageViews: number = 0,
     languageCount: number = 0,
   ): Promise<Card> {
-    const rarity = this.deriveRarity(pageViews);
+    const averageViews = await this.getAverageViews();
+    const rarity = this.deriveRarity(pageViews, averageViews);
     const stats = this.deriveStats(wikiData, pageViews, languageCount);
 
     const cardData = {
@@ -151,17 +180,19 @@ export class CardService {
   }
 
   /**
-   * Derives rarity based on page views.
-   * Page views act as a proxy for article popularity/importance.
+   * Derives rarity based on page views relative to the global average.
    *
    * @param pageViews The number of views for the Wikipedia article.
+   * @param avg The global average pageviews per article.
    * @returns The derived Rarity level (N, R, S, SR, SSR).
    */
-  private deriveRarity(pageViews: number): Rarity {
-    if (pageViews >= 500000) return Rarity.SSR;
-    if (pageViews >= 150000) return Rarity.SR;
-    if (pageViews >= 50000) return Rarity.S;
-    if (pageViews >= 15000) return Rarity.R;
+  private deriveRarity(pageViews: number, avg: number): Rarity {
+    // Thresholds scaled by average views (calibration)
+    // S and SR thresholds increased to reduce their frequency
+    if (pageViews >= avg * 500) return Rarity.SSR; // ~750,000+
+    if (pageViews >= avg * 150) return Rarity.SR;  // ~225,000+
+    if (pageViews >= avg * 50) return Rarity.S;    // ~75,000+
+    if (pageViews >= avg * 10) return Rarity.R;    // ~15,000+
     return Rarity.N;
   }
 

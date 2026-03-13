@@ -193,4 +193,58 @@ export class WikiService {
       return { pageViews: 0, languageCount: 0 };
     }
   }
+
+  /**
+   * Fetches global Wikipedia statistics for calibration.
+   * Fetches total article count and aggregate pageviews for the last month.
+   */
+  async getGlobalStats(): Promise<{ articleCount: number; totalMonthlyViews: number }> {
+    try {
+      // 1. Get article count
+      const statsParams = {
+        action: 'query',
+        meta: 'siteinfo',
+        siprop: 'statistics',
+        format: 'json',
+        origin: '*',
+      };
+
+      const statsRes = await firstValueFrom(
+        this.httpService.get<any>(this.actionApiUrl, {
+          params: statsParams,
+          headers: { 'User-Agent': this.userAgent },
+        }),
+      );
+
+      const articleCount = statsRes?.query?.statistics?.articles || 7000000;
+
+      // 2. Get aggregate pageviews (monthly)
+      // Use the Analytics API
+      const today = new Date();
+      const lastMonth = new Date();
+      lastMonth.setMonth(today.getMonth() - 1);
+
+      const start = lastMonth.toISOString().slice(0, 10).replace(/-/g, '');
+      const end = today.toISOString().slice(0, 10).replace(/-/g, '');
+
+      // Endpoint: https://wikimedia.org/api/rest_v1/metrics/pageviews/aggregate/en.wikipedia/all-access/user/monthly/2023010100/2023123100
+      const analyticsUrl = `https://wikimedia.org/api/rest_v1/metrics/pageviews/aggregate/en.wikipedia/all-access/user/monthly/${start}00/${end}00`;
+
+      const analyticsRes = await firstValueFrom(
+        this.httpService.get<any>(analyticsUrl, {
+          headers: { 'User-Agent': this.userAgent },
+        }),
+      );
+
+      const totalMonthlyViews = analyticsRes?.items?.[0]?.views || 10000000000; // Fallback to 10B
+
+      return {
+        articleCount,
+        totalMonthlyViews,
+      };
+    } catch (error) {
+      this.logger.error(`Error fetching global stats: ${error.message}`);
+      return { articleCount: 7000000, totalMonthlyViews: 10000000000 };
+    }
+  }
 }
