@@ -60,6 +60,16 @@ Wikigacha is a multiverse-themed gacha game where every Wikipedia article is a c
 - **Endpoints:**
   - `GET /api/v1/trophy/:playerId` - Retrieve all trophies unlocked by a player.
 
+### US14: Daily & Lifetime Missions
+- **Mission Engine:** Event-driven progress tracking for daily and lifetime goals.
+- **Criteria Types:**
+  - **PULL_CARDS:** Track number of cards pulled from gacha packs.
+  - **PLAY_BATTLES:** Track total auto-battles played.
+  - **WIN_BATTLES:** Track total victories in auto-battles.
+- **Backend:** `MissionService` listening for `card.pulled` and `battle.finished` events.
+- **Rewards:** Claim `rewardCredits` upon mission completion.
+- **Logic:** Atomic reward claiming using database transactions to ensure data integrity.
+
 ## 📝 API Documentation
 - **Swagger UI:** Accessible at `/docs` when the server is running.
 - **Auth Endpoints:**
