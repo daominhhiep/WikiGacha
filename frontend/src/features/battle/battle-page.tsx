@@ -3,8 +3,9 @@ import DeckSelector from './DeckSelector';
 import BattleArena from './BattleArena';
 import { useBattle, type BattleResult } from './use-battle';
 import { Button } from '@/components/ui/button';
-import { Swords, History, Loader2, Trophy, ArrowLeft } from 'lucide-react';
+import { Swords, History, Trophy, ArrowLeft } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Skeleton } from '@/components/ui/skeleton';
 
 type BattlePhase = 'DECK_SELECTION' | 'IN_BATTLE' | 'RESULTS' | 'HISTORY';
 
@@ -129,8 +130,25 @@ const BattlePage: React.FC = () => {
             </h3>
 
             {isLoadingHistory ? (
-              <div className="flex justify-center py-20">
-                <Loader2 className="size-8 animate-spin text-primary/40" />
+              <div className="grid gap-4">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <div
+                    key={i}
+                    className="bg-black/40 border border-primary/10 p-4 flex items-center justify-between"
+                  >
+                    <div className="flex items-center gap-6">
+                      <Skeleton className="size-12 skew-x-[-12deg]" />
+                      <div className="space-y-2">
+                        <Skeleton className="h-2 w-24" />
+                        <Skeleton className="h-4 w-48" />
+                      </div>
+                    </div>
+                    <div className="flex flex-col items-end gap-2">
+                      <Skeleton className="h-2 w-20" />
+                      <Skeleton className="h-2 w-32" />
+                    </div>
+                  </div>
+                ))}
               </div>
             ) : battleHistory.length === 0 ? (
               <div className="text-center py-20 border-2 border-dashed border-primary/10 opacity-40 font-mono">

@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient, useInfiniteQuery } from '@tanstack/react-query';
+import { useMutation, useQueryClient, useInfiniteQuery } from '@tanstack/react-query';
 import api from '@/services/api';
 import type { CardData } from '@/components/card';
 import { useAuthStore } from '../auth/auth-store';

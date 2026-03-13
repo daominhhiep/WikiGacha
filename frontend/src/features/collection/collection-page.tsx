@@ -47,17 +47,6 @@ const CollectionPage: React.FC = () => {
     return () => observer.disconnect();
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-  if (isLoading) {
-    return (
-      <div className="flex min-h-[60vh] flex-col items-center justify-center space-y-4">
-        <Loader2 className="size-12 animate-spin text-primary" />
-        <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground animate-pulse">
-          Accessing_Central_Database...
-        </p>
-      </div>
-    );
-  }
-
   if (error) {
     return (
       <div className="flex min-h-[60vh] flex-col items-center justify-center p-8 border-2 border-red-500/20 bg-red-500/5">
@@ -105,8 +94,8 @@ const CollectionPage: React.FC = () => {
 
       {/* Main Grid */}
       <CollectionGrid
-        items={allItems}
-        isLoadingMore={isFetchingNextPage}
+        items={isLoading ? [] : allItems}
+        isLoadingMore={isLoading || isFetchingNextPage}
         onToggleFavorite={(id) => toggleFavorite(id)}
         onCardClick={(item) => setSelectedItem(item)}
       />
@@ -127,7 +116,7 @@ const CollectionPage: React.FC = () => {
               SCROLL_FOR_RECORDS
             </span>
           </>
-        ) : allItems.length > 0 ? (
+        ) : allItems.length > 0 || isLoading ? (
           <span className="text-[10px] font-mono text-muted-foreground/40 uppercase tracking-widest">
             — END_OF_DATABASE —
           </span>

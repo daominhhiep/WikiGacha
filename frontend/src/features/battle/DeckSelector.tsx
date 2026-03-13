@@ -6,6 +6,7 @@ import Card, { Rarity } from '@/components/card';
 import { Button } from '@/components/ui/button';
 import { Sword, Swords, Trash2, ShieldAlert, Loader2, ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface DeckSelectorProps {
   onStartBattle: (deckIds: string[]) => void;
@@ -17,7 +18,8 @@ interface DeckSelectorProps {
  * Follows the Cyberpunk/Anti-Softness design system.
  */
 const DeckSelector: React.FC<DeckSelectorProps> = ({ onStartBattle, isStarting = false }) => {
-  const { selectedCardIds, toggleCard, clearDeck, maxDeckSize, cardRegistry, registerCards } = useBattleStore();
+  const { selectedCardIds, toggleCard, clearDeck, maxDeckSize, cardRegistry, registerCards } =
+    useBattleStore();
   const [rarityFilter, setRarityFilter] = useState<string>('ALL');
 
   // Fetch collection
@@ -221,11 +223,21 @@ const DeckSelector: React.FC<DeckSelectorProps> = ({ onStartBattle, isStarting =
         </div>
 
         {isLoading ? (
-          <div className="flex flex-col items-center justify-center py-20 gap-4 opacity-50">
-            <Loader2 className="size-12 animate-spin text-primary" />
-            <p className="font-mono text-xs animate-pulse tracking-[0.2em]">
-              [ SCANNING_REPOSITORY... ]
-            </p>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-6 justify-items-center">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <div
+                key={i}
+                className="relative w-full max-w-[224px] h-[22rem] border-2 border-primary/10 bg-black/40 p-3 flex flex-col gap-3"
+              >
+                <Skeleton className="aspect-square w-full" />
+                <Skeleton className="h-4 w-3/4" />
+                <Skeleton className="h-3 w-1/2" />
+                <div className="mt-auto space-y-2">
+                  <Skeleton className="h-6 w-full opacity-20" />
+                  <Skeleton className="h-6 w-full opacity-20" />
+                </div>
+              </div>
+            ))}
           </div>
         ) : allCards.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 gap-4 border-2 border-dashed border-primary/10 bg-black/20">

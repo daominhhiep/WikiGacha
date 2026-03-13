@@ -113,7 +113,7 @@
 **Purpose**: Final refinements and verification.
 
 - [x] T036 [P] Implement Redis caching for Card Pool metadata in `backend/src/modules/card/card.service.ts`
-- [ ] T037 Add Loading States and Skeletons across all features in `frontend/src/components/ui/`
+- [x] T037 Add Loading States and Skeletons across all features in `frontend/src/components/ui/`
 - [ ] T038 Performance audit of Wikipedia card generation (target SC-001)
 - [ ] T039 [P] Final Documentation update in `README.md` and `quickstart.md`
 - [ ] T040 Run full E2E validation of the "Pull -> View -> Battle" loop

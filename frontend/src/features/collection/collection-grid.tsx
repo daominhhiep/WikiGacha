@@ -2,8 +2,9 @@ import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Card from '@/components/card';
 import type { InventoryItem } from './use-collection';
-import { Star, Clock, Search, Loader2 } from 'lucide-react';
+import { Star, Clock, Search } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface CollectionGridProps {
   /** The list of items in the collection. */
@@ -22,16 +23,14 @@ interface CollectionGridProps {
 const CardSkeleton = () => (
   <div className="relative h-[30rem] w-72 flex flex-col rounded-none border-2 border-border-grid bg-black/40 p-4 overflow-hidden">
     <div className="absolute inset-0 bg-gradient-to-b from-transparent via-primary/5 to-transparent h-1/3 w-full animate-scan" />
-    <div className="aspect-square w-full bg-white/5 border border-border-grid flex items-center justify-center">
-      <Loader2 className="size-10 text-primary/20 animate-spin" />
-    </div>
+    <Skeleton className="aspect-square w-full border border-border-grid" />
     <div className="mt-4 space-y-3">
-      <div className="h-6 w-3/4 bg-white/10 animate-pulse" />
-      <div className="h-4 w-full bg-white/5 animate-pulse" />
+      <Skeleton className="h-6 w-3/4" />
+      <Skeleton className="h-4 w-full" />
       <div className="mt-auto pt-4 space-y-2">
-        <div className="h-8 w-full bg-red-500/10 border-l-2 border-red-500/20" />
-        <div className="h-8 w-full bg-orange-500/10 border-l-2 border-orange-500/20" />
-        <div className="h-8 w-full bg-blue-500/10 border-l-2 border-blue-500/20" />
+        <Skeleton className="h-8 w-full bg-red-500/10 border-l-2 border-red-500/20" />
+        <Skeleton className="h-8 w-full bg-orange-500/10 border-l-2 border-orange-500/20" />
+        <Skeleton className="h-8 w-full bg-blue-500/10 border-l-2 border-blue-500/20" />
       </div>
     </div>
   </div>
