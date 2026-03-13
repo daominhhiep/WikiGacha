@@ -117,8 +117,24 @@ const DeckSelector: React.FC<DeckSelectorProps> = ({ onStartBattle, isStarting =
                         className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-primary/5">
-                        <Swords className="size-10 text-primary/20" />
+                      <div className="absolute inset-0 flex flex-col items-center justify-center bg-bg-surface/20 p-4">
+                        {/* Cyberpunk abstract background for missing images */}
+                        <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_center,_var(--color-primary)_0%,_transparent_70%)]" />
+                        <div className="absolute inset-0 opacity-10 flex flex-wrap gap-1 p-1 pointer-events-none">
+                          {Array.from({ length: 15 }).map((_, i) => (
+                            <div
+                              key={i}
+                              className="h-0.5 w-full bg-primary/20 animate-pulse"
+                              style={{ animationDelay: `${i * 100}ms` }}
+                            />
+                          ))}
+                        </div>
+                        <Swords className="size-8 text-primary/20 mb-2 relative z-10" />
+                        <div className="relative z-10 text-center">
+                          <div className="line-clamp-3 font-mono text-[8px] font-black uppercase leading-tight text-white/40">
+                            {cardItem.card.title}
+                          </div>
+                        </div>
                       </div>
                     )}
                     <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
