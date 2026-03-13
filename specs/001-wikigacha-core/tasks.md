@@ -73,7 +73,7 @@
 
 ### Tests for User Story 2
 - [x] T021 [P] [US2] Unit test for Inventory service in `backend/src/modules/collection/collection.service.spec.ts`
-- [ ] T022 [US2] Integration test for `GET /collection` in `backend/test/collection.e2e-spec.ts`
+- [x] T022 [US2] Integration test for `GET /collection` in `backend/test/collection.e2e-spec.ts`
 
 ### Implementation for User Story 2
 - [x] T023 [P] [US2] Implement Inventory Service to fetch player cards in `backend/src/modules/collection/collection.service.ts`
