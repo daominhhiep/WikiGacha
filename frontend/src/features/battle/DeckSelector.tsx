@@ -3,7 +3,7 @@ import { useInfiniteCollection, type InventoryItem } from '../collection/use-col
 import { useBattleStore } from './use-battle';
 import Card, { Rarity } from '@/components/card';
 import { Button } from '@/components/ui/button';
-import { Sword, Trash2, ShieldAlert, Loader2, ChevronDown } from 'lucide-react';
+import { Sword, Swords, Trash2, ShieldAlert, Loader2, ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface DeckSelectorProps {
@@ -110,11 +110,17 @@ const DeckSelector: React.FC<DeckSelectorProps> = ({ onStartBattle, isStarting =
                     className="relative group cursor-pointer w-full h-full"
                     onClick={() => toggleCard(cardItem.cardId)}
                   >
-                    <img
-                      src={cardItem.card.imageUrl}
-                      alt={cardItem.card.title}
-                      className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
-                    />
+                    {cardItem.card.imageUrl ? (
+                      <img
+                        src={cardItem.card.imageUrl}
+                        alt={cardItem.card.title}
+                        className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-primary/5">
+                        <Swords className="size-10 text-primary/20" />
+                      </div>
+                    )}
                     <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
                     <div className="absolute bottom-2 left-2 right-2">
                       <p className="text-[10px] font-black uppercase truncate text-white">
