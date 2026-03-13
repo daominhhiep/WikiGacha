@@ -1,36 +1,36 @@
-# Quickstart: Wikigacha Core Gameplay
+# Quickstart: WikiGacha Core
 
 ## Prerequisites
 - **Docker** and **Docker Compose**
-- **Node.js 20+** (Optional, for local development)
-- **PNPM** (Recommended package manager)
+- **Node.js 20+**
+- **npm** (Default package manager)
 
-## Launching with Docker
+## Launching with Docker (Recommended)
 To start the entire stack (Frontend, Backend, MySQL, Redis):
 
 ```bash
-docker-compose up -d
+docker-compose -f docker/docker-compose.yml up -d
 ```
 
 Access the application at:
 - **Frontend**: `http://localhost:5173`
 - **Backend (API)**: `http://localhost:3000/api/v1`
-- **MySQL**: `localhost:3306` (User: `wikiuser`, Pass: `wikipass`, DB: `wikigacha`)
-- **Redis**: `localhost:6379`
+- **Swagger Docs**: `http://localhost:3000/docs`
 
 ## Local Development Setup
 
 ### 1. Install Dependencies
 Run from the repository root:
 ```bash
-pnpm install
+npm install
 ```
 
 ### 2. Configure Environment
-Create `.env` files in `frontend/` and `backend/` based on their respective `.env.example`.
+1. Create `backend/.env` from `backend/.env.example`.
+2. Create `frontend/.env` from `frontend/.env.example`.
 
 ### 3. Initialize Database
-In `backend/`:
+Ensure MySQL is running, then in `backend/`:
 ```bash
 npx prisma migrate dev
 ```
@@ -38,17 +38,27 @@ npx prisma migrate dev
 ### 4. Start Development Servers
 ```bash
 # In backend/
-pnpm start:dev
+npm run start:dev
 
 # In frontend/
-pnpm dev
+npm run dev
 ```
 
 ## Running Tests
 ```bash
 # Backend (Jest)
-pnpm test
+cd backend && npm test
+
+# Backend E2E
+cd backend && npm run test:e2e
 
 # Frontend (Vitest)
-pnpm test:unit
+cd frontend && npm test
+```
+
+## Maintenance
+To refresh card stats or purge old data:
+```bash
+cd backend
+npm run refresh-cards
 ```
