@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useInfiniteCollection, type InventoryItem } from '../collection/use-collection';
 import { useBattleStore } from './use-battle';
 import Card, { Rarity } from '@/components/card';
@@ -227,33 +228,44 @@ const DeckSelector: React.FC<DeckSelectorProps> = ({ onStartBattle, isStarting =
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-              {allCards.map((item) => {
-                const isSelected = selectedCardIds.includes(item.cardId);
-                const isMaxReached = selectedCardIds.length >= maxDeckSize;
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-8 justify-items-center">
+              <AnimatePresence mode="popLayout">
+                {allCards.map((item) => {
+                  const isSelected = selectedCardIds.includes(item.cardId);
+                  const isMaxReached = selectedCardIds.length >= maxDeckSize;
 
-                return (
-                  <div key={item.id} className="relative" onClick={() => toggleCard(item.cardId)}>
-                    <Card
-                      card={item.card}
-                      className={cn(
-                        'cursor-pointer transition-transform duration-300',
-                        isSelected &&
-                          'ring-4 ring-primary ring-offset-4 ring-offset-black scale-95 opacity-50',
-                        !isSelected && isMaxReached && 'grayscale opacity-50',
-                      )}
-                    />
+                  return (
+                    <motion.div
+                      key={item.id}
+                      layout
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.9 }}
+                      transition={{ duration: 0.2 }}
+                      className="relative"
+                      onClick={() => toggleCard(item.cardId)}
+                    >
+                      <Card
+                        card={item.card}
+                        className={cn(
+                          'cursor-pointer transition-transform duration-300',
+                          isSelected &&
+                            'ring-4 ring-primary ring-offset-4 ring-offset-black scale-95 opacity-50',
+                          !isSelected && isMaxReached && 'grayscale opacity-50',
+                        )}
+                      />
 
-                    {isSelected && (
-                      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                        <div className="bg-primary text-black font-black px-4 py-2 border-2 border-black uppercase tracking-widest shadow-[0_0_20px_rgba(0,240,255,0.5)]">
-                          SELECTED
+                      {isSelected && (
+                        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                          <div className="bg-primary text-black font-black px-4 py-2 border-2 border-black uppercase tracking-widest shadow-[0_0_20px_rgba(0,240,255,0.5)]">
+                            SELECTED
+                          </div>
                         </div>
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
+                      )}
+                    </motion.div>
+                  );
+                })}
+              </AnimatePresence>
             </div>
 
             {hasNextPage && (
