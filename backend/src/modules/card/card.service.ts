@@ -46,7 +46,9 @@ export class CardService {
         totalCards = parseInt(cachedCount, 10);
       } else {
         totalCards = await this.prisma.card.count();
-        await this.redisService.set(this.CACHE_KEY_COUNT, totalCards.toString(), 'EX', 60); // Cache for 1 min
+        // If pool is large enough (>= 50k), cache for 24 hours, otherwise 1 min
+        const ttl = totalCards >= 50000 ? 86400 : 60;
+        await this.redisService.set(this.CACHE_KEY_COUNT, totalCards.toString(), 'EX', ttl);
       }
     } catch (err) {
       this.logger.warn(`Redis error fetching card count: ${err.message}`);
@@ -173,7 +175,8 @@ export class CardService {
     // Update cached count after refill
     try {
       const totalCards = await this.prisma.card.count();
-      await this.redisService.set(this.CACHE_KEY_COUNT, totalCards.toString(), 'EX', 60);
+      const ttl = totalCards >= 50000 ? 86400 : 60;
+      await this.redisService.set(this.CACHE_KEY_COUNT, totalCards.toString(), 'EX', ttl);
     } catch (e) {
       this.logger.warn(`Failed to update cached card count: ${e.message}`);
     }

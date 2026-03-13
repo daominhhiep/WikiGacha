@@ -98,5 +98,17 @@ describe('CardService', () => {
       expect(prisma.card.count).toHaveBeenCalled();
       expect(redis.set).toHaveBeenCalledWith('gacha:pool:count', '50', 'EX', 60);
     });
+
+    it('should cache for 24 hours if count >= 50,000', async () => {
+      mockPrismaService.player.findUnique.mockResolvedValue(mockPlayer);
+      mockRedisService.get.mockResolvedValue(null);
+      mockPrismaService.card.count.mockResolvedValue(55000);
+      mockPrismaService.card.findMany.mockResolvedValue([{ id: 'card-1', rarity: Rarity.C }]);
+      mockPrismaService.player.update.mockResolvedValue({ credits: 90, pityCounter: 1 });
+
+      await service.openPack(playerId);
+
+      expect(redis.set).toHaveBeenCalledWith('gacha:pool:count', '55000', 'EX', 86400);
+    });
   });
 });
