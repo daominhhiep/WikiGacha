@@ -36,6 +36,8 @@ export interface ArticleSummary {
       page: string;
     };
   };
+  pageViews?: number;
+  languageCount?: number;
 }
 
 interface WikiError {
@@ -131,6 +133,64 @@ export class WikiService {
       const message = error instanceof Error ? error.message : 'Unknown error';
       this.logger.error(`Error fetching article summary for "${title}": ${message}`);
       throw error;
+    }
+  }
+
+  /**
+   * Fetches article statistics (page views and language count) from Wikipedia.
+   * @param title The article title.
+   * @returns Page views (last 30 days) and language count.
+   */
+  async getArticleStats(title: string): Promise<{ pageViews: number; languageCount: number }> {
+    const params = {
+      action: 'query',
+      format: 'json',
+      prop: 'pageviews|langlinks',
+      titles: title,
+      lllimit: 'max',
+      pvipdays: 30,
+      redirects: 1,
+      origin: '*',
+    };
+
+    try {
+      const { data } = await firstValueFrom(
+        this.httpService.get<any>(this.actionApiUrl, {
+          params,
+          headers: { 'User-Agent': this.userAgent },
+        }),
+      );
+
+      const pages = data?.query?.pages;
+      if (!pages) {
+        return { pageViews: 0, languageCount: 0 };
+      }
+
+      // Get the first page (there should only be one)
+      const pageId = Object.keys(pages)[0];
+      const page = pages[pageId];
+
+      if (!page || page.missing === '') {
+        return { pageViews: 0, languageCount: 0 };
+      }
+
+      // Sum page views for the last 30 days
+      const pageViewsMap = page.pageviews || {};
+      const totalPageViews = Object.values(pageViewsMap)
+        .filter((v): v is number => typeof v === 'number')
+        .reduce((sum, count) => sum + count, 0);
+
+      // Count language links
+      const languageCount = page.langlinks ? page.langlinks.length : 0;
+
+      return {
+        pageViews: totalPageViews,
+        languageCount,
+      };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Unknown error';
+      this.logger.error(`Error fetching article stats for "${title}": ${message}`);
+      return { pageViews: 0, languageCount: 0 };
     }
   }
 }

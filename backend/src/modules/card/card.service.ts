@@ -56,19 +56,20 @@ export class CardService {
       const wikiData = await this.wikiService.getArticleSummary(title);
 
       if (wikiData) {
-        // Natural range increased to allow S and SR naturally (up to 500,000)
-        let mockPageViews = Math.floor(Math.random() * 500000);
-        const mockLangCount = Math.floor(Math.random() * 50);
+        // Fetch real stats from Wikipedia
+        const wikiStats = await this.wikiService.getArticleStats(title);
+        let pageViews = wikiStats.pageViews;
+        const languageCount = wikiStats.languageCount;
 
         // Pity Logic: If this is the last card and no S+ pulled yet, force high rarity
         const isLastCard = i === titles.length - 1;
         if (isLastCard && isPityTriggered && !highRarityPulled) {
           this.logger.log(`[Pity Triggered] Forcing S+ for player ${playerId}`);
-          // Force page views to S threshold (> 50,000)
-          mockPageViews = 50001 + Math.floor(Math.random() * 950000);
+          // Force page views to S threshold (> 50,000) if it's not already high enough
+          pageViews = Math.max(pageViews, 50001 + Math.floor(Math.random() * 950000));
         }
 
-        const card = await this.generateCardFromWiki(wikiData, mockPageViews, mockLangCount);
+        const card = await this.generateCardFromWiki(wikiData, pageViews, languageCount);
         newCards.push(card);
 
         // Track if we pulled an S or higher (S, SR, or SSR)
@@ -157,10 +158,10 @@ export class CardService {
    * @returns The derived Rarity level (N, R, S, SR, SSR).
    */
   private deriveRarity(pageViews: number): Rarity {
-    if (pageViews > 500000) return Rarity.SSR;
-    if (pageViews > 150000) return Rarity.SR;
-    if (pageViews > 50000) return Rarity.S;
-    if (pageViews > 15000) return Rarity.R;
+    if (pageViews >= 500000) return Rarity.SSR;
+    if (pageViews >= 150000) return Rarity.SR;
+    if (pageViews >= 50000) return Rarity.S;
+    if (pageViews >= 15000) return Rarity.R;
     return Rarity.N;
   }
 
