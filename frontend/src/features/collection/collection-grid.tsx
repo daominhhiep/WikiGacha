@@ -2,12 +2,14 @@ import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Card from '@/components/card';
 import type { InventoryItem } from './use-collection';
-import { Star, Clock, Search } from 'lucide-react';
+import { Star, Clock, Search, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface CollectionGridProps {
   /** The list of items in the collection. */
   items: InventoryItem[];
+  /** Whether more items are currently being fetched. */
+  isLoadingMore?: boolean;
   /** Optional callback when a card is clicked (e.g., to show details). */
   onCardClick?: (item: InventoryItem) => void;
   /** Optional callback to toggle favorite. */
@@ -15,15 +17,37 @@ interface CollectionGridProps {
 }
 
 /**
+ * Lightweight skeleton card for loading states.
+ */
+const CardSkeleton = () => (
+  <div className="relative h-[30rem] w-72 flex flex-col rounded-none border-2 border-border-grid bg-black/40 p-4 overflow-hidden">
+    <div className="absolute inset-0 bg-gradient-to-b from-transparent via-primary/5 to-transparent h-1/3 w-full animate-scan" />
+    <div className="aspect-square w-full bg-white/5 border border-border-grid flex items-center justify-center">
+      <Loader2 className="size-10 text-primary/20 animate-spin" />
+    </div>
+    <div className="mt-4 space-y-3">
+      <div className="h-6 w-3/4 bg-white/10 animate-pulse" />
+      <div className="h-4 w-full bg-white/5 animate-pulse" />
+      <div className="mt-auto pt-4 space-y-2">
+        <div className="h-8 w-full bg-red-500/10 border-l-2 border-red-500/20" />
+        <div className="h-8 w-full bg-orange-500/10 border-l-2 border-orange-500/20" />
+        <div className="h-8 w-full bg-blue-500/10 border-l-2 border-blue-500/20" />
+      </div>
+    </div>
+  </div>
+);
+
+/**
  * CollectionGrid component renders a responsive grid of collected Wikipedia cards.
  * Implements the Cyberpunk HUD style for the collection view.
  */
 const CollectionGrid: React.FC<CollectionGridProps> = ({ 
   items, 
+  isLoadingMore,
   onCardClick, 
   onToggleFavorite 
 }) => {
-  if (items.length === 0) {
+  if (items.length === 0 && !isLoadingMore) {
     return (
       <div className="flex flex-col items-center justify-center py-20 border-2 border-dashed border-border-grid bg-black/20">
         <div className="size-20 border border-primary/20 flex items-center justify-center mb-6">
@@ -45,7 +69,7 @@ const CollectionGrid: React.FC<CollectionGridProps> = ({
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9 }}
-            transition={{ duration: 0.3, delay: index * 0.05 }}
+            transition={{ duration: 0.3, delay: index % 20 * 0.05 }}
             className="relative group"
           >
             {/* Collection Metadata Overlay */}
@@ -84,6 +108,21 @@ const CollectionGrid: React.FC<CollectionGridProps> = ({
             </div>
           </motion.div>
         ))}
+
+        {/* Loading Skeletons */}
+        {isLoadingMore && (
+          Array.from({ length: 5 }).map((_, i) => (
+            <motion.div
+              key={`skeleton-${i}`}
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              <CardSkeleton />
+            </motion.div>
+          ))
+        )}
       </AnimatePresence>
     </div>
   );

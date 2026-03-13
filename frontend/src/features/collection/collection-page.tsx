@@ -40,7 +40,10 @@ const CollectionPage: React.FC = () => {
           fetchNextPage();
         }
       },
-      { threshold: 0.1 }
+      { 
+        threshold: 0,
+        rootMargin: '600px', // Pre-fetch data 600px before user reaches the bottom
+      }
     );
 
     if (loadMoreRef.current) {
@@ -106,6 +109,7 @@ const CollectionPage: React.FC = () => {
       {/* Main Grid */}
       <CollectionGrid 
         items={allItems} 
+        isLoadingMore={isFetchingNextPage}
         onToggleFavorite={(id) => toggleFavorite(id)}
         onCardClick={(item) => setSelectedItem(item)}
       />
