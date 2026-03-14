@@ -1,8 +1,13 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../../common/prisma/prisma.service';
-import { BattleEngine, BattleParticipant } from './battle-engine';
+import { BattleEngine, BattleParticipant, BattleStep } from './battle-engine';
 import { BattleStatus } from '../../generated/prisma/client';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+
+interface EloUpdate {
+  player1: { old: number; new: number };
+  player2: { old: number; new: number };
+}
 
 @Injectable()
 export class BattleService {
@@ -13,6 +18,37 @@ export class BattleService {
     private eventEmitter: EventEmitter2,
   ) {
     this.engine = new BattleEngine();
+  }
+
+  /**
+   * Fetches player's cards from inventory and maps them to a BattleParticipant.
+   */
+  async getParticipant(playerId: string, deckIds: string[]): Promise<BattleParticipant> {
+    const playerInventory = await this.prisma.inventory.findMany({
+      where: {
+        playerId,
+        id: { in: deckIds },
+      },
+      include: { card: true },
+    });
+
+    if (playerInventory.length === 0) {
+      throw new NotFoundException('BATTLE_CARDS_NOT_FOUND: Selected cards not found.');
+    }
+
+    return {
+      id: playerId,
+      cards: playerInventory.map((item) => ({
+        instanceId: item.id,
+        title: item.card.title,
+        imageUrl: item.card.imageUrl || undefined,
+        rarity: item.card.rarity,
+        hp: item.card.hp,
+        maxHp: item.card.hp,
+        atk: item.card.atk,
+        def: item.card.def,
+      })),
+    };
   }
 
   /**
@@ -32,35 +68,8 @@ export class BattleService {
       throw new BadRequestException('BATTLE_DECK_TOO_LARGE: Maximum of 5 cards allowed.');
     }
 
-    // Fetch player's cards from inventory using unique IDs
-    const playerInventory = await this.prisma.inventory.findMany({
-      where: {
-        playerId,
-        id: { in: deckIds },
-      },
-      include: { card: true },
-    });
-
-    if (playerInventory.length === 0) {
-      throw new NotFoundException(
-        'BATTLE_CARDS_NOT_FOUND: Selected cards not found in player inventory.',
-      );
-    }
-
     // Map to BattleParticipant for Player 1
-    const p1: BattleParticipant = {
-      id: playerId,
-      cards: playerInventory.map((item) => ({
-        instanceId: item.id,
-        title: item.card.title,
-        imageUrl: item.card.imageUrl || undefined,
-        rarity: item.card.rarity,
-        hp: item.card.hp,
-        maxHp: item.card.hp,
-        atk: item.card.atk,
-        def: item.card.def,
-      })),
-    };
+    const p1 = await this.getParticipant(playerId, deckIds);
 
     let p2: BattleParticipant;
 
@@ -122,7 +131,7 @@ export class BattleService {
     };
 
     // Calculate Elo for PvP
-    let eloUpdate = null;
+    let eloUpdate: EloUpdate | null = null;
     if (opponentId) {
       const [player1, player2] = await Promise.all([
         this.prisma.player.findUnique({ where: { id: playerId } }),
@@ -161,8 +170,16 @@ export class BattleService {
       data: {
         player1Id: playerId,
         player2Id: opponentId || null,
-        winnerId: isWinner ? playerId : (opponentId && result.winnerId === opponentId ? opponentId : null),
+        winnerId: isWinner
+          ? playerId
+          : opponentId && result.winnerId === opponentId
+            ? opponentId
+            : null,
         log: result.log as any,
+        player1Deck: deckIds,
+        player2Deck: opponentId
+          ? p2.cards.map((c) => c.instanceId)
+          : p2.cards.map((c) => c.instanceId.replace('AI_', '')),
         status: BattleStatus.COMPLETED,
       },
     });
@@ -179,10 +196,12 @@ export class BattleService {
       data: {
         credits: { increment: rewards.credits },
         xp: { increment: rewards.xp },
-        ...(eloUpdate ? {
-          eloRating: eloUpdate.player1.new,
-          matchesPlayed: { increment: 1 },
-        } : {}),
+        ...(eloUpdate
+          ? {
+              eloRating: eloUpdate.player1.new,
+              matchesPlayed: { increment: 1 },
+            }
+          : {}),
       },
     });
 
@@ -235,22 +254,115 @@ export class BattleService {
   }
 
   /**
-   * Retrieves battle history for a specific player.
+   * Retrieves battle history (both PvE and PvP) for a specific player.
    *
    * @param playerId The unique player identifier.
-   * @returns List of past battle records.
+   * @returns List of past battle records from both Battle and PvPMatch tables.
    */
   async getBattleHistory(playerId: string) {
-    return this.prisma.battle.findMany({
-      where: {
-        OR: [{ player1Id: playerId }, { player2Id: playerId }],
-      },
-      orderBy: { createdAt: 'desc' },
+    const [pveBattles, pvpMatches] = await Promise.all([
+      this.prisma.battle.findMany({
+        where: {
+          OR: [{ player1Id: playerId }, { player2Id: playerId }],
+        },
+        orderBy: { createdAt: 'desc' },
+        include: {
+          player1: { select: { id: true, username: true, avatarUrl: true } },
+          player2: { select: { id: true, username: true, avatarUrl: true } },
+          winner: { select: { id: true, username: true } },
+        },
+      }),
+      this.prisma.pvPMatch.findMany({
+        where: {
+          OR: [{ player1Id: playerId }, { player2Id: playerId }],
+          status: 'COMPLETED',
+        },
+        orderBy: { createdAt: 'desc' },
+        include: {
+          player1: { select: { id: true, username: true, avatarUrl: true } },
+          player2: { select: { id: true, username: true, avatarUrl: true } },
+          winner: { select: { id: true, username: true } },
+        },
+      }),
+    ]);
+
+    // Merge and sort
+    const history = [
+      ...pveBattles.map((b) => ({ ...b, type: 'PVE' })),
+      ...pvpMatches.map((m) => ({ ...m, type: 'PVP' })),
+    ].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+
+    return history;
+  }
+
+  /**
+   * Retrieves a single battle by ID, ensuring the player was a participant.
+   */
+  async getBattle(id: string, playerId: string) {
+    const battle = await this.prisma.battle.findUnique({
+      where: { id },
       include: {
-        player1: true,
-        player2: true,
-        winner: true,
+        player1: { select: { id: true, username: true, avatarUrl: true } },
+        player2: { select: { id: true, username: true, avatarUrl: true } },
       },
     });
+
+    if (!battle) {
+      throw new NotFoundException('Battle not found');
+    }
+
+    if (battle.player1Id !== playerId && battle.player2Id && battle.player2Id !== playerId) {
+      throw new NotFoundException('UNAUTHORIZED: You were not a participant in this battle.');
+    }
+
+    // Reconstruct participants
+    const p1Deck = (battle.player1Deck as string[]) || [];
+    const p2Deck = (battle.player2Deck as string[]) || [];
+
+    const p1: BattleParticipant & { username?: string; avatarUrl?: string | null } =
+      await this.getParticipant(battle.player1Id, p1Deck);
+    if (battle.player1) {
+      p1.username = battle.player1.username;
+      p1.avatarUrl = battle.player1.avatarUrl;
+    }
+
+    let p2: BattleParticipant & { username?: string; avatarUrl?: string | null };
+    if (battle.player2Id) {
+      p2 = await this.getParticipant(battle.player2Id, p2Deck);
+      if (battle.player2) {
+        p2.username = battle.player2.username;
+        p2.avatarUrl = battle.player2.avatarUrl;
+      }
+    } else {
+      // Reconstruct AI
+      const aiCards = await this.prisma.card.findMany({
+        where: { id: { in: p2Deck } },
+      });
+
+      p2 = {
+        id: 'AI_BOT',
+        username: 'AI_BOT',
+        cards: aiCards.map((card) => ({
+          instanceId: `AI_${card.id}`,
+          title: card.title,
+          imageUrl: card.imageUrl || undefined,
+          rarity: card.rarity,
+          hp: card.hp,
+          maxHp: card.hp,
+          atk: card.atk,
+          def: card.def,
+        })),
+      };
+    }
+
+    return {
+      id: battle.id,
+      battleId: battle.id,
+      winnerId: battle.winnerId,
+      participants: { p1, p2 },
+      log: (battle.log as unknown as BattleStep[]) || [],
+      rewards: { credits: 50, xp: 100 }, // Default rewards
+      status: battle.status,
+    };
   }
 }

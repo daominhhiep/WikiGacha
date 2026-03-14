@@ -141,6 +141,14 @@ export class AuthService {
     return this.jwtService.sign(payload);
   }
 
+  async verifyToken(token: string) {
+    try {
+      return this.jwtService.verify(token);
+    } catch (e) {
+      return null;
+    }
+  }
+
   async getPlayerById(id: string) {
     return this.prisma.player.findUnique({
       where: { id },

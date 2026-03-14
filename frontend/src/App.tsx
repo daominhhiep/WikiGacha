@@ -148,6 +148,14 @@ function App() {
             }
           />
           <Route
+            path="battle/:id"
+            element={
+              <ProtectedRoute>
+                <BattlePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="missions"
             element={
               <ProtectedRoute>

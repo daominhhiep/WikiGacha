@@ -46,6 +46,7 @@ export interface BattleLogEntry {
  * Interface for the battle result response.
  */
 export interface BattleResult {
+  id?: string;
   battleId: string;
   winnerId: string;
   participants: {
@@ -57,6 +58,7 @@ export interface BattleResult {
     credits: number;
     xp: number;
   };
+  status?: string;
 }
 
 /**
@@ -68,6 +70,7 @@ export interface BattleHistory {
   player2Id: string | null;
   winnerId: string | null;
   status: string;
+  type: 'PVE' | 'PVP';
   createdAt: string;
   player1: { id: string; username: string };
   player2: { id: string; username: string } | null;
@@ -154,10 +157,27 @@ export const useBattle = () => {
     enabled: !!accessToken,
   });
 
+  /**
+   * Fetch a specific battle by ID, trying PvP endpoint first then general battle endpoint.
+   */
+  const getMatch = async (id: string): Promise<BattleResult> => {
+    if (!accessToken) throw new Error('AUTH_REQUIRED');
+    try {
+      // Try PvP endpoint first - interceptor already returns response.data.data
+      const result = await api.get<BattleResult>(`/pvp/match/${id}`);
+      return result as unknown as BattleResult;
+    } catch (error) {
+      // Fallback to PvE/Common battle endpoint
+      const result = await api.get<BattleResult>(`/battle/${id}`);
+      return result as unknown as BattleResult;
+    }
+  };
+
   return {
     startBattle: startBattleMutation.mutateAsync,
     isStartingBattle: startBattleMutation.isPending,
     battleHistory: battleHistoryQuery.data || [],
     isLoadingHistory: battleHistoryQuery.isLoading,
+    getMatch,
   };
 };

@@ -47,6 +47,8 @@ export type BattleCountAggregateOutputType = {
   player2Id: number
   winnerId: number
   log: number
+  player1Deck: number
+  player2Deck: number
   status: number
   createdAt: number
   _all: number
@@ -77,6 +79,8 @@ export type BattleCountAggregateInputType = {
   player2Id?: true
   winnerId?: true
   log?: true
+  player1Deck?: true
+  player2Deck?: true
   status?: true
   createdAt?: true
   _all?: true
@@ -160,6 +164,8 @@ export type BattleGroupByOutputType = {
   player2Id: string | null
   winnerId: string | null
   log: runtime.JsonValue
+  player1Deck: runtime.JsonValue | null
+  player2Deck: runtime.JsonValue | null
   status: $Enums.BattleStatus
   createdAt: Date
   _count: BattleCountAggregateOutputType | null
@@ -191,6 +197,8 @@ export type BattleWhereInput = {
   player2Id?: Prisma.StringNullableFilter<"Battle"> | string | null
   winnerId?: Prisma.StringNullableFilter<"Battle"> | string | null
   log?: Prisma.JsonFilter<"Battle">
+  player1Deck?: Prisma.JsonNullableFilter<"Battle">
+  player2Deck?: Prisma.JsonNullableFilter<"Battle">
   status?: Prisma.EnumBattleStatusFilter<"Battle"> | $Enums.BattleStatus
   createdAt?: Prisma.DateTimeFilter<"Battle"> | Date | string
   player1?: Prisma.XOR<Prisma.PlayerScalarRelationFilter, Prisma.PlayerWhereInput>
@@ -204,6 +212,8 @@ export type BattleOrderByWithRelationInput = {
   player2Id?: Prisma.SortOrderInput | Prisma.SortOrder
   winnerId?: Prisma.SortOrderInput | Prisma.SortOrder
   log?: Prisma.SortOrder
+  player1Deck?: Prisma.SortOrderInput | Prisma.SortOrder
+  player2Deck?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   player1?: Prisma.PlayerOrderByWithRelationInput
@@ -221,6 +231,8 @@ export type BattleWhereUniqueInput = Prisma.AtLeast<{
   player2Id?: Prisma.StringNullableFilter<"Battle"> | string | null
   winnerId?: Prisma.StringNullableFilter<"Battle"> | string | null
   log?: Prisma.JsonFilter<"Battle">
+  player1Deck?: Prisma.JsonNullableFilter<"Battle">
+  player2Deck?: Prisma.JsonNullableFilter<"Battle">
   status?: Prisma.EnumBattleStatusFilter<"Battle"> | $Enums.BattleStatus
   createdAt?: Prisma.DateTimeFilter<"Battle"> | Date | string
   player1?: Prisma.XOR<Prisma.PlayerScalarRelationFilter, Prisma.PlayerWhereInput>
@@ -234,6 +246,8 @@ export type BattleOrderByWithAggregationInput = {
   player2Id?: Prisma.SortOrderInput | Prisma.SortOrder
   winnerId?: Prisma.SortOrderInput | Prisma.SortOrder
   log?: Prisma.SortOrder
+  player1Deck?: Prisma.SortOrderInput | Prisma.SortOrder
+  player2Deck?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.BattleCountOrderByAggregateInput
@@ -250,6 +264,8 @@ export type BattleScalarWhereWithAggregatesInput = {
   player2Id?: Prisma.StringNullableWithAggregatesFilter<"Battle"> | string | null
   winnerId?: Prisma.StringNullableWithAggregatesFilter<"Battle"> | string | null
   log?: Prisma.JsonWithAggregatesFilter<"Battle">
+  player1Deck?: Prisma.JsonNullableWithAggregatesFilter<"Battle">
+  player2Deck?: Prisma.JsonNullableWithAggregatesFilter<"Battle">
   status?: Prisma.EnumBattleStatusWithAggregatesFilter<"Battle"> | $Enums.BattleStatus
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Battle"> | Date | string
 }
@@ -257,6 +273,8 @@ export type BattleScalarWhereWithAggregatesInput = {
 export type BattleCreateInput = {
   id?: string
   log: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  player1Deck?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  player2Deck?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   status?: $Enums.BattleStatus
   createdAt?: Date | string
   player1: Prisma.PlayerCreateNestedOneWithoutBattles1Input
@@ -270,6 +288,8 @@ export type BattleUncheckedCreateInput = {
   player2Id?: string | null
   winnerId?: string | null
   log: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  player1Deck?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  player2Deck?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   status?: $Enums.BattleStatus
   createdAt?: Date | string
 }
@@ -277,6 +297,8 @@ export type BattleUncheckedCreateInput = {
 export type BattleUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   log?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  player1Deck?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  player2Deck?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   status?: Prisma.EnumBattleStatusFieldUpdateOperationsInput | $Enums.BattleStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   player1?: Prisma.PlayerUpdateOneRequiredWithoutBattles1NestedInput
@@ -290,6 +312,8 @@ export type BattleUncheckedUpdateInput = {
   player2Id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   winnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   log?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  player1Deck?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  player2Deck?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   status?: Prisma.EnumBattleStatusFieldUpdateOperationsInput | $Enums.BattleStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -300,6 +324,8 @@ export type BattleCreateManyInput = {
   player2Id?: string | null
   winnerId?: string | null
   log: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  player1Deck?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  player2Deck?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   status?: $Enums.BattleStatus
   createdAt?: Date | string
 }
@@ -307,6 +333,8 @@ export type BattleCreateManyInput = {
 export type BattleUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   log?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  player1Deck?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  player2Deck?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   status?: Prisma.EnumBattleStatusFieldUpdateOperationsInput | $Enums.BattleStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -317,6 +345,8 @@ export type BattleUncheckedUpdateManyInput = {
   player2Id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   winnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   log?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  player1Deck?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  player2Deck?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   status?: Prisma.EnumBattleStatusFieldUpdateOperationsInput | $Enums.BattleStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -343,6 +373,8 @@ export type BattleCountOrderByAggregateInput = {
   player2Id?: Prisma.SortOrder
   winnerId?: Prisma.SortOrder
   log?: Prisma.SortOrder
+  player1Deck?: Prisma.SortOrder
+  player2Deck?: Prisma.SortOrder
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
@@ -498,6 +530,8 @@ export type EnumBattleStatusFieldUpdateOperationsInput = {
 export type BattleCreateWithoutPlayer1Input = {
   id?: string
   log: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  player1Deck?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  player2Deck?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   status?: $Enums.BattleStatus
   createdAt?: Date | string
   player2?: Prisma.PlayerCreateNestedOneWithoutBattles2Input
@@ -509,6 +543,8 @@ export type BattleUncheckedCreateWithoutPlayer1Input = {
   player2Id?: string | null
   winnerId?: string | null
   log: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  player1Deck?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  player2Deck?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   status?: $Enums.BattleStatus
   createdAt?: Date | string
 }
@@ -526,6 +562,8 @@ export type BattleCreateManyPlayer1InputEnvelope = {
 export type BattleCreateWithoutPlayer2Input = {
   id?: string
   log: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  player1Deck?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  player2Deck?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   status?: $Enums.BattleStatus
   createdAt?: Date | string
   player1: Prisma.PlayerCreateNestedOneWithoutBattles1Input
@@ -537,6 +575,8 @@ export type BattleUncheckedCreateWithoutPlayer2Input = {
   player1Id: string
   winnerId?: string | null
   log: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  player1Deck?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  player2Deck?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   status?: $Enums.BattleStatus
   createdAt?: Date | string
 }
@@ -554,6 +594,8 @@ export type BattleCreateManyPlayer2InputEnvelope = {
 export type BattleCreateWithoutWinnerInput = {
   id?: string
   log: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  player1Deck?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  player2Deck?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   status?: $Enums.BattleStatus
   createdAt?: Date | string
   player1: Prisma.PlayerCreateNestedOneWithoutBattles1Input
@@ -565,6 +607,8 @@ export type BattleUncheckedCreateWithoutWinnerInput = {
   player1Id: string
   player2Id?: string | null
   log: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  player1Deck?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  player2Deck?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   status?: $Enums.BattleStatus
   createdAt?: Date | string
 }
@@ -604,6 +648,8 @@ export type BattleScalarWhereInput = {
   player2Id?: Prisma.StringNullableFilter<"Battle"> | string | null
   winnerId?: Prisma.StringNullableFilter<"Battle"> | string | null
   log?: Prisma.JsonFilter<"Battle">
+  player1Deck?: Prisma.JsonNullableFilter<"Battle">
+  player2Deck?: Prisma.JsonNullableFilter<"Battle">
   status?: Prisma.EnumBattleStatusFilter<"Battle"> | $Enums.BattleStatus
   createdAt?: Prisma.DateTimeFilter<"Battle"> | Date | string
 }
@@ -645,6 +691,8 @@ export type BattleCreateManyPlayer1Input = {
   player2Id?: string | null
   winnerId?: string | null
   log: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  player1Deck?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  player2Deck?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   status?: $Enums.BattleStatus
   createdAt?: Date | string
 }
@@ -654,6 +702,8 @@ export type BattleCreateManyPlayer2Input = {
   player1Id: string
   winnerId?: string | null
   log: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  player1Deck?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  player2Deck?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   status?: $Enums.BattleStatus
   createdAt?: Date | string
 }
@@ -663,6 +713,8 @@ export type BattleCreateManyWinnerInput = {
   player1Id: string
   player2Id?: string | null
   log: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  player1Deck?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  player2Deck?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   status?: $Enums.BattleStatus
   createdAt?: Date | string
 }
@@ -670,6 +722,8 @@ export type BattleCreateManyWinnerInput = {
 export type BattleUpdateWithoutPlayer1Input = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   log?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  player1Deck?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  player2Deck?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   status?: Prisma.EnumBattleStatusFieldUpdateOperationsInput | $Enums.BattleStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   player2?: Prisma.PlayerUpdateOneWithoutBattles2NestedInput
@@ -681,6 +735,8 @@ export type BattleUncheckedUpdateWithoutPlayer1Input = {
   player2Id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   winnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   log?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  player1Deck?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  player2Deck?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   status?: Prisma.EnumBattleStatusFieldUpdateOperationsInput | $Enums.BattleStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -690,6 +746,8 @@ export type BattleUncheckedUpdateManyWithoutPlayer1Input = {
   player2Id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   winnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   log?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  player1Deck?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  player2Deck?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   status?: Prisma.EnumBattleStatusFieldUpdateOperationsInput | $Enums.BattleStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -697,6 +755,8 @@ export type BattleUncheckedUpdateManyWithoutPlayer1Input = {
 export type BattleUpdateWithoutPlayer2Input = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   log?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  player1Deck?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  player2Deck?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   status?: Prisma.EnumBattleStatusFieldUpdateOperationsInput | $Enums.BattleStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   player1?: Prisma.PlayerUpdateOneRequiredWithoutBattles1NestedInput
@@ -708,6 +768,8 @@ export type BattleUncheckedUpdateWithoutPlayer2Input = {
   player1Id?: Prisma.StringFieldUpdateOperationsInput | string
   winnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   log?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  player1Deck?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  player2Deck?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   status?: Prisma.EnumBattleStatusFieldUpdateOperationsInput | $Enums.BattleStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -717,6 +779,8 @@ export type BattleUncheckedUpdateManyWithoutPlayer2Input = {
   player1Id?: Prisma.StringFieldUpdateOperationsInput | string
   winnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   log?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  player1Deck?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  player2Deck?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   status?: Prisma.EnumBattleStatusFieldUpdateOperationsInput | $Enums.BattleStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -724,6 +788,8 @@ export type BattleUncheckedUpdateManyWithoutPlayer2Input = {
 export type BattleUpdateWithoutWinnerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   log?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  player1Deck?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  player2Deck?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   status?: Prisma.EnumBattleStatusFieldUpdateOperationsInput | $Enums.BattleStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   player1?: Prisma.PlayerUpdateOneRequiredWithoutBattles1NestedInput
@@ -735,6 +801,8 @@ export type BattleUncheckedUpdateWithoutWinnerInput = {
   player1Id?: Prisma.StringFieldUpdateOperationsInput | string
   player2Id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   log?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  player1Deck?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  player2Deck?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   status?: Prisma.EnumBattleStatusFieldUpdateOperationsInput | $Enums.BattleStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -744,6 +812,8 @@ export type BattleUncheckedUpdateManyWithoutWinnerInput = {
   player1Id?: Prisma.StringFieldUpdateOperationsInput | string
   player2Id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   log?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  player1Deck?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  player2Deck?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   status?: Prisma.EnumBattleStatusFieldUpdateOperationsInput | $Enums.BattleStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -756,6 +826,8 @@ export type BattleSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   player2Id?: boolean
   winnerId?: boolean
   log?: boolean
+  player1Deck?: boolean
+  player2Deck?: boolean
   status?: boolean
   createdAt?: boolean
   player1?: boolean | Prisma.PlayerDefaultArgs<ExtArgs>
@@ -771,11 +843,13 @@ export type BattleSelectScalar = {
   player2Id?: boolean
   winnerId?: boolean
   log?: boolean
+  player1Deck?: boolean
+  player2Deck?: boolean
   status?: boolean
   createdAt?: boolean
 }
 
-export type BattleOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "player1Id" | "player2Id" | "winnerId" | "log" | "status" | "createdAt", ExtArgs["result"]["battle"]>
+export type BattleOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "player1Id" | "player2Id" | "winnerId" | "log" | "player1Deck" | "player2Deck" | "status" | "createdAt", ExtArgs["result"]["battle"]>
 export type BattleInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   player1?: boolean | Prisma.PlayerDefaultArgs<ExtArgs>
   player2?: boolean | Prisma.Battle$player2Args<ExtArgs>
@@ -795,6 +869,8 @@ export type $BattlePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     player2Id: string | null
     winnerId: string | null
     log: runtime.JsonValue
+    player1Deck: runtime.JsonValue | null
+    player2Deck: runtime.JsonValue | null
     status: $Enums.BattleStatus
     createdAt: Date
   }, ExtArgs["result"]["battle"]>
@@ -1174,6 +1250,8 @@ export interface BattleFieldRefs {
   readonly player2Id: Prisma.FieldRef<"Battle", 'String'>
   readonly winnerId: Prisma.FieldRef<"Battle", 'String'>
   readonly log: Prisma.FieldRef<"Battle", 'Json'>
+  readonly player1Deck: Prisma.FieldRef<"Battle", 'Json'>
+  readonly player2Deck: Prisma.FieldRef<"Battle", 'Json'>
   readonly status: Prisma.FieldRef<"Battle", 'BattleStatus'>
   readonly createdAt: Prisma.FieldRef<"Battle", 'DateTime'>
 }

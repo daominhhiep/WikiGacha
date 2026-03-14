@@ -10,11 +10,11 @@ const TrophyPage: React.FC = () => {
 
   return (
     <div className="container mx-auto py-10 animate-in fade-in duration-700">
-      <div className="mb-10 border-b border-border-grid pb-8 relative">
-        <div className="absolute top-0 left-0 text-[10px] font-mono text-primary/40 uppercase mb-2">
-          [ ARCHIVE_COLLECTION_DATA_v1.5 ]
-        </div>
+      <div className="mb-10 border-b border-border-grid pb-8">
         <div className="space-y-2">
+          <div className="text-[10px] font-mono text-primary/40 uppercase mb-2">
+            [ ARCHIVE_COLLECTION_DATA_v1.5 ]
+          </div>
           <h1 className="text-5xl font-black tracking-tighter uppercase italic flex items-center gap-3">
             <Award className="text-primary size-10" />
             Trophy Room
