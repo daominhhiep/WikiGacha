@@ -40,7 +40,7 @@ const MatchmakingOverlay: React.FC<MatchmakingOverlayProps> = ({
 
     // Initialize socket connection with a small delay to ensure stable state
     const timer = setTimeout(() => {
-      const socketUrl = import.meta.env.VITE_API_BASE_URL.replace('/api/v1', '');
+      const socketUrl = import.meta.env.VITE_SOCKET_URL || 'http://localhost:3000';
       const newSocket = io(`${socketUrl}/pvp`, {
         auth: { token: accessToken },
         path: '/socket.io/',

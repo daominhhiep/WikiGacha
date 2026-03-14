@@ -1,10 +1,10 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../../common/prisma/prisma.service';
-import { BattleEngine, BattleParticipant, BattleStep } from './battle-engine';
-import { BattleStatus } from '../../generated/prisma/client';
+import { BattleEngine, BattleParticipant, BattleLogEntry } from './battle-engine';
+import { BattleStatus, Card } from '../../generated/prisma/client';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 
-interface EloUpdate {
+export interface EloUpdate {
   player1: { old: number; new: number };
   player2: { old: number; new: number };
 }
@@ -100,10 +100,24 @@ export class BattleService {
       };
     } else {
       // PvE: Generate an AI opponent using random cards from the global pool
-      const randomCards = await this.prisma.card.findMany({
-        take: Math.min(p1.cards.length, 5),
-        orderBy: { createdAt: 'desc' }, // Simplified random choice
-      });
+      const totalCards = await this.prisma.card.count();
+      const numCards = Math.min(p1.cards.length, 5);
+      const randomCards: Card[] = [];
+
+      if (totalCards > 0) {
+        const randomIndices = new Set<number>();
+        while (randomIndices.size < Math.min(numCards, totalCards)) {
+          randomIndices.add(Math.floor(Math.random() * totalCards));
+        }
+
+        const cardPromises = Array.from(randomIndices).map((index) =>
+          this.prisma.card.findFirst({
+            skip: index,
+          }),
+        );
+        const results = await Promise.all(cardPromises);
+        randomCards.push(...results.filter((c): c is Card => c !== null));
+      }
 
       p2 = {
         id: 'AI_BOT',
@@ -360,7 +374,7 @@ export class BattleService {
       battleId: battle.id,
       winnerId: battle.winnerId,
       participants: { p1, p2 },
-      log: (battle.log as unknown as BattleStep[]) || [],
+      log: (battle.log as unknown as BattleLogEntry[]) || [],
       rewards: { credits: 50, xp: 100 }, // Default rewards
       status: battle.status,
     };
