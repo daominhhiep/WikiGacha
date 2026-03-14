@@ -74,6 +74,13 @@ Wikigacha is a multiverse-themed gacha game where every Wikipedia article is a c
   - `GET /api/v1/missions/:playerId` - Fetch user-specific mission progress.
   - `POST /api/v1/missions/claim` - Claim credits for a completed mission.
 
+### US20: PvP Matchmaking
+- **Matchmaking Engine:** Redis-based FIFO queue for efficient player pairing.
+- **PvPMatch Entity:** Tracks PvP match lifecycle (MATCHMAKING -> IN_PROGRESS -> COMPLETED).
+- **Backend:** `PvPMatchmakingService` handling `joinQueue`, `leaveQueue`, and automatic match creation.
+- **Logic:** Atomic queue operations with `removeFromQueue` to prevent duplicate entries.
+- **Scalability:** Built for high concurrency with Redis backend.
+
 ## 📝 API Documentation
 - **Swagger UI:** Accessible at `/docs` when the server is running.
 - **Auth Endpoints:**
