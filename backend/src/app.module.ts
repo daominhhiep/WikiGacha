@@ -12,6 +12,7 @@ import { BattleModule } from './modules/battle/battle.module';
 import { SocketModule } from './modules/socket/socket.module';
 import { MissionModule } from './modules/mission/mission.module';
 import { TrophyModule } from './modules/trophy/trophy.module';
+import { PvPModule } from './modules/pvp/pvp.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { TrophyModule } from './modules/trophy/trophy.module';
     SocketModule,
     MissionModule,
     TrophyModule,
+    PvPModule,
   ],
   controllers: [AppController],
   providers: [AppService],
