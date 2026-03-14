@@ -11,6 +11,7 @@ interface PvPBattleViewProps {
   matchId: string;
   initialResult: BattleResult;
   onComplete: () => void;
+  onResult: (result: BattleResult) => void;
 }
 
 /**
@@ -106,14 +107,22 @@ const ArenaCard: React.FC<{
 /**
  * PvPBattleView handles real-time PvP battles via WebSockets.
  */
-const PvPBattleView: React.FC<PvPBattleViewProps> = ({ matchId, initialResult, onComplete }) => {
+const PvPBattleView: React.FC<PvPBattleViewProps> = ({ 
+  matchId, 
+  initialResult, 
+  onComplete,
+  onResult 
+}) => {
   const { accessToken } = useAuthStore();
   const [socket, setSocket] = useState<Socket | null>(null);
   const [currentEntry, setCurrentEntry] = useState<BattleLogEntry | null>(null);
   const [cardHps, setCardHps] = useState<Record<string, number>>(() => {
     const initialHps: Record<string, number> = {};
-    initialResult.participants.p1.cards.forEach((c) => (initialHps[c.instanceId] = c.hp));
-    initialResult.participants.p2.cards.forEach((c) => (initialHps[c.instanceId] = c.hp));
+    const pts = initialResult?.participants;
+    if (pts) {
+      pts.p1?.cards?.forEach((c) => (initialHps[c.instanceId] = c.hp));
+      pts.p2?.cards?.forEach((c) => (initialHps[c.instanceId] = c.hp));
+    }
     return initialHps;
   });
   const [visibleLogs, setVisibleLogs] = useState<BattleLogEntry[]>([]);
@@ -123,17 +132,27 @@ const PvPBattleView: React.FC<PvPBattleViewProps> = ({ matchId, initialResult, o
   useEffect(() => {
     if (!accessToken) return;
 
+    // If match is already finished, don't connect, just notify parent
+    if ((initialResult as any).status === 'COMPLETED') {
+      onResult(initialResult);
+      setIsFinished(true);
+      return;
+    }
+
+    const realMatchId = matchId || (initialResult as any).id;
+    if (!realMatchId) return;
+
     const socketUrl = import.meta.env.VITE_API_BASE_URL.replace('/api/v1', '');
     const newSocket = io(`${socketUrl}/pvp`, {
       auth: { token: accessToken },
-      transports: ['websocket'],
+      transports: ['polling', 'websocket'],
     });
 
     setSocket(newSocket);
 
     newSocket.on('connect', () => {
-      console.log('[PvP Battle] Connected to battle room', matchId);
-      // Optional: Backend might expect a 'rejoin_match' or just identify via token
+      console.log('[PvP Battle] Connected to battle room', realMatchId);
+      newSocket.emit('join_match', { matchId: realMatchId });
     });
 
     newSocket.on('battle_step', (entry: BattleLogEntry) => {
@@ -148,13 +167,14 @@ const PvPBattleView: React.FC<PvPBattleViewProps> = ({ matchId, initialResult, o
 
     newSocket.on('battle_finished', (finalResult: BattleResult) => {
       console.log('[PvP Battle] Finished!', finalResult);
+      onResult(finalResult);
       setIsFinished(true);
     });
 
     return () => {
       newSocket.disconnect();
     };
-  }, [accessToken, matchId]);
+  }, [accessToken, matchId, initialResult, onResult]);
 
   // Scroll log to bottom
   useEffect(() => {
@@ -177,8 +197,16 @@ const PvPBattleView: React.FC<PvPBattleViewProps> = ({ matchId, initialResult, o
     };
   };
 
-  const p1 = initialResult.participants.p1;
-  const p2 = initialResult.participants.p2;
+  const p1 = initialResult?.participants?.p1;
+  const p2 = initialResult?.participants?.p2;
+
+  if (!p1 || !p2) {
+    return (
+      <div className="flex h-full items-center justify-center bg-black font-mono text-primary animate-pulse">
+        [ INITIALIZING_COMBAT_CORE... ]
+      </div>
+    );
+  }
 
   return (
     <motion.div
@@ -207,7 +235,7 @@ const PvPBattleView: React.FC<PvPBattleViewProps> = ({ matchId, initialResult, o
           </div>
 
           <div className="flex flex-row justify-center gap-2 sm:gap-6 w-full overflow-visible">
-            {p2.cards.map((card) => (
+            {p2.cards?.map((card) => (
               <ArenaCard
                 key={card.instanceId}
                 card={card}
@@ -268,7 +296,7 @@ const PvPBattleView: React.FC<PvPBattleViewProps> = ({ matchId, initialResult, o
           </div>
 
           <div className="flex flex-row justify-center gap-2 sm:gap-6 w-full overflow-visible">
-            {p1.cards.map((card) => (
+            {p1.cards?.map((card) => (
               <ArenaCard
                 key={card.instanceId}
                 card={card}

@@ -25,52 +25,59 @@ const MatchmakingOverlay: React.FC<MatchmakingOverlayProps> = ({
   const [searchTime, setSearchTime] = useState(0);
   const [error, setError] = useState<string | null>(null);
 
+  const socketRef = React.useRef<any>(null);
+ 
   useEffect(() => {
     if (!accessToken) {
-      setTimeout(() => {
-        setError('AUTHENTICATION_REQUIRED: Please login to join PvP.');
-      }, 0);
+      setError('AUTHENTICATION_REQUIRED: Please login to join PvP.');
       return;
     }
 
-    // Initialize socket connection to the 'pvp' namespace
-    const socketUrl = import.meta.env.VITE_API_BASE_URL.replace('/api/v1', '');
-    const newSocket = io(`${socketUrl}/pvp`, {
-      auth: { token: accessToken },
-      transports: ['websocket'],
-    });
-
-    setSocket(newSocket);
-
-    newSocket.on('connect', () => {
-      console.log('[PvP] Connected to matchmaking server');
-      newSocket.emit('join_queue', { deckIds });
-    });
-
-    newSocket.on('match_found', (data: BattleResult) => {
-      console.log('[PvP] Match found!', data);
-      onMatchFound(data);
-    });
-
-    newSocket.on('error', (err: { message: string }) => {
-      console.error('[PvP] Socket error:', err);
-      setError(err.message || 'CONNECTION_ERROR: Failed to join queue.');
-    });
-
-    newSocket.on('disconnect', (reason) => {
-      console.log('[PvP] Disconnected:', reason);
-    });
-
-    // Timer for searching
+    // Interval for search timer
     const interval = setInterval(() => {
       setSearchTime((prev) => prev + 1);
     }, 1000);
 
+    // Initialize socket connection with a small delay to ensure stable state
+    const timer = setTimeout(() => {
+      const socketUrl = import.meta.env.VITE_API_BASE_URL.replace('/api/v1', '');
+      const newSocket = io(`${socketUrl}/pvp`, {
+        auth: { token: accessToken },
+        path: '/socket.io/',
+        reconnectionAttempts: 5,
+        transports: ['polling', 'websocket'],
+      });
+
+      newSocket.on('connect', () => {
+        console.log('[PvP] Connected to matchmaking server');
+        newSocket.emit('join_queue', { deckIds });
+      });
+
+      newSocket.on('match_found', (data: any) => {
+        console.log('[PvP] Match found!', data);
+        onMatchFound(data);
+      });
+
+      newSocket.on('error', (err: { message: string }) => {
+        console.error('[PvP] Socket error:', err);
+        setError(err.message || 'CONNECTION_ERROR: Failed to join queue.');
+      });
+
+      newSocket.on('connect_error', (err) => {
+        console.error('[PvP] Connection error:', err);
+        setError(`CONNECTION_ERROR: ${err.message}`);
+      });
+
+      socketRef.current = newSocket;
+    }, 500);
+
     return () => {
+      clearTimeout(timer);
       clearInterval(interval);
-      if (newSocket) {
-        newSocket.emit('leave_queue');
-        newSocket.disconnect();
+      if (socketRef.current) {
+        socketRef.current.emit('leave_queue');
+        socketRef.current.disconnect();
+        socketRef.current = null;
       }
     };
   }, [accessToken, deckIds, onMatchFound]);

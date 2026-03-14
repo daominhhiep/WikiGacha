@@ -1103,6 +1103,8 @@ export const BattleScalarFieldEnum = {
   player2Id: 'player2Id',
   winnerId: 'winnerId',
   log: 'log',
+  player1Deck: 'player1Deck',
+  player2Deck: 'player2Deck',
   status: 'status',
   createdAt: 'createdAt'
 } as const
@@ -1163,6 +1165,8 @@ export const PvPMatchScalarFieldEnum = {
   player2Id: 'player2Id',
   status: 'status',
   winnerId: 'winnerId',
+  player1Deck: 'player1Deck',
+  player2Deck: 'player2Deck',
   logs: 'logs',
   createdAt: 'createdAt'
 } as const
@@ -1183,6 +1187,14 @@ export const JsonNullValueInput = {
 } as const
 
 export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
+
+
+export const NullableJsonNullValueInput = {
+  DbNull: DbNull,
+  JsonNull: JsonNull
+} as const
+
+export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
 
 
 export const NullsOrder = {

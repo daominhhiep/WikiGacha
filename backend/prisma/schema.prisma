@@ -72,8 +72,10 @@ model Battle {
   player1Id String
   player2Id String?
   winnerId  String?
-  log       Json
-  status    BattleStatus @default(PENDING)
+  log         Json
+  player1Deck Json?
+  player2Deck Json?
+  status      BattleStatus @default(PENDING)
   createdAt DateTime     @default(now())
   player1   Player       @relation("Player1Battles", fields: [player1Id], references: [id])
   player2   Player?      @relation("Player2Battles", fields: [player2Id], references: [id])
@@ -137,6 +139,8 @@ model PvPMatch {
   player2Id String
   status    PvPStatus @default(MATCHMAKING)
   winnerId  String?
+  player1Deck Json?
+  player2Deck Json?
   logs      Json
   createdAt DateTime  @default(now())
   player1   Player    @relation("PvPPlayer1", fields: [player1Id], references: [id])

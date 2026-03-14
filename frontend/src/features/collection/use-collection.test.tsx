@@ -3,7 +3,6 @@ import { vi, describe, it, expect, beforeEach } from 'vitest';
 import { useInfiniteCollection } from './use-collection';
 import api from '@/services/api';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useAuthStore } from '../auth/auth-store';
 
 // Mock api
 vi.mock('@/services/api');
@@ -81,7 +80,6 @@ describe('useInfiniteCollection', () => {
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
     // Test getNextPageParam logic internally
-    const getNextPageParam =
       (useInfiniteCollection as any).mock?.calls?.[0]?.[0]?.getNextPageParam ||
       (result.current as any).options?.getNextPageParam;
 

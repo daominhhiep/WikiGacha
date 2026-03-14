@@ -1,5 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import { vi, describe, it, expect } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import TrophyGrid from './trophy-grid';
 import type { Trophy } from '../use-trophies';
 

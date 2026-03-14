@@ -23,21 +23,52 @@ export class TrophyService {
         icon: '🌟',
       });
     }
+
+    // Check collection size
+    const count = await this.prisma.inventory.count({ where: { playerId } });
+    if (count >= 50) {
+      await this.awardTrophy(playerId, 'COLLECTION_EXPERT', {
+        name: 'COLLECTION_EXPERT',
+        description: 'Maintain a collection of 50+ article cards',
+        icon: '📚',
+      });
+    }
+
+    // Gacha Addiction
+    if (cards.length > 0) {
+      // Just a simple increment if we had a counter, but let's check pulls via history or just total cards
+      if (count >= 100) {
+        await this.awardTrophy(playerId, 'GACHA_JUNKIE', {
+          name: 'GACHA_JUNKIE',
+          description: 'Acquire over 100 cards through the terminal',
+          icon: '🎰',
+        });
+      }
+    }
   }
 
   @OnEvent('battle.won')
-  async handleBattleWon(payload: { playerId: string; isWinner: boolean }) {
-    const { playerId, isWinner } = payload;
+  async handleBattleWon(payload: { playerId: string; isWinner: boolean; isPvP?: boolean }) {
+    const { playerId, isWinner, isPvP } = payload;
     if (!isWinner) return;
 
+    if (isPvP) {
+      await this.awardTrophy(playerId, 'PVP_CONQUEROR', {
+        name: 'PVP_CONQUEROR',
+        description: 'Achieve victory in your first PvP engagement',
+        icon: '⚔️',
+      });
+    }
+
     // Count both normal battles and PvP matches where this player won
-    const [battleWins, pvpWins] = await Promise.all([
+    const [battleWins, pvpWins, player] = await Promise.all([
       this.prisma.battle.count({
         where: { winnerId: playerId },
       }),
       this.prisma.pvPMatch.count({
         where: { winnerId: playerId },
       }),
+      this.prisma.player.findUnique({ where: { id: playerId } }),
     ]);
 
     const totalWins = battleWins + pvpWins;
@@ -45,8 +76,16 @@ export class TrophyService {
     if (totalWins >= 10) {
       await this.awardTrophy(playerId, 'VETERAN_COMMANDER', {
         name: 'VETERAN_COMMANDER',
-        description: 'Win 10 battles',
+        description: 'Win 10 battles across all modes',
         icon: '🎖️',
+      });
+    }
+
+    if (player && player.eloRating >= 1300) {
+      await this.awardTrophy(playerId, 'ELITE_DUELIST', {
+        name: 'ELITE_DUELIST',
+        description: 'Reach an Elo rating of 1300 or higher',
+        icon: '🏆',
       });
     }
   }

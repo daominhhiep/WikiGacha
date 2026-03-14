@@ -67,10 +67,10 @@ const CollectionPage: React.FC = () => {
     <div className="space-y-10 py-10 animate-in fade-in duration-700">
       {/* Header HUD */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-border-grid pb-8 relative">
-        <div className="absolute top-0 left-0 text-[10px] font-mono text-primary/40 uppercase mb-2">
-          [ USER_INVENTORY_TERMINAL_v1.0 ]
-        </div>
         <div className="space-y-2">
+          <div className="text-[10px] font-mono text-primary/40 uppercase mb-2">
+            [ USER_INVENTORY_TERMINAL_v1.0 ]
+          </div>
           <h1 className="text-5xl font-black tracking-tighter uppercase italic flex items-center gap-3">
             <Database className="text-primary size-10" />
             Collection

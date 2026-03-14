@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Body, UseGuards, Req } from '@nestjs/common';
+import { Controller, Post, Get, Body, UseGuards, Req, Param } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiProperty } from '@nestjs/swagger';
 import { BattleService } from './battle.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -35,5 +35,12 @@ export class BattleController {
   @Get('history')
   async getHistory(@Req() req: any) {
     return this.battleService.getBattleHistory(req.user.userId);
+  }
+
+  @ApiOperation({ summary: 'Get single battle details' })
+  @ApiResponse({ status: 200, description: 'Single battle details' })
+  @Get(':id')
+  async getBattle(@Param('id') id: string, @Req() req: any) {
+    return this.battleService.getBattle(id, req.user.userId);
   }
 }
