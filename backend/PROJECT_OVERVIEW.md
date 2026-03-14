@@ -81,6 +81,13 @@ Wikigacha is a multiverse-themed gacha game where every Wikipedia article is a c
 - **Logic:** Atomic queue operations with `removeFromQueue` to prevent duplicate entries.
 - **Scalability:** Built for high concurrency with Redis backend.
 
+### US22: Elo & Battle Stats
+- **Elo System:** Server-side implementation of the Elo rating system (K=32).
+- **Matchmaking Context:** Calculates rating changes for PvP battles based on victory/defeat/draw.
+- **Statistics Tracking:** Automatic tracking of `matchesPlayed` and real-time `eloRating` updates.
+- **Backend:** `BattleService` with a `calculateElo` method for rating adjustments.
+- **Logic:** Atomic updates to both players' ratings and stats after combat simulation.
+
 ## 📝 API Documentation
 - **Swagger UI:** Accessible at `/docs` when the server is running.
 - **Auth Endpoints:**

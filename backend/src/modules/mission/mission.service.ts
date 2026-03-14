@@ -13,7 +13,9 @@ export class MissionService {
    */
   @OnEvent('card.pulled')
   async handleCardPulled(payload: { playerId: string; count: number }) {
-    this.logger.debug(`Handling card.pulled for player ${payload.playerId}, count: ${payload.count}`);
+    this.logger.debug(
+      `Handling card.pulled for player ${payload.playerId}, count: ${payload.count}`,
+    );
     await this.updateProgress(payload.playerId, 'PULL_CARDS', payload.count);
   }
 
@@ -65,9 +67,7 @@ export class MissionService {
         });
 
         if (isCompleted) {
-          this.logger.log(
-            `Mission [${userMission.mission.title}] COMPLETED by player ${playerId}`,
-          );
+          this.logger.log(`Mission [${userMission.mission.title}] COMPLETED by player ${playerId}`);
         }
       }
     }

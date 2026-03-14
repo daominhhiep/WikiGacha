@@ -30,7 +30,10 @@ export class MissionController {
   @Get(':playerId')
   @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Get all missions for a player' })
-  @ApiResponse({ status: 200, description: 'Return all missions and their progress for the player.' })
+  @ApiResponse({
+    status: 200,
+    description: 'Return all missions and their progress for the player.',
+  })
   async getPlayerMissions(@Param('playerId') playerId: string) {
     const missions = await this.missionService.getPlayerMissions(playerId);
 
@@ -51,9 +54,6 @@ export class MissionController {
   @ApiResponse({ status: 404, description: 'Mission not found for this player.' })
   async claimReward(@Body() claimRewardDto: ClaimRewardDto) {
     console.log('[MissionController] Claiming reward:', claimRewardDto);
-    return this.missionService.claimReward(
-      claimRewardDto.userId,
-      claimRewardDto.userMissionId,
-    );
+    return this.missionService.claimReward(claimRewardDto.userId, claimRewardDto.userMissionId);
   }
 }
