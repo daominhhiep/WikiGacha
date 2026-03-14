@@ -3,6 +3,7 @@ import { MainLayout } from './components/layout/MainLayout';
 import { Button } from '@/components/ui/button';
 import GachaPage from '@/features/gacha/gacha-page';
 import CollectionPage from '@/features/collection/collection-page';
+import BattlePage from '@/features/battle/battle-page';
 import { AuthCallback } from './features/auth/auth-callback';
 
 const HomePage = () => (
@@ -37,17 +38,6 @@ const HomePage = () => (
         </Button>
       </Link>
     </div>
-  </div>
-);
-
-const BattlePage = () => (
-  <div className="py-8">
-    <h1 className="mb-4 text-3xl font-black uppercase font-mono tracking-widest border-l-4 border-primary pl-4">
-      COMBAT_SIMULATION
-    </h1>
-    <p className="text-muted-foreground font-mono text-xs uppercase">
-      Simulate data-clashes with other entities.
-    </p>
   </div>
 );
 

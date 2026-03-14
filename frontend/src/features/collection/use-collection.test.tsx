@@ -35,9 +35,7 @@ describe('useInfiniteCollection', () => {
 
   it('fetches paginated collection data', async () => {
     const mockData = {
-      items: [
-        { id: '1', card: { title: 'Card 1' } },
-      ],
+      items: [{ id: '1', card: { title: 'Card 1' } }],
       meta: {
         total: 1,
         page: 1,
@@ -55,9 +53,12 @@ describe('useInfiniteCollection', () => {
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
     expect(result.current.data?.pages[0]).toEqual(mockData);
-    expect(api.get).toHaveBeenCalledWith('/collection', expect.objectContaining({
-      params: expect.objectContaining({ page: 1, limit: 20 }),
-    }));
+    expect(api.get).toHaveBeenCalledWith(
+      '/collection',
+      expect.objectContaining({
+        params: expect.objectContaining({ page: 1, limit: 20 }),
+      }),
+    );
   });
 
   it('provides the next page param when more pages exist', async () => {
@@ -78,11 +79,12 @@ describe('useInfiniteCollection', () => {
     });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    
+
     // Test getNextPageParam logic internally
-    const getNextPageParam = (useInfiniteCollection as any).mock?.calls?.[0]?.[0]?.getNextPageParam 
-      || (result.current as any).options?.getNextPageParam;
-    
+    const getNextPageParam =
+      (useInfiniteCollection as any).mock?.calls?.[0]?.[0]?.getNextPageParam ||
+      (result.current as any).options?.getNextPageParam;
+
     // Access internal TanStack query option via result.current if possible or just trust the hook implementation
     // Actually we can just check hasNextPage
     expect(result.current.hasNextPage).toBe(true);

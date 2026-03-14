@@ -53,7 +53,7 @@ describe('GachaPage', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    
+
     (useAuthStore as any).mockReturnValue({
       accessToken: 'mock-token',
       player: { pityCounter: 0 },
@@ -87,7 +87,7 @@ describe('GachaPage', () => {
     const button = screen.getByRole('button');
     expect(button).toBeDisabled();
     // Match partial text since it has icons
-    expect(screen.getByText(/BREACHING_FIREWALL/)).toBeInTheDocument();
+    expect(screen.getByText(/BREACHING.../)).toBeInTheDocument();
   });
 
   it('calls openPack when button is clicked and shows reveal immediately', () => {
@@ -106,10 +106,10 @@ describe('GachaPage', () => {
     });
 
     render(<GachaPage />, { wrapper });
-    
+
     // Trigger transition
     fireEvent.click(screen.getByText('INITIATE_BREACH'));
-    
+
     expect(screen.getByTestId('gacha-reveal')).toBeInTheDocument();
     expect(screen.getByText('ERROR_STATE')).toBeInTheDocument();
   });

@@ -93,16 +93,16 @@
 **Independent Test**: Select 3 cards, start battle, watch logs/animation, verify winner and reward distribution.
 
 ### Tests for User Story 3
-- [ ] T028 [P] [US3] Unit test for Auto-Battle Engine logic in `backend/src/modules/battle/battle-engine.spec.ts`
-- [ ] T029 [US3] Integration test for Battle flow and rewards in `backend/test/battle.e2e-spec.ts`
+- [x] T028 [P] [US3] Unit test for Auto-Battle Engine logic in `backend/src/modules/battle/battle-engine.spec.ts`
+- [x] T029 [US3] Integration test for Battle flow and rewards in `backend/test/battle.e2e-spec.ts`
 
 ### Implementation for User Story 3
-- [ ] T030 [US3] Implement Auto-Battle Engine (Turn-based simulation) in `backend/src/modules/battle/battle-engine.ts`
-- [ ] T031 [US3] Implement Battle Service (State management, rewards) in `backend/src/modules/battle/battle.service.ts`
-- [ ] T032 [US3] Implement Battle Controller and `POST /battle/start` in `backend/src/modules/battle/battle.controller.ts`
-- [ ] T033 [P] [US3] Create Battle Deck Selection UI in `frontend/src/features/battle/DeckSelector.tsx`
-- [ ] T034 [US3] Implement Battle Visualizer (Log playback) in `frontend/src/features/battle/BattleArena.tsx`
-- [ ] T035 [US3] Add Battle Result screen with reward animation in `frontend/src/features/battle/BattleResult.tsx`
+- [x] T030 [US3] Implement Auto-Battle Engine (Turn-based simulation) in `backend/src/modules/battle/battle-engine.ts`
+- [x] T031 [US3] Implement Battle Service (State management, rewards) in `backend/src/modules/battle/battle.service.ts`
+- [x] T032 [US3] Implement Battle Controller and `POST /battle/start` in `backend/src/modules/battle/battle.controller.ts`
+- [x] T033 [P] [US3] Create Battle Deck Selection UI in `frontend/src/features/battle/DeckSelector.tsx`
+- [x] T034 [US3] Implement Battle Visualizer (Log playback) in `frontend/src/features/battle/BattleArena.tsx`
+- [x] T035 [US3] Add Battle Result screen with reward animation in `frontend/src/features/battle/BattleResult.tsx`
 
 **Checkpoint**: All user stories functional. Core loop complete.
 
@@ -112,11 +112,11 @@
 
 **Purpose**: Final refinements and verification.
 
-- [ ] T036 [P] Implement Redis caching for Wikipedia API responses in `backend/src/modules/card/wiki.service.ts`
-- [ ] T037 Add Loading States and Skeletons across all features in `frontend/src/components/ui/`
-- [ ] T038 Performance audit of Wikipedia card generation (target SC-001)
-- [ ] T039 [P] Final Documentation update in `README.md` and `quickstart.md`
-- [ ] T040 Run full E2E validation of the "Pull -> View -> Battle" loop
+- [x] T036 [P] Implement Redis caching for Card Pool metadata in `backend/src/modules/card/card.service.ts`
+- [x] T037 Add Loading States and Skeletons across all features in `frontend/src/components/ui/`
+- [x] T038 Performance audit of Wikipedia card generation (target SC-001)
+- [x] T039 [P] Final Documentation update in `README.md` and `quickstart.md`
+- [x] T040 Run full E2E validation of the "Pull -> View -> Battle" loop
 
 ---
 

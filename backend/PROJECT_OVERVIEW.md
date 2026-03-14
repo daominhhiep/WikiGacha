@@ -41,6 +41,16 @@ Wikigacha is a multiverse-themed gacha game where every Wikipedia article is a c
 - **Frontend:** Data-terminal style gacha page with breach animation.
 - **Card UI:** Cyberpunk-themed cards with full Wikipedia attribution and links.
 
+### US3: Battle with Wikipedia Cards
+- **Battle Engine:** Server-side auto-battle simulation (Turn-based logic).
+- **PvE Mode:** Challenge AI opponents using random card data.
+- **Rewards System:** Earn credits and XP based on battle results; automatic level-up.
+- **Battle History:** Track past combat logs and winners.
+- **Visualizer:** Frontend playback of combat logs with animations, health bars, and live logs.
+- **Endpoints:**
+  - `POST /api/v1/battle/start` - Start an auto-battle with a selected deck.
+  - `GET /api/v1/battle/history` - Retrieve player's battle history.
+
 ## 📝 API Documentation
 - **Swagger UI:** Accessible at `/docs` when the server is running.
 - **Auth Endpoints:**

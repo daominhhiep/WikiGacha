@@ -6,9 +6,8 @@ Auto-generated from all feature plans. Last updated: 2026-03-11
 
 - TypeScript (Node.js 20+) + React, Vite, Shadcn UI, Tailwind CSS (Frontend); 
 - NestJS + Prisma (Backend), Wikipedia API (001-wikigacha-core)
-- Database: MySql
+- Database: MySql, Redis (Caching)
 - Deployment: Docker
-- Search: elasticsearch
 
 ## Project Structure
 
@@ -40,7 +39,7 @@ TypeScript (Node.js 20+): Follow standard conventions
 
 ## Recent Changes
 
-- 001-wikigacha-core: Added TypeScript (Node.js 20+) + React, Vite, Shadcn UI, Tailwind CSS (Frontend); NestJS (Backend); Wikipedia API
+- 001-wikigacha-core: Full Core Loop Implemented (Auth -> Gacha -> Collection -> Battle). Added Redis caching, Framer Motion animations, and PvE Auto-Battle engine.
 
 ## Required
 <!-- MANUAL ADDITIONS START -->

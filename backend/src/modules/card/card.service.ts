@@ -2,6 +2,7 @@ import { Injectable, Logger, BadRequestException } from '@nestjs/common';
 import { PrismaService } from './../../common/prisma/prisma.service';
 import { WikiService, ArticleSummary } from './wiki.service';
 import { Rarity, Card } from '../../generated/prisma/client';
+import { RedisService } from '../../common/redis/redis.service';
 
 /**
  * Service for managing game cards and gacha mechanics.
@@ -13,10 +14,12 @@ export class CardService {
   private readonly PACK_COST = 10;
   private readonly CARDS_PER_PACK = 5;
   private readonly PITY_THRESHOLD = 10;
+  private readonly CACHE_KEY_COUNT = 'gacha:pool:count';
 
   constructor(
     private readonly prisma: PrismaService,
     private readonly wikiService: WikiService,
+    private readonly redisService: RedisService,
   ) {}
 
   /**
@@ -35,9 +38,24 @@ export class CardService {
     if (!player) throw new BadRequestException('Player not found');
     if (player.credits < this.PACK_COST) throw new BadRequestException('Insufficient credits');
 
-    // 2. Pull 5 random cards from the local Card Pool
-    // Optimized random selection: Get all IDs first (small pool) or use a random skip
-    const totalCards = await this.prisma.card.count();
+    // 2. Get total cards (from Cache or DB)
+    let totalCards: number;
+    try {
+      const cachedCount = await this.redisService.get(this.CACHE_KEY_COUNT);
+      if (cachedCount) {
+        totalCards = parseInt(cachedCount, 10);
+      } else {
+        totalCards = await this.prisma.card.count();
+        // If pool is large enough (>= 50k), cache for 24 hours, otherwise 1 min
+        const ttl = totalCards >= 50000 ? 86400 : 60;
+        await this.redisService.set(this.CACHE_KEY_COUNT, totalCards.toString(), 'EX', ttl);
+      }
+    } catch (err) {
+      this.logger.warn(`Redis error fetching card count: ${err.message}`);
+      totalCards = await this.prisma.card.count();
+    }
+
+    // 3. Pull 5 random cards from the local Card Pool
     let cards: Card[] = [];
 
     if (totalCards >= this.CARDS_PER_PACK) {
@@ -72,7 +90,7 @@ export class CardService {
       cards = liveCards.filter((c): c is Card => c !== null);
     }
 
-    // 3. Pity Logic: If pity is triggered and no high rarity in the 5 cards, replace one
+    // 4. Pity Logic: If pity is triggered and no high rarity in the 5 cards, replace one
     const currentPity = player.pityCounter + 1;
     let highRarityPulled = cards.some(c => c.rarity === Rarity.SSR || c.rarity === Rarity.UR || c.rarity === Rarity.LR);
 
@@ -90,7 +108,7 @@ export class CardService {
       }
     }
 
-    // 4. Update Inventory and Player State in parallel
+    // 5. Update Inventory and Player State in parallel
     const [updatedPlayer] = await Promise.all([
       this.prisma.player.update({
         where: { id: playerId },
@@ -107,9 +125,9 @@ export class CardService {
       }),
     ]);
 
-    // 5. BACKGROUND REFILL: Keep pool fresh (Fire and forget)
-    // Grow the pool until it reaches 500 cards
-    if (totalCards < 5000) {
+    // 6. BACKGROUND REFILL: Keep pool fresh (Fire and forget)
+    // Grow the pool until it reaches 50000 cards
+    if (totalCards < 50000) {
       this.logger.log(`[Background] Triggering pool refill (Current size: ${totalCards})`);
       this.refillPool(15).catch(err => this.logger.error(`Pool refill failed: ${err.message}`));
     }
@@ -153,19 +171,19 @@ export class CardService {
 
     await Promise.all(promises);
     this.logger.log(`[Background] Refill complete.`);
+    
+    // Update cached count after refill
+    try {
+      const totalCards = await this.prisma.card.count();
+      const ttl = totalCards >= 50000 ? 86400 : 60;
+      await this.redisService.set(this.CACHE_KEY_COUNT, totalCards.toString(), 'EX', ttl);
+    } catch (e) {
+      this.logger.warn(`Failed to update cached card count: ${e.message}`);
+    }
   }
 
   /**
    * Generates a game card from a Wikipedia article summary.
-   *
-   * @param wikiData Summary data from Wikipedia API.
-   * @param pageViews (Optional) Page views for rarity/stat derivation.
-   * @param languageCount (Optional) Number of languages for HP derivation.
-   * @param pageAssessments (Optional) Quality assessments from Wikipedia.
-   * @param length (Optional) Article content length.
-   * @param quality (Optional) Quality score from WikiRank.
-   * @param popularity (Optional) Popularity score from WikiRank.
-   * @returns The newly created or updated card from the database.
    */
   async generateCardFromWiki(
     wikiData: ArticleSummary,
@@ -176,6 +194,7 @@ export class CardService {
     quality: number = 0,
     popularity: number = 0,
   ): Promise<Card> {
+    const start = Date.now();
     // 1. Determine final Q-Score (WikiRank preferred, fallback to internal calculation)
     let finalQScore = quality;
     if (finalQScore <= 0) {
@@ -203,11 +222,15 @@ export class CardService {
     };
 
     // Upsert the card in the database to ensure we have the latest version but don't duplicate
-    return this.prisma.card.upsert({
+    const card = await this.prisma.card.upsert({
       where: { id: cardData.id },
       update: cardData,
       create: cardData,
     });
+
+    const duration = Date.now() - start;
+    this.logger.debug(`generateCardFromWiki("${wikiData.title}") took ${duration}ms`);
+    return card;
   }
 
   /**
@@ -254,9 +277,6 @@ export class CardService {
 
   /**
    * Derives rarity based on Q-Score.
-   *
-   * @param qScore The calculated quality score (0-100).
-   * @returns The derived Rarity level (C to LR).
    */
   private deriveRarity(qScore: number): Rarity {
     if (qScore >= 100) return Rarity.LR;
@@ -293,11 +313,9 @@ export class CardService {
     const hp = Math.min(Math.floor(languageCount * 50 * mult) + 100, 15000);
 
     // ATK based on popularity (max 15,000)
-    // Scale: 1M views -> ~5000 base * mult
     const atk = Math.min(Math.floor((pageViews / 200) * mult) + 10, 15000);
 
     // DEF based on depth (max 15,000)
-    // Scale: 100k length -> ~2000 base * mult
     const def = Math.min(Math.floor((length / 50) * mult) + 10, 15000);
 
     return { hp, atk, def };

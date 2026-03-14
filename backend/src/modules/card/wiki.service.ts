@@ -72,6 +72,7 @@ export class WikiService {
    * @returns Array of article titles.
    */
   async getRandomArticles(limit: number): Promise<string[]> {
+    const start = Date.now();
     const params = {
       action: 'query',
       format: 'json',
@@ -93,6 +94,8 @@ export class WikiService {
         throw new Error('Invalid response from Wikipedia API');
       }
 
+      const duration = Date.now() - start;
+      this.logger.debug(`getRandomArticles(${limit}) took ${duration}ms`);
       return data.query.random.map((article) => article.title);
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Unknown error';
@@ -108,6 +111,7 @@ export class WikiService {
    * @returns Article summary data (title, extract, thumbnail, etc.)
    */
   async getArticleSummary(title: string): Promise<ArticleSummary | null> {
+    const start = Date.now();
     const encodedTitle = encodeURIComponent(title.replace(/ /g, '_'));
     const summaryUrl = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodedTitle}`;
 
@@ -118,6 +122,8 @@ export class WikiService {
         }),
       );
 
+      const duration = Date.now() - start;
+      this.logger.debug(`getArticleSummary("${title}") took ${duration}ms`);
       return {
         title: data.title,
         extract: data.extract,
@@ -143,6 +149,7 @@ export class WikiService {
    * @returns Map of article data indexed by title.
    */
   async getBatchArticlesData(titles: string[]): Promise<Record<string, any>> {
+    const start = Date.now();
     const params = {
       action: 'query',
       format: 'json',
@@ -197,6 +204,8 @@ export class WikiService {
         };
       }
 
+      const duration = Date.now() - start;
+      this.logger.debug(`getBatchArticlesData(${titles.length}) took ${duration}ms`);
       return results;
     } catch (error) {
       this.logger.error(`Error fetching batch articles: ${error.message}`);
@@ -211,6 +220,7 @@ export class WikiService {
    * @returns An object containing quality and popularity scores.
    */
   async getWikiRankScore(title: string, lang: string = 'en'): Promise<{ quality: number; popularity: number }> {
+    const start = Date.now();
     const encodedTitle = encodeURIComponent(title.replace(/ /g, '_'));
     const url = `https://api.wikirank.net/api.php?name=${encodedTitle}&lang=${lang}`;
     this.logger.debug(`Fetching WikiRank score: ${url}`);
@@ -223,6 +233,8 @@ export class WikiService {
       );
 
       const result = response?.data?.result?.[lang];
+      const duration = Date.now() - start;
+      this.logger.debug(`getWikiRankScore("${title}") took ${duration}ms`);
       return {
         quality: typeof result?.quality === 'number' ? result.quality : 0,
         popularity: typeof result?.popularity === 'number' ? result.popularity : 0,

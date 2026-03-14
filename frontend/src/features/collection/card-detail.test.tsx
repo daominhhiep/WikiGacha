@@ -30,18 +30,18 @@ describe('CardDetail', () => {
 
   it('renders card details when item is provided', () => {
     render(<CardDetail item={mockItem} onClose={vi.fn()} />);
-    
+
     // Check title (might be multiple due to Card component background)
     expect(screen.getAllByText('Detailed Card').length).toBeGreaterThan(0);
-    
+
     // Check summary
     expect(screen.getByText(/This is a long summary/)).toBeInTheDocument();
-    
+
     // Check stats (displayed in both Card and Sidebar)
     expect(screen.getAllByText('150').length).toBeGreaterThan(0);
     expect(screen.getAllByText('45').length).toBeGreaterThan(0);
     expect(screen.getAllByText('30').length).toBeGreaterThan(0);
-    
+
     // Check favorite badge
     expect(screen.getByText('FAVORITE_ASSET')).toBeInTheDocument();
   });
@@ -49,11 +49,11 @@ describe('CardDetail', () => {
   it('calls onClose when close button is clicked', () => {
     const onClose = vi.fn();
     render(<CardDetail item={mockItem} onClose={onClose} />);
-    
+
     // In our implementation, the close button is the first button in the DOM order of the modal.
     const buttons = screen.getAllByRole('button');
     fireEvent.click(buttons[0]); // The X button
-    
+
     expect(onClose).toHaveBeenCalled();
   });
 

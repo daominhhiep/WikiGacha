@@ -15,7 +15,7 @@ interface CollectionFiltersProps {
 }
 
 /**
- * CollectionFilters component provides the UI for searching, 
+ * CollectionFilters component provides the UI for searching,
  * filtering by rarity, and sorting the card collection.
  */
 const CollectionFilters: React.FC<CollectionFiltersProps> = ({
@@ -31,7 +31,7 @@ const CollectionFilters: React.FC<CollectionFiltersProps> = ({
       {/* Search */}
       <div className="relative group">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground transition-colors group-focus-within:text-primary" />
-        <input 
+        <input
           type="text"
           placeholder="SEARCH_INDEX..."
           value={searchQuery}
@@ -50,10 +50,10 @@ const CollectionFilters: React.FC<CollectionFiltersProps> = ({
             key={r}
             onClick={() => onRarityFilterChange(r)}
             className={cn(
-              "px-3 py-1 text-[10px] font-black transition-all",
-              rarityFilter === r 
-                ? "bg-primary text-black" 
-                : "text-muted-foreground hover:text-primary hover:bg-primary/10"
+              'px-3 py-1 text-[10px] font-black transition-all',
+              rarityFilter === r
+                ? 'bg-primary text-black'
+                : 'text-muted-foreground hover:text-primary hover:bg-primary/10',
             )}
           >
             {r}
@@ -62,7 +62,7 @@ const CollectionFilters: React.FC<CollectionFiltersProps> = ({
       </div>
 
       {/* Sort */}
-      <select 
+      <select
         value={sortBy}
         onChange={(e) => onSortByChange(e.target.value as SortOption)}
         className="bg-black/40 border border-border-grid h-10 px-4 text-xs font-mono focus:border-primary outline-none cursor-pointer uppercase"

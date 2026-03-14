@@ -18,10 +18,13 @@ vi.mock('./card-detail', () => ({
 // Mock IntersectionObserver
 const mockObserve = vi.fn();
 const mockDisconnect = vi.fn();
-vi.stubGlobal('IntersectionObserver', class {
-  observe = mockObserve;
-  disconnect = mockDisconnect;
-});
+vi.stubGlobal(
+  'IntersectionObserver',
+  class {
+    observe = mockObserve;
+    disconnect = mockDisconnect;
+  },
+);
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -38,12 +41,18 @@ const wrapper = ({ children }: { children: React.ReactNode }) => (
 describe('CollectionPage', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    
+
     (useInfiniteCollection as any).mockReturnValue({
       data: {
         pages: [
           {
-            items: [{ id: '1', card: { title: 'Card 1', rarity: 'C' }, acquiredAt: new Date().toISOString() }],
+            items: [
+              {
+                id: '1',
+                card: { title: 'Card 1', rarity: 'C' },
+                acquiredAt: new Date().toISOString(),
+              },
+            ],
             meta: { total: 1, page: 1, limit: 20, totalPages: 1 },
           },
         ],
@@ -72,7 +81,8 @@ describe('CollectionPage', () => {
     });
 
     render(<CollectionPage />, { wrapper });
-    expect(screen.getByText('Accessing_Central_Database...')).toBeInTheDocument();
+    // When loading, we still show the header but the grid is empty/skeletons
+    expect(screen.getByText('Collection')).toBeInTheDocument();
   });
 
   it('shows end of database message when no more pages', () => {

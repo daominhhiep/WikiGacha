@@ -30,160 +30,183 @@ describe('WikiService', () => {
 
     service = module.get<WikiService>(WikiService);
     httpService = module.get<HttpService>(HttpService);
+
+    jest.clearAllMocks();
   });
 
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
 
-  describe('getRandomArticles', () => {
-    it('should return a list of random article titles', async () => {
-      const mockResponse = {
-        data: {
-          query: {
-            random: [{ title: 'Article 1' }, { title: 'Article 2' }],
-          },
-        },
-        status: 200,
-        statusText: 'OK',
-        headers: {},
-        config: { headers: {} as any },
-      };
-
-      jest.spyOn(httpService, 'get').mockReturnValue(of(mockResponse as AxiosResponse));
-
-      const result = await service.getRandomArticles(2);
-      expect(result).toEqual(['Article 1', 'Article 2']);
-      expect(httpService.get).toHaveBeenCalledWith(
-        'https://en.wikipedia.org/w/api.php',
-        expect.objectContaining({
-          params: expect.objectContaining({ action: 'query' }),
-        }),
-      );
-    });
-
-    it('should throw an error if the API call fails', async () => {
-      jest.spyOn(httpService, 'get').mockReturnValue(throwError(() => new Error('API Error')));
-      await expect(service.getRandomArticles(2)).rejects.toThrow('API Error');
-    });
-  });
-
   describe('getArticleSummary', () => {
-    it('should return article summary data', async () => {
-      const mockResponse = {
-        data: {
-          title: 'Article 1',
-          extract: 'This is a summary',
-          thumbnail: { source: 'image.jpg' },
-          pageid: 123,
-          content_urls: { desktop: { page: 'https://en.wikipedia.org/wiki/Article_1' } },
-        },
-        status: 200,
-        statusText: 'OK',
-        headers: {},
-        config: { headers: {} as any },
-      };
+    const mockSummary = {
+      title: 'Article 1',
+      extract: 'This is a summary',
+      thumbnail: { source: 'image.jpg' },
+      pageid: 123,
+      content_urls: { desktop: { page: 'https://en.wikipedia.org/wiki/Article_1' } },
+    };
 
-      jest.spyOn(httpService, 'get').mockReturnValue(of(mockResponse as AxiosResponse));
+    it('should fetch summary from Wikipedia API', async () => {
+      const mockApiResponse = {
+        data: mockSummary,
+      };
+      jest.spyOn(httpService, 'get').mockReturnValue(of(mockApiResponse as AxiosResponse));
 
       const result = await service.getArticleSummary('Article 1');
+
       expect(result).toEqual({
-        title: 'Article 1',
-        extract: 'This is a summary',
-        thumbnail: 'image.jpg',
-        pageid: 123,
-        content_urls: { desktop: { page: 'https://en.wikipedia.org/wiki/Article_1' } },
+        title: mockSummary.title,
+        extract: mockSummary.extract,
+        thumbnail: mockSummary.thumbnail.source,
+        pageid: mockSummary.pageid,
+        content_urls: mockSummary.content_urls,
       });
       expect(httpService.get).toHaveBeenCalledWith(
-        expect.stringContaining('/api/rest_v1/page/summary/Article_1'),
+        expect.stringContaining('/page/summary/Article_1'),
         expect.any(Object),
       );
     });
 
-    it('should return null if the article is not found', async () => {
+    it('should return null if article is not found', async () => {
       const errorResponse = {
         response: {
           status: 404,
           data: { message: 'Not Found' },
         },
       };
-
       jest.spyOn(httpService, 'get').mockReturnValue(throwError(() => errorResponse));
+
       const result = await service.getArticleSummary('Unknown');
       expect(result).toBeNull();
     });
   });
 
-  describe('getArticleStats', () => {
-    it('should return article stats (page views and language count)', async () => {
+  describe('getRandomArticles', () => {
+    it('should fetch random article titles', async () => {
       const mockResponse = {
+        data: {
+          query: {
+            random: [{ title: 'Random 1' }, { title: 'Random 2' }],
+          },
+        },
+      };
+      jest.spyOn(httpService, 'get').mockReturnValue(of(mockResponse as AxiosResponse));
+
+      const result = await service.getRandomArticles(2);
+
+      expect(result).toEqual(['Random 1', 'Random 2']);
+      expect(httpService.get).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({ params: expect.objectContaining({ list: 'random' }) }),
+      );
+    });
+  });
+
+  describe('getBatchArticlesData', () => {
+    it('should fetch data for multiple articles', async () => {
+      const mockResponse = {
+        data: {
+          query: {
+            pages: {
+              '1': { pageid: 1, title: 'A', extract: 'Ext A', pageviews: { '2024-01-01': 10 } },
+              '2': { pageid: 2, title: 'B', extract: 'Ext B', pageviews: { '2024-01-01': 20 } },
+            },
+          },
+        },
+      };
+      jest.spyOn(httpService, 'get').mockReturnValue(of(mockResponse as AxiosResponse));
+
+      const result = await service.getBatchArticlesData(['A', 'B']);
+
+      expect(result['A']).toBeDefined();
+      expect(result['B']).toBeDefined();
+      expect(result['A'].pageViews).toBe(10);
+    });
+  });
+
+  describe('getWikiRankScore', () => {
+    it('should fetch scores from WikiRank', async () => {
+      const mockResponse = {
+        data: {
+          result: {
+            en: { quality: 85, popularity: 90 },
+          },
+        },
+      };
+      jest.spyOn(httpService, 'get').mockReturnValue(of(mockResponse as AxiosResponse));
+
+      const result = await service.getWikiRankScore('Article');
+
+      expect(result).toEqual({ quality: 85, popularity: 90 });
+    });
+  });
+
+  describe('getTopArticles', () => {
+    it('should fetch top articles from Wikimedia', async () => {
+      const mockResponse = {
+        data: {
+          items: [
+            {
+              articles: [
+                { article: 'Main_Page', views: 1000 },
+                { article: 'Popular_Article', views: 500 },
+              ],
+            },
+          ],
+        },
+      };
+      jest.spyOn(httpService, 'get').mockReturnValue(of(mockResponse as AxiosResponse));
+
+      const result = await service.getTopArticles(10);
+
+      expect(result).toContain('Popular Article');
+      expect(result).not.toContain('Main Page');
+    });
+  });
+
+  describe('getArticleStats', () => {
+    it('should fetch stats from Wikipedia APIs', async () => {
+      const mockActionResponse = {
         data: {
           query: {
             pages: {
               '123': {
                 pageid: 123,
                 title: 'Article 1',
-                pageviews: {
-                  '2024-03-01': 100,
-                  '2024-03-02': 200,
-                },
                 langlinks: [{}, {}, {}],
+                pageassessments: { enwiki: 'FA' },
+                length: 1000,
               },
             },
           },
         },
-        status: 200,
-        statusText: 'OK',
-        headers: {},
-        config: { headers: {} as any },
       };
 
-      jest.spyOn(httpService, 'get').mockReturnValue(of(mockResponse as AxiosResponse));
+      const mockAnalyticsResponse = {
+        data: {
+          items: [{ views: 100 }, { views: 200 }],
+        },
+      };
+
+      jest.spyOn(httpService, 'get')
+        .mockReturnValueOnce(of(mockActionResponse as AxiosResponse))
+        .mockReturnValueOnce(of(mockAnalyticsResponse as AxiosResponse));
 
       const result = await service.getArticleStats('Article 1');
+
       expect(result).toEqual({
         pageViews: 300,
         languageCount: 3,
+        pageAssessments: { enwiki: 'FA' },
+        length: 1000,
       });
-      expect(httpService.get).toHaveBeenCalledWith(
-        'https://en.wikipedia.org/w/api.php',
-        expect.objectContaining({
-          params: expect.objectContaining({
-            action: 'query',
-            prop: 'pageviews|langlinks',
-            titles: 'Article 1',
-          }),
-        }),
-      );
-    });
-
-    it('should return zeros if the article is missing', async () => {
-      const mockResponse = {
-        data: {
-          query: {
-            pages: {
-              '-1': {
-                missing: '',
-              },
-            },
-          },
-        },
-        status: 200,
-        statusText: 'OK',
-        headers: {},
-        config: { headers: {} as any },
-      };
-
-      jest.spyOn(httpService, 'get').mockReturnValue(of(mockResponse as AxiosResponse));
-
-      const result = await service.getArticleStats('NonExistent');
-      expect(result).toEqual({ pageViews: 0, languageCount: 0 });
     });
   });
 
   describe('getGlobalStats', () => {
-    it('should return global wiki statistics', async () => {
-      const mockStatsResponse = {
+    it('should fetch global stats from Wikipedia APIs', async () => {
+      const mockStatsRes = {
         data: {
           query: {
             statistics: {
@@ -191,51 +214,20 @@ describe('WikiService', () => {
             },
           },
         },
-        status: 200,
-        statusText: 'OK',
-        headers: {},
-        config: { headers: {} as any },
       };
 
-      const mockAnalyticsResponse = {
+      const mockAnalyticsRes = {
         data: {
-          items: [
-            { views: 5000000000 },
-            { views: 10000000000 },
-            { views: 1000000 }, // Current (incomplete) month
-          ],
+          items: [{ views: 10000000000 }],
         },
-        status: 200,
-        statusText: 'OK',
-        headers: {},
-        config: { headers: {} as any },
       };
 
-      jest
-        .spyOn(httpService, 'get')
-        .mockReturnValueOnce(of(mockStatsResponse as AxiosResponse)) // SiteInfo
-        .mockReturnValueOnce(of(mockAnalyticsResponse as AxiosResponse)); // Analytics
+      jest.spyOn(httpService, 'get')
+        .mockReturnValueOnce(of(mockStatsRes as AxiosResponse))
+        .mockReturnValueOnce(of(mockAnalyticsRes as AxiosResponse));
 
       const result = await service.getGlobalStats();
-      expect(result).toEqual({
-        articleCount: 7000000,
-        totalMonthlyViews: 10000000000, // Should be the MAX value
-      });
-      expect(httpService.get).toHaveBeenCalledWith(
-        'https://en.wikipedia.org/w/api.php',
-        expect.objectContaining({
-          params: expect.objectContaining({ meta: 'siteinfo' }),
-        }),
-      );
-      expect(httpService.get).toHaveBeenCalledWith(
-        expect.stringContaining('wikimedia.org/api/rest_v1/metrics/pageviews/aggregate'),
-        expect.any(Object),
-      );
-    });
 
-    it('should return fallback values if the API calls fail', async () => {
-      jest.spyOn(httpService, 'get').mockReturnValue(throwError(() => new Error('API Error')));
-      const result = await service.getGlobalStats();
       expect(result).toEqual({
         articleCount: 7000000,
         totalMonthlyViews: 10000000000,

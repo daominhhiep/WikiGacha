@@ -15,21 +15,15 @@ const CollectionPage: React.FC = () => {
   const [sortBy, setSortBy] = useState<SortOption>('NEWEST');
   const [selectedItem, setSelectedItem] = useState<InventoryItem | null>(null);
 
-  const { 
-    data, 
-    isLoading, 
-    error, 
-    fetchNextPage, 
-    hasNextPage, 
-    isFetchingNextPage 
-  } = useInfiniteCollection({
-    search: searchQuery,
-    rarity: rarityFilter,
-    sortBy
-  });
+  const { data, isLoading, error, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    useInfiniteCollection({
+      search: searchQuery,
+      rarity: rarityFilter,
+      sortBy,
+    });
 
   const { mutate: toggleFavorite } = useToggleFavorite();
-  
+
   const loadMoreRef = useRef<HTMLDivElement>(null);
 
   // Infinite Scroll Intersection Observer
@@ -40,10 +34,10 @@ const CollectionPage: React.FC = () => {
           fetchNextPage();
         }
       },
-      { 
+      {
         threshold: 0,
         rootMargin: '600px', // Pre-fetch data 600px before user reaches the bottom
-      }
+      },
     );
 
     if (loadMoreRef.current) {
@@ -53,23 +47,14 @@ const CollectionPage: React.FC = () => {
     return () => observer.disconnect();
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-  if (isLoading) {
-    return (
-      <div className="flex min-h-[60vh] flex-col items-center justify-center space-y-4">
-        <Loader2 className="size-12 animate-spin text-primary" />
-        <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground animate-pulse">
-          Accessing_Central_Database...
-        </p>
-      </div>
-    );
-  }
-
   if (error) {
     return (
       <div className="flex min-h-[60vh] flex-col items-center justify-center p-8 border-2 border-red-500/20 bg-red-500/5">
         <Database className="size-16 text-red-500 mb-4 opacity-50" />
         <h2 className="text-2xl font-black uppercase text-red-500 mb-2">Connection_Lost</h2>
-        <p className="text-sm font-mono text-red-400/80 uppercase">Failed to retrieve inventory data from core terminal.</p>
+        <p className="text-sm font-mono text-red-400/80 uppercase">
+          Failed to retrieve inventory data from core terminal.
+        </p>
       </div>
     );
   }
@@ -91,12 +76,13 @@ const CollectionPage: React.FC = () => {
             Collection
           </h1>
           <p className="text-xs font-mono text-muted-foreground uppercase tracking-widest">
-            Stored Article Assets: <span className="text-primary font-bold">{totalCount}</span> / 500
+            Stored Article Assets: <span className="text-primary font-bold">{totalCount}</span> /
+            500
           </p>
         </div>
 
         {/* Toolbar */}
-        <CollectionFilters 
+        <CollectionFilters
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
           rarityFilter={rarityFilter}
@@ -107,38 +93,38 @@ const CollectionPage: React.FC = () => {
       </div>
 
       {/* Main Grid */}
-      <CollectionGrid 
-        items={allItems} 
-        isLoadingMore={isFetchingNextPage}
+      <CollectionGrid
+        items={isLoading ? [] : allItems}
+        isLoadingMore={isLoading || isFetchingNextPage}
         onToggleFavorite={(id) => toggleFavorite(id)}
         onCardClick={(item) => setSelectedItem(item)}
       />
 
       {/* Infinite Scroll Trigger */}
-      <div 
-        ref={loadMoreRef} 
-        className="h-20 flex flex-col items-center justify-center gap-2 mt-10"
-      >
+      <div ref={loadMoreRef} className="h-20 flex flex-col items-center justify-center gap-2 mt-10">
         {isFetchingNextPage ? (
           <>
             <Loader2 className="size-6 animate-spin text-primary" />
-            <span className="text-[10px] font-mono text-primary uppercase animate-pulse">DECRYPTING_MORE_RECORDS...</span>
+            <span className="text-[10px] font-mono text-primary uppercase animate-pulse">
+              DECRYPTING_MORE_RECORDS...
+            </span>
           </>
         ) : hasNextPage ? (
           <>
             <ArrowDownCircle className="size-6 text-primary/40 animate-bounce" />
-            <span className="text-[10px] font-mono text-primary/40 uppercase tracking-widest">SCROLL_FOR_RECORDS</span>
+            <span className="text-[10px] font-mono text-primary/40 uppercase tracking-widest">
+              SCROLL_FOR_RECORDS
+            </span>
           </>
-        ) : allItems.length > 0 ? (
-          <span className="text-[10px] font-mono text-muted-foreground/40 uppercase tracking-widest">— END_OF_DATABASE —</span>
+        ) : allItems.length > 0 || isLoading ? (
+          <span className="text-[10px] font-mono text-muted-foreground/40 uppercase tracking-widest">
+            — END_OF_DATABASE —
+          </span>
         ) : null}
       </div>
 
       {/* Detail Modal */}
-      <CardDetail 
-        item={selectedItem} 
-        onClose={() => setSelectedItem(null)} 
-      />
+      <CardDetail item={selectedItem} onClose={() => setSelectedItem(null)} />
     </div>
   );
 };
