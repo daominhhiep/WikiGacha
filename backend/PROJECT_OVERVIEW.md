@@ -88,6 +88,17 @@ Wikigacha is a multiverse-themed gacha game where every Wikipedia article is a c
 - **Backend:** `BattleService` with a `calculateElo` method for rating adjustments.
 - **Logic:** Atomic updates to both players' ratings and stats after combat simulation.
 
+### US25: Deck Snapshots & Battle History
+- **Deck Persistence:** Automatic snapshotting of player decks during every battle (PvE and PvP).
+- **Battle Replays:** Support for detailed battle retrieval and playback via `BattleService.getBattle`.
+- **Combined History:** Integrated view for both PvE and PvP match history in the same list.
+- **Backend:** 
+  - `BattleService.getBattleHistory` merging data from `Battle` and `PvPMatch` tables.
+  - `PvPController` providing detailed match data with reconstructed participant states.
+- **Frontend:** 
+  - Enhanced `BattlePage` with history filtering and improved visualizer.
+  - Automated deck state reconstruction for historical matches.
+
 ## 📝 API Documentation
 - **Swagger UI:** Accessible at `/docs` when the server is running.
 - **Auth Endpoints:**
