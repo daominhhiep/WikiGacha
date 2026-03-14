@@ -10,6 +10,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 
 interface DeckSelectorProps {
   onStartBattle: (deckIds: string[]) => void;
+  onJoinQueue: (deckIds: string[]) => void;
   isStarting?: boolean;
 }
 
@@ -17,7 +18,11 @@ interface DeckSelectorProps {
  * DeckSelector component allows players to select up to 5 cards from their collection for battle.
  * Follows the Cyberpunk/Anti-Softness design system.
  */
-const DeckSelector: React.FC<DeckSelectorProps> = ({ onStartBattle, isStarting = false }) => {
+const DeckSelector: React.FC<DeckSelectorProps> = ({
+  onStartBattle,
+  onJoinQueue,
+  isStarting = false,
+}) => {
   const { selectedCardIds, toggleCard, clearDeck, maxDeckSize, cardRegistry, registerCards } =
     useBattleStore();
   const [rarityFilter, setRarityFilter] = useState<string>('ALL');
@@ -25,7 +30,7 @@ const DeckSelector: React.FC<DeckSelectorProps> = ({ onStartBattle, isStarting =
   // Fetch collection
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } = useInfiniteCollection(
     {
-      rarity: rarityFilter === 'ALL' ? undefined : (rarityFilter as any),
+      rarity: rarityFilter === 'ALL' ? undefined : (rarityFilter as Rarity),
     },
   );
 
@@ -44,9 +49,15 @@ const DeckSelector: React.FC<DeckSelectorProps> = ({ onStartBattle, isStarting =
       .filter((item): item is InventoryItem => !!item);
   }, [selectedCardIds, cardRegistry]);
 
-  const handleStart = () => {
+  const handleStartPvE = () => {
     if (selectedCardIds.length > 0) {
       onStartBattle(selectedCardIds);
+    }
+  };
+
+  const handleStartPvP = () => {
+    if (selectedCardIds.length > 0) {
+      onJoinQueue(selectedCardIds);
     }
   };
 
@@ -75,21 +86,29 @@ const DeckSelector: React.FC<DeckSelectorProps> = ({ onStartBattle, isStarting =
             <Trash2 className="size-3 mr-2" /> CLEAR_ALL
           </Button>
 
-          <Button
-            size="lg"
-            onClick={handleStart}
-            disabled={selectedCardIds.length === 0 || isStarting}
-            className="rounded-none bg-primary text-black font-black uppercase tracking-widest px-8 group relative overflow-hidden"
-          >
-            {isStarting ? (
-              <Loader2 className="size-5 animate-spin" />
-            ) : (
+          <div className="flex gap-2">
+            <Button
+              size="lg"
+              variant="outline"
+              onClick={handleStartPvE}
+              disabled={selectedCardIds.length === 0 || isStarting}
+              className="rounded-none border-primary/40 text-primary hover:bg-primary/5 font-black uppercase tracking-widest px-6"
+            >
+              {isStarting ? <Loader2 className="size-5 animate-spin" /> : <>PVE_SIMULATION</>}
+            </Button>
+
+            <Button
+              size="lg"
+              onClick={handleStartPvP}
+              disabled={selectedCardIds.length === 0 || isStarting}
+              className="rounded-none bg-primary text-black font-black uppercase tracking-widest px-8 group relative overflow-hidden"
+            >
               <>
-                START_ENGAGEMENT
+                JOIN_PVP_QUEUE
                 <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-500" />
               </>
-            )}
-          </Button>
+            </Button>
+          </div>
         </div>
       </div>
 

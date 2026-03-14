@@ -123,10 +123,10 @@ export function Navbar() {
         <div className="flex flex-1 items-center space-x-8 text-[11px] font-mono font-black uppercase tracking-widest">
           {navItems.map((item) => {
             const isLocked = item.requiresAuth && !player;
-            
+
             if (isLocked) {
               return (
-                <div 
+                <div
                   key={item.path}
                   className="text-muted-foreground/20 cursor-not-allowed relative py-1 flex items-center gap-1.5"
                   title="AUTHENTICATION_REQUIRED"

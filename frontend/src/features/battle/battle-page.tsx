@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import DeckSelector from './DeckSelector';
 import BattleArena from './BattleArena';
+import PvPBattleView from './components/pvp-battle-view';
 import { useBattle, type BattleResult } from './use-battle';
 import { Button } from '@/components/ui/button';
 import { Swords, History, Trophy, ArrowLeft } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/skeleton';
+import MatchmakingOverlay from '../pvp/components/matchmaking-overlay';
 
 type BattlePhase = 'DECK_SELECTION' | 'IN_BATTLE' | 'RESULTS' | 'HISTORY';
 
@@ -17,15 +19,31 @@ const BattlePage: React.FC = () => {
   const [phase, setPhase] = useState<BattlePhase>('DECK_SELECTION');
   const { startBattle, isStartingBattle, battleHistory, isLoadingHistory } = useBattle();
   const [lastResult, setLastResult] = useState<BattleResult | null>(null);
+  const [isSearchingMatch, setIsSearchingMatch] = useState(false);
+  const [pendingDeckIds, setPendingDeckIds] = useState<string[]>([]);
+  const [isPvP, setIsPvP] = useState(false);
 
   const handleStartBattle = async (deckIds: string[]) => {
     try {
       const result = await startBattle(deckIds);
       setLastResult(result);
+      setIsPvP(false);
       setPhase('IN_BATTLE');
     } catch (error) {
       console.error('Failed to start battle:', error);
     }
+  };
+
+  const handleJoinQueue = (deckIds: string[]) => {
+    setPendingDeckIds(deckIds);
+    setIsSearchingMatch(true);
+  };
+
+  const handleMatchFound = (result: BattleResult) => {
+    setIsSearchingMatch(false);
+    setLastResult(result);
+    setIsPvP(true);
+    setPhase('IN_BATTLE');
   };
 
   const handleBattleComplete = () => {
@@ -65,13 +83,33 @@ const BattlePage: React.FC = () => {
       <div className="flex-1 overflow-hidden relative">
         {phase === 'DECK_SELECTION' && (
           <div className="h-full overflow-y-auto custom-scrollbar pb-10">
-            <DeckSelector onStartBattle={handleStartBattle} isStarting={isStartingBattle} />
+            <DeckSelector
+              onStartBattle={handleStartBattle}
+              onJoinQueue={handleJoinQueue}
+              isStarting={isStartingBattle}
+            />
           </div>
+        )}
+
+        {isSearchingMatch && (
+          <MatchmakingOverlay
+            deckIds={pendingDeckIds}
+            onCancel={() => setIsSearchingMatch(false)}
+            onMatchFound={handleMatchFound}
+          />
         )}
 
         {phase === 'IN_BATTLE' && lastResult && (
           <div className="h-full w-full">
-            <BattleArena result={lastResult} onComplete={handleBattleComplete} />
+            {isPvP ? (
+              <PvPBattleView
+                matchId={lastResult.battleId}
+                initialResult={lastResult}
+                onComplete={handleBattleComplete}
+              />
+            ) : (
+              <BattleArena result={lastResult} onComplete={handleBattleComplete} />
+            )}
           </div>
         )}
 

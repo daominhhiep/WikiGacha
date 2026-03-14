@@ -145,8 +145,28 @@ const BattleArena: React.FC<BattleArenaProps> = ({ result, onComplete }) => {
     logEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [visibleLogs]);
 
-  const currentEntry = turnIndex >= 0 ? result.log[turnIndex] : null;
   const isFinished = turnIndex >= result.log.length - 1;
+  const currentEntry = turnIndex >= 0 ? result.log[turnIndex] : null;
+
+  // Screen Shake logic based on damage
+  const getShakeAnimation = () => {
+    if (!currentEntry) return {};
+
+    // Violent shake for massive damage
+    if (currentEntry.damage >= 50) {
+      return {
+        x: [0, -20, 20, -20, 20, -10, 10, 0],
+        y: [0, 10, -10, 10, -10, 5, -5, 0],
+        transition: { duration: 0.4 },
+      };
+    }
+
+    // Subtle shake for normal hits
+    return {
+      x: [0, -4, 4, -4, 4, 0],
+      transition: { duration: 0.2 },
+    };
+  };
 
   const handleSkip = () => {
     // Immediate finish
@@ -174,7 +194,10 @@ const BattleArena: React.FC<BattleArenaProps> = ({ result, onComplete }) => {
   };
 
   return (
-    <div className="relative w-full h-[calc(100vh-180px)] min-h-[600px] bg-black border-2 border-primary/10 overflow-hidden flex flex-col md:flex-row">
+    <motion.div
+      animate={turnIndex >= 0 ? getShakeAnimation() : {}}
+      className="relative w-full h-[calc(100vh-180px)] min-h-[600px] bg-black border-2 border-primary/10 overflow-hidden flex flex-col md:flex-row"
+    >
       {/* HUD Grid Overlay */}
       <div className="absolute inset-0 opacity-10 pointer-events-none bg-[linear-gradient(rgba(0,240,255,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(0,240,255,0.1)_1px,transparent_1px)] bg-[length:40px_40px]" />
       <div className="absolute inset-0 opacity-5 pointer-events-none bg-[radial-gradient(circle_at_center,rgba(0,240,255,0.2)_0%,transparent_70%)]" />
@@ -338,7 +361,7 @@ const BattleArena: React.FC<BattleArenaProps> = ({ result, onComplete }) => {
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

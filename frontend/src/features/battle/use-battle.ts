@@ -23,6 +23,8 @@ export interface BattleCard {
  */
 export interface BattleParticipant {
   id: string;
+  username?: string;
+  avatarUrl?: string;
   cards: BattleCard[];
 }
 
