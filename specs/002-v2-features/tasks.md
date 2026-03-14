@@ -61,11 +61,11 @@
 
 **Independent Test**: Two users join matchmaking, get paired, and see real-time battle logs ending in an ELO update.
 
-- [ ] T020 [US2] Implement `PvPMatchmakingService` with Redis-based queue logic in `backend/src/modules/pvp/pvp-matchmaking.service.ts`
-- [ ] T021 [US2] Implement `PvPGateway` for Socket.io events (`matchmaking.join`, `battle.step`) in `backend/src/modules/pvp/pvp.gateway.ts`
-- [ ] T022 [US2] Update `BattleService` to support Elo calculation and detailed step logs in `backend/src/modules/battle/battle.service.ts`
-- [ ] T023 [US2] Frontend: Create PvP Matchmaking UI with "Searching..." state in `frontend/src/features/pvp/components/matchmaking-overlay.tsx`
-- [ ] T024 [US2] Frontend: Update Battle interface for real-time PvP log streaming in `frontend/src/features/battle/components/pvp-battle-view.tsx`
+- [x] T020 [US2] Implement `PvPMatchmakingService` with Redis-based queue logic in `backend/src/modules/pvp/pvp-matchmaking.service.ts`
+- [x] T021 [US2] Implement `PvPGateway` for Socket.io events (`matchmaking.join`, `battle.step`) in `backend/src/modules/pvp/pvp.gateway.ts`
+- [x] T022 [US2] Update `BattleService` to support Elo calculation and detailed step logs in `backend/src/modules/battle/battle.service.ts`
+- [x] T023 [US2] Frontend: Create PvP Matchmaking UI with "Searching..." state in `frontend/src/features/pvp/components/matchmaking-overlay.tsx`
+- [x] T024 [US2] Frontend: Update Battle interface for real-time PvP log streaming in `frontend/src/features/battle/components/pvp-battle-view.tsx`
 
 ---
 

@@ -9,7 +9,7 @@ const NotFoundPage = () => {
         <div className="absolute inset-0 blur-2xl bg-primary/20 animate-pulse" />
         <AlertTriangle size={120} className="text-primary relative z-10" />
       </div>
-      
+
       <div className="space-y-4 relative z-10">
         <h1 className="text-6xl font-black tracking-tighter uppercase italic bg-gradient-to-br from-white to-white/40 bg-clip-text text-transparent">
           404_ERROR

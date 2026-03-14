@@ -99,6 +99,16 @@
   --radius-2xl: 0;
   --radius-3xl: 0;
   --radius-4xl: 0;
+
+  @keyframes scan {
+    from {
+      top: 0%;
+    }
+    to {
+      top: 100%;
+    }
+  }
+  --animate-scan: scan 3s linear infinite;
 }
 
 @layer base {
