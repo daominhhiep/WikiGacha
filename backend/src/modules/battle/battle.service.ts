@@ -121,12 +121,47 @@ export class BattleService {
       xp: isWinner ? 100 : 20,
     };
 
+    // Calculate Elo for PvP
+    let eloUpdate = null;
+    if (opponentId) {
+      const [player1, player2] = await Promise.all([
+        this.prisma.player.findUnique({ where: { id: playerId } }),
+        this.prisma.player.findUnique({ where: { id: opponentId } }),
+      ]);
+
+      if (player1 && player2) {
+        let outcome = 0.5; // Draw
+        if (result.winnerId === playerId) outcome = 1;
+        else if (result.winnerId === opponentId) outcome = 0;
+
+        const { player1NewElo, player2NewElo } = this.calculateElo(
+          player1.eloRating,
+          player2.eloRating,
+          outcome,
+        );
+
+        // Update player 2 Elo and matchesPlayed
+        await this.prisma.player.update({
+          where: { id: opponentId },
+          data: {
+            eloRating: player2NewElo,
+            matchesPlayed: { increment: 1 },
+          },
+        });
+
+        eloUpdate = {
+          player1: { old: player1.eloRating, new: player1NewElo },
+          player2: { old: player2.eloRating, new: player2NewElo },
+        };
+      }
+    }
+
     // Save Battle Record
     const battle = await this.prisma.battle.create({
       data: {
         player1Id: playerId,
         player2Id: opponentId || null,
-        winnerId: isWinner ? playerId : opponentId || null,
+        winnerId: isWinner ? playerId : (opponentId && result.winnerId === opponentId ? opponentId : null),
         log: result.log as any,
         status: BattleStatus.COMPLETED,
       },
@@ -138,12 +173,16 @@ export class BattleService {
       isWinner: result.winnerId === playerId,
     });
 
-    // Update Player rewards
+    // Update Player 1 rewards and Elo
     await this.prisma.player.update({
       where: { id: playerId },
       data: {
         credits: { increment: rewards.credits },
         xp: { increment: rewards.xp },
+        ...(eloUpdate ? {
+          eloRating: eloUpdate.player1.new,
+          matchesPlayed: { increment: 1 },
+        } : {}),
       },
     });
 
@@ -172,7 +211,27 @@ export class BattleService {
       participants: result.participants,
       log: result.log,
       rewards,
+      elo: eloUpdate,
     };
+  }
+
+  /**
+   * Calculates new Elo ratings for two players.
+   *
+   * @param player1Elo Current Elo of player 1.
+   * @param player2Elo Current Elo of player 2.
+   * @param outcome 1 for player 1 win, 0.5 for draw, 0 for player 1 loss.
+   * @returns New Elo ratings for both players.
+   */
+  calculateElo(player1Elo: number, player2Elo: number, outcome: number) {
+    const K = 32;
+    const expected1 = 1 / (1 + Math.pow(10, (player2Elo - player1Elo) / 400));
+    const expected2 = 1 / (1 + Math.pow(10, (player1Elo - player2Elo) / 400));
+
+    const player1NewElo = Math.round(player1Elo + K * (outcome - expected1));
+    const player2NewElo = Math.round(player2Elo + K * (1 - outcome - expected2));
+
+    return { player1NewElo, player2NewElo };
   }
 
   /**

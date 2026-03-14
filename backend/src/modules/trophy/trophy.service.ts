@@ -14,9 +14,7 @@ export class TrophyService {
     const { playerId, cards } = payload;
     if (!cards) return;
 
-    const hasLegendary = cards.some(
-      (c) => c.rarity === Rarity.UR || c.rarity === Rarity.LR,
-    );
+    const hasLegendary = cards.some((c) => c.rarity === Rarity.UR || c.rarity === Rarity.LR);
 
     if (hasLegendary) {
       await this.awardTrophy(playerId, 'LEGENDARY_FINDER', {

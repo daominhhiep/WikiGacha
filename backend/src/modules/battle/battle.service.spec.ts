@@ -82,7 +82,7 @@ describe('BattleService', () => {
 
       mockPrismaService.inventory.findMany.mockResolvedValue(mockInventory);
       mockPrismaService.card.findMany.mockResolvedValue(mockAiCards);
-      engine.simulate.mockReturnValue(mockSimulationResult as any);
+      (engine.simulate as jest.Mock).mockReturnValue(mockSimulationResult as any);
       mockPrismaService.battle.create.mockResolvedValue({ id: 'battle-1' });
       mockPrismaService.player.findUnique.mockResolvedValue({ xp: 100, level: 1 });
 
@@ -96,6 +96,50 @@ describe('BattleService', () => {
         winnerId: playerId,
         isWinner: true,
       });
+    });
+
+    it('should complete PvP battle and return Elo updates', async () => {
+      const opponentId = 'p2';
+      const mockInventoryP1 = [
+        { id: 'inv-1', card: { title: 'Card 1', hp: 100, atk: 10, def: 10, rarity: 'C' } },
+      ];
+      const mockInventoryP2 = [
+        { id: 'inv-2', card: { title: 'Card 2', hp: 100, atk: 10, def: 10, rarity: 'C' } },
+      ];
+      const mockSimulationResult = {
+        winnerId: playerId,
+        log: [],
+        participants: {
+          p1: { id: playerId, cards: [] },
+          p2: { id: opponentId, cards: [] },
+        },
+      };
+
+      mockPrismaService.inventory.findMany
+        .mockResolvedValueOnce(mockInventoryP1)
+        .mockResolvedValueOnce(mockInventoryP2);
+      (engine.simulate as jest.Mock).mockReturnValue(mockSimulationResult as any);
+      mockPrismaService.player.findUnique
+        .mockResolvedValueOnce({ id: playerId, eloRating: 1200, xp: 0, level: 1 })
+        .mockResolvedValueOnce({ id: opponentId, eloRating: 1200, xp: 0, level: 1 })
+        .mockResolvedValueOnce({ id: playerId, eloRating: 1216, xp: 100, level: 1 }); // for level up check
+
+      mockPrismaService.battle.create.mockResolvedValue({ id: 'battle-pvp' });
+
+      const result = await service.startBattle(playerId, deckIds, opponentId);
+
+      expect(result.battleId).toBe('battle-pvp');
+      expect(result.elo).toBeDefined();
+      expect(result.elo.player1.new).toBeGreaterThan(1200);
+      expect(result.elo.player2.new).toBeLessThan(1200);
+
+      // Verify updates for both players
+      expect(prisma.player.update).toHaveBeenCalledWith(
+        expect.objectContaining({ where: { id: opponentId } }),
+      );
+      expect(prisma.player.update).toHaveBeenCalledWith(
+        expect.objectContaining({ where: { id: playerId } }),
+      );
     });
   });
 
