@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { RedisService } from '../../common/redis/redis.service';
 import { PrismaService } from '../../common/prisma/prisma.service';
+import { PvPMatch } from '@prisma/client';
 
 @Injectable()
 export class PvPMatchmakingService {
@@ -12,19 +13,19 @@ export class PvPMatchmakingService {
     private readonly prismaService: PrismaService,
   ) {}
 
-  async joinQueue(playerId: string): Promise<{ status: string; match?: any }> {
+  async joinQueue(playerId: string): Promise<{ status: string; match?: PvPMatch }> {
     this.logger.log(`Player ${playerId} joining PvP queue`);
-    
+
     // Remove existing entries to prevent duplicates
     await this.redisService.removeFromQueue(this.QUEUE_NAME, playerId);
-    
+
     await this.redisService.addToQueue(this.QUEUE_NAME, playerId);
-    
+
     const match = await this.findMatch();
     if (match) {
       return { status: 'MATCHED', match };
     }
-    
+
     return { status: 'QUEUED' };
   }
 
@@ -34,9 +35,9 @@ export class PvPMatchmakingService {
     return { status: 'LEFT_QUEUE' };
   }
 
-  async findMatch(): Promise<any | null> {
+  async findMatch(): Promise<PvPMatch | null> {
     const queueLength = await this.redisService.getQueueLength(this.QUEUE_NAME);
-    
+
     if (queueLength < 2) {
       return null;
     }
@@ -69,14 +70,14 @@ export class PvPMatchmakingService {
       },
       include: {
         player1: {
-          select: { id: true, username: true, avatarUrl: true, eloRating: true }
+          select: { id: true, username: true, avatarUrl: true, eloRating: true },
         },
         player2: {
-          select: { id: true, username: true, avatarUrl: true, eloRating: true }
-        }
-      }
+          select: { id: true, username: true, avatarUrl: true, eloRating: true },
+        },
+      },
     });
 
-    return match;
+    return match as PvPMatch;
   }
 }
