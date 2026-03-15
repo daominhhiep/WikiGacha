@@ -20,9 +20,15 @@ describe('BattleService', () => {
     },
     card: {
       findMany: jest.fn(),
+      count: jest.fn(),
+      findFirst: jest.fn(),
     },
     battle: {
       create: jest.fn(),
+      findMany: jest.fn(),
+      findUnique: jest.fn(),
+    },
+    pvPMatch: {
       findMany: jest.fn(),
     },
     player: {
@@ -81,7 +87,8 @@ describe('BattleService', () => {
       };
 
       mockPrismaService.inventory.findMany.mockResolvedValue(mockInventory);
-      mockPrismaService.card.findMany.mockResolvedValue(mockAiCards);
+      mockPrismaService.card.count.mockResolvedValue(1);
+      mockPrismaService.card.findFirst.mockResolvedValue(mockAiCards[0]);
       (engine.simulate as jest.Mock).mockReturnValue(mockSimulationResult as any);
       mockPrismaService.battle.create.mockResolvedValue({ id: 'battle-1' });
       mockPrismaService.player.findUnique.mockResolvedValue({ xp: 100, level: 1 });
@@ -146,6 +153,7 @@ describe('BattleService', () => {
   describe('getBattleHistory', () => {
     it('should return battle history', async () => {
       mockPrismaService.battle.findMany.mockResolvedValue([]);
+      mockPrismaService.pvPMatch.findMany.mockResolvedValue([]);
       const result = await service.getBattleHistory('p1');
       expect(result).toEqual([]);
     });

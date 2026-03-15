@@ -19,6 +19,12 @@ describe('TrophyService', () => {
     pvPMatch: {
       count: jest.fn(),
     },
+    inventory: {
+      count: jest.fn(),
+    },
+    player: {
+      findUnique: jest.fn(),
+    },
   };
 
   beforeEach(async () => {
@@ -38,6 +44,7 @@ describe('TrophyService', () => {
   describe('handleCardPulled', () => {
     it('should award LEGENDARY_FINDER trophy if UR card is pulled', async () => {
       mockPrismaService.trophy.findFirst.mockResolvedValue(null);
+      mockPrismaService.inventory.count.mockResolvedValue(10);
       const payload = {
         playerId: 'player1',
         cards: [{ rarity: Rarity.UR }],
@@ -55,6 +62,7 @@ describe('TrophyService', () => {
 
     it('should not award trophy if already exists', async () => {
       mockPrismaService.trophy.findFirst.mockResolvedValue({ id: 1 });
+      mockPrismaService.inventory.count.mockResolvedValue(10);
       const payload = {
         playerId: 'player1',
         cards: [{ rarity: Rarity.LR }],
@@ -66,6 +74,7 @@ describe('TrophyService', () => {
     });
 
     it('should not award trophy if no UR/LR cards', async () => {
+      mockPrismaService.inventory.count.mockResolvedValue(10);
       const payload = {
         playerId: 'player1',
         cards: [{ rarity: Rarity.SSR }],
@@ -81,6 +90,7 @@ describe('TrophyService', () => {
     it('should award VETERAN_COMMANDER if winCount >= 10', async () => {
       mockPrismaService.battle.count.mockResolvedValue(10);
       mockPrismaService.pvPMatch.count.mockResolvedValue(0);
+      mockPrismaService.player.findUnique.mockResolvedValue({ id: 'player1', eloRating: 1200 });
       mockPrismaService.trophy.findFirst.mockResolvedValue(null);
 
       await service.handleBattleWon({ playerId: 'player1', isWinner: true });
@@ -96,6 +106,7 @@ describe('TrophyService', () => {
     it('should not award if winCount < 10', async () => {
       mockPrismaService.battle.count.mockResolvedValue(5);
       mockPrismaService.pvPMatch.count.mockResolvedValue(4);
+      mockPrismaService.player.findUnique.mockResolvedValue({ id: 'player1', eloRating: 1200 });
 
       await service.handleBattleWon({ playerId: 'player1', isWinner: true });
 

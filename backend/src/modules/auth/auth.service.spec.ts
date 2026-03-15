@@ -3,17 +3,20 @@ import { AuthService } from './auth.service';
 import { PrismaService } from '../../common/prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
+import { MissionService } from '../mission/mission.service';
 
 describe('AuthService', () => {
   let service: AuthService;
   let prisma: PrismaService;
   let jwtService: JwtService;
+  let missionService: MissionService;
 
   const mockPrismaService = {
     player: {
       findUnique: jest.fn(),
       findFirst: jest.fn(),
       create: jest.fn(),
+      update: jest.fn(),
     },
   };
 
@@ -25,6 +28,10 @@ describe('AuthService', () => {
     get: jest.fn().mockReturnValue('supersecret'),
   };
 
+  const mockMissionService = {
+    assignInitialMissions: jest.fn().mockResolvedValue([]),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -32,12 +39,14 @@ describe('AuthService', () => {
         { provide: PrismaService, useValue: mockPrismaService },
         { provide: JwtService, useValue: mockJwtService },
         { provide: ConfigService, useValue: mockConfigService },
+        { provide: MissionService, useValue: mockMissionService },
       ],
     }).compile();
 
     service = module.get<AuthService>(AuthService);
     prisma = module.get<PrismaService>(PrismaService);
     jwtService = module.get<JwtService>(JwtService);
+    missionService = module.get<MissionService>(MissionService);
 
     jest.clearAllMocks();
   });
@@ -54,6 +63,7 @@ describe('AuthService', () => {
       const result = await service.guestLogin('Guest');
 
       expect(prisma.player.create).toHaveBeenCalled();
+      expect(missionService.assignInitialMissions).toHaveBeenCalledWith('new-id');
       expect(result.player.username).toBe('Guest');
       expect(result.accessToken).toBe('mock-token');
     });
@@ -103,6 +113,7 @@ describe('AuthService', () => {
       const result = await service.verifyGoogleIdToken('some-token');
 
       expect(result.player.username).toBe('Google User');
+      expect(missionService.assignInitialMissions).toHaveBeenCalledWith('new-id');
       expect(result.accessToken).toBe('mock-token');
     });
   });

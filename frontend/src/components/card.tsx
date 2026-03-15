@@ -383,16 +383,26 @@ const Card: React.FC<CardProps> = ({
             {/* Footer: ACQUIRED date or SOURCE label */}
             <div className="mt-4 pt-2 border-t border-border-grid flex items-center justify-between">
               <span className="text-[8px] font-mono opacity-50">SOURCE: WIKIPEDIA_API_v1</span>
-              {acquiredAt ? (
-                <span className="text-[9px] font-mono text-primary/60 uppercase tracking-tighter">
-                  ACQUIRED:{' '}
-                  {new Date(acquiredAt).toLocaleDateString(undefined, {
-                    year: '2-digit',
-                    month: 'short',
-                    day: 'numeric',
-                  })}
-                </span>
-              ) : null}
+              <div className="flex items-center gap-3">
+                <a
+                  href={card.wikiUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-[9px] font-mono text-primary/60 hover:text-primary transition-colors uppercase tracking-tighter"
+                >
+                  ACCESS_DATA
+                </a>
+                {acquiredAt ? (
+                  <span className="text-[9px] font-mono text-primary/60 uppercase tracking-tighter">
+                    ACQUIRED:{' '}
+                    {new Date(acquiredAt).toLocaleDateString(undefined, {
+                      year: '2-digit',
+                      month: 'short',
+                      day: 'numeric',
+                    })}
+                  </span>
+                ) : null}
+              </div>
             </div>
           </motion.div>
         )}

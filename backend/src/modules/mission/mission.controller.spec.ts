@@ -8,8 +8,9 @@ describe('MissionController', () => {
   let missionService: MissionService;
 
   const mockMissionService = {
-    findUserMissions: jest.fn(),
+    getPlayerMissions: jest.fn(),
     claimReward: jest.fn(),
+    assignInitialMissions: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -30,10 +31,10 @@ describe('MissionController', () => {
   });
 
   describe('getPlayerMissions', () => {
-    it('should call missionService.findUserMissions', async () => {
-      mockMissionService.findUserMissions.mockResolvedValue([]);
+    it('should call missionService.getPlayerMissions', async () => {
+      mockMissionService.getPlayerMissions.mockResolvedValue([]);
       const result = await controller.getPlayerMissions('p1');
-      expect(missionService.findUserMissions).toHaveBeenCalledWith('p1');
+      expect(missionService.getPlayerMissions).toHaveBeenCalledWith('p1');
       expect(result).toEqual([]);
     });
   });

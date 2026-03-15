@@ -177,7 +177,7 @@ describe('BattleEngine', () => {
       expect(result.winnerId).toBeDefined();
     });
 
-    it('should calculate damage as max(1, atk - def)', () => {
+    it('should calculate damage as max(25% atk, atk - 50% def)', () => {
       const p1: BattleParticipant = {
         id: 'player1',
         cards: [
@@ -202,15 +202,18 @@ describe('BattleEngine', () => {
             hp: 100,
             maxHp: 100,
             atk: 0,
-            def: 15,
+            def: 16,
           },
         ],
       };
 
       const result = engine.simulate(p1, p2);
 
-      expect(result.log[0].damage).toBe(5);
-      expect(result.log[0].hpRemaining).toBe(95);
+      // baseDamage = 20 - (16 * 0.5) = 20 - 8 = 12
+      // minDamage = ceil(20 * 0.25) = 5
+      // max(5, 12) = 12
+      expect(result.log[0].damage).toBe(12);
+      expect(result.log[0].hpRemaining).toBe(88);
     });
   });
 });
