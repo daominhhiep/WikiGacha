@@ -75,9 +75,9 @@
 
 **Independent Test**: Battle a "History" card with a "Science" card and verify the +20% ATK bonus in logs.
 
-- [ ] T025 [US3] Implement `CategoryCounter` utility in `backend/src/modules/battle/utils/category-counter.ts`
-- [ ] T026 [US3] Integrate `CategoryCounter` and Diminishing Returns Defense into `BattleService` battle resolution logic
-- [ ] T027 [US3] Frontend: Add Category counter visual indicators (e.g., "History > Science") in `frontend/src/features/battle/components/battle-ui-hints.tsx`
+- [x] T025 [US3] Implement `CategoryCounter` utility in `backend/src/modules/battle/utils/category-counter.ts`
+- [x] T026 [US3] Integrate `CategoryCounter` and Diminishing Returns Defense into `BattleService` battle resolution logic
+- [x] T027 [US3] Frontend: Add Category counter visual indicators (e.g., "History > Science") in `frontend/src/features/battle/components/battle-ui-hints.tsx`
 
 ---
 
@@ -87,18 +87,18 @@
 
 **Independent Test**: Send a message in one tab and see it instantly appear in another user's chat window.
 
-- [ ] T028 [US5] Implement `ChatGateway` for global broadcasting in `backend/src/modules/chat/chat.gateway.ts`
-- [ ] T029 [US5] Implement `ChatService` for message persistence in `backend/src/modules/chat/chat.service.ts`
-- [ ] T030 [US5] Frontend: Create `ChatSidebar` component with real-time updates in `frontend/src/features/chat/components/chat-sidebar.tsx`
+- [x] T028 [US5] Implement `ChatGateway` for global broadcasting in `backend/src/modules/chat/chat.gateway.ts`
+- [x] T029 [US5] Implement `ChatService` for message persistence in `backend/src/modules/chat/chat.service.ts`
+- [x] T030 [US5] Frontend: Create `ChatSidebar` component with real-time updates in `frontend/src/features/chat/components/chat-sidebar.tsx`
 
 ---
 
 ## Phase N: Polish & Cross-Cutting Concerns
 
-- [ ] T031 Update Swagger documentation for new REST endpoints in `backend/src/main.ts`
-- [ ] T032 [P] Create E2E test for full PvP loop: `backend/test/pvp.e2e-spec.ts`
-- [ ] T033 [P] Create E2E test for Mission completion: `backend/test/mission.e2e-spec.ts`
-- [ ] T034 Perform final code cleanup and refactoring across all new modules
+- [x] T031 Update Swagger documentation for new REST endpoints in `backend/src/main.ts`
+- [x] T032 [P] Create E2E test for full PvP loop: `backend/test/pvp.e2e-spec.ts`
+- [x] T033 [P] Create E2E test for Mission completion: `backend/test/mission.e2e-spec.ts`
+- [x] T034 Perform final code cleanup and refactoring across all new modules
 
 ---
 
