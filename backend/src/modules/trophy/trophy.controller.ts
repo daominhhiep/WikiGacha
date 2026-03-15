@@ -4,7 +4,7 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 
 @ApiTags('trophy')
-@Controller('trophies')
+@Controller('trophy')
 export class TrophyController {
   constructor(private readonly trophyService: TrophyService) {}
 

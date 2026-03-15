@@ -1,9 +1,46 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Trophy, CheckCircle2, Circle, Gift, AlertCircle, Loader2 } from 'lucide-react';
+import { Trophy, CheckCircle2, Circle, Gift, AlertCircle, Loader2, Clock } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { useMissions, useClaimMissionReward, type UserMission } from '../use-missions';
+
+/**
+ * MissionCountdown component displays the time remaining until the next UTC midnight.
+ */
+const MissionCountdown: React.FC = () => {
+  const [timeLeft, setTimeLeft] = useState<string>('');
+
+  useEffect(() => {
+    const calculateTimeLeft = () => {
+      const now = new Date();
+      const nextMidnight = new Date(
+        Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1, 0, 0, 0),
+      );
+      const diff = nextMidnight.getTime() - now.getTime();
+
+      const hours = Math.floor(diff / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+      return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    };
+
+    setTimeLeft(calculateTimeLeft());
+    const timer = setInterval(() => {
+      setTimeLeft(calculateTimeLeft());
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  return (
+    <div className="flex items-center gap-2 text-[10px] font-mono bg-amber-500/10 text-amber-500 px-3 py-1 border border-amber-500/30 uppercase">
+      <Clock className="size-3 animate-pulse" />
+      <span>Reset in: {timeLeft}</span>
+    </div>
+  );
+};
 
 /**
  * MissionItem component displays a single mission card with HUD styling.
@@ -167,6 +204,9 @@ export const MissionList: React.FC = () => {
     );
   }
 
+  // Check if there are any daily missions
+  const hasDailyMissions = missions.some((um) => um.mission.type === 'DAILY');
+
   // Sort missions: Claimable first, then incomplete, then claimed
   const sortedMissions = [...missions].sort((a, b) => {
     if (a.isClaimed !== b.isClaimed) return a.isClaimed ? 1 : -1;
@@ -176,7 +216,7 @@ export const MissionList: React.FC = () => {
 
   return (
     <div className="flex flex-col h-full overflow-hidden">
-      <div className="flex items-center justify-between mb-6 px-1">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 px-1 gap-4">
         <div className="flex items-center gap-3">
           <Trophy className="size-6 text-amber-500" />
           <div>
@@ -188,9 +228,12 @@ export const MissionList: React.FC = () => {
             </p>
           </div>
         </div>
-        <div className="hidden sm:flex items-center gap-2 text-[10px] font-mono bg-black/40 px-3 py-1 border border-border-grid uppercase opacity-60">
-          <div className="size-1.5 rounded-full bg-green-500 animate-pulse" />
-          SYSTEM_ONLINE
+        <div className="flex items-center gap-3">
+          {hasDailyMissions && <MissionCountdown />}
+          <div className="hidden sm:flex items-center gap-2 text-[10px] font-mono bg-black/40 px-3 py-1 border border-border-grid uppercase opacity-60">
+            <div className="size-1.5 rounded-full bg-green-500 animate-pulse" />
+            SYSTEM_ONLINE
+          </div>
         </div>
       </div>
 

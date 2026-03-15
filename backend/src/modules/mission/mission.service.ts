@@ -1,5 +1,6 @@
 import { Injectable, Logger, BadRequestException, NotFoundException } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
+import { Cron, CronExpression } from '@nestjs/schedule';
 import { PrismaService } from '../../common/prisma/prisma.service';
 
 @Injectable()
@@ -7,6 +8,45 @@ export class MissionService {
   private readonly logger = new Logger(MissionService.name);
 
   constructor(private prisma: PrismaService) {}
+
+  /**
+   * Resets all DAILY missions for all players every day at midnight UTC.
+   */
+  @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
+  async resetDailyMissions() {
+    this.logger.log('Starting daily mission reset...');
+
+    try {
+      // updateMany does not support relation filtering in some Prisma versions.
+      // We first find all daily mission IDs.
+      const dailyMissions = await this.prisma.mission.findMany({
+        where: { type: 'DAILY' },
+        select: { id: true },
+      });
+
+      const dailyMissionIds = dailyMissions.map((m) => m.id);
+
+      if (dailyMissionIds.length === 0) {
+        this.logger.warn('No daily missions found to reset.');
+        return;
+      }
+
+      const result = await this.prisma.userMission.updateMany({
+        where: {
+          missionId: { in: dailyMissionIds },
+        },
+        data: {
+          progress: 0,
+          isCompleted: false,
+          isClaimed: false,
+        },
+      });
+
+      this.logger.log(`Successfully reset daily missions for all players. Affected: ${result.count}`);
+    } catch (error) {
+      this.logger.error('Failed to reset daily missions', error.stack);
+    }
+  }
 
   /**
    * Listens for 'card.pulled' event and updates mission progress.
